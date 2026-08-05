@@ -7,11 +7,14 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { signInAnonymously, onAuthStateChanged, signOut } from "firebase/auth";
+import { auth, firebaseReady } from "./firebase";
 
 // Prototype-auth voor de Dinely-app.
-// Login = telefoonnummer invullen -> (mock) code ontvangen -> code invoeren.
-// De sessie wordt lokaal bewaard. Echte SMS/anonieme Firebase-auth komt later
-// (nodig zodra sollicitaties echt naar Firestore geschreven worden).
+// Login = telefoonnummer -> (mock) code 123456 -> code invoeren.
+// De sessie wordt lokaal bewaard. Onder water loggen we anoniem in bij Firebase
+// (indien de Anonymous-provider aanstaat) zodat sollicitaties naar Firestore
+// geschreven kunnen worden. De echte SMS-login komt bij de native app.
 
 export const DEMO_CODE = "123456";
 
@@ -39,9 +42,10 @@ type Session = { phone: string };
 
 type AppAuthValue = {
   session: Session | null;
+  uid: string | null; // Firebase anonieme uid (null als provider uit staat)
   loading: boolean;
   profile: CreatorProfile;
-  login: (phone: string) => void; // na geldige code
+  login: (phone: string) => void;
   logout: () => void;
   saveProfile: (p: CreatorProfile) => void;
 };
@@ -51,6 +55,7 @@ const P_KEY = "dinely-app:profile";
 
 const AppAuthContext = createContext<AppAuthValue>({
   session: null,
+  uid: null,
   loading: true,
   profile: EMPTY_PROFILE,
   login: () => {},
@@ -60,6 +65,7 @@ const AppAuthContext = createContext<AppAuthValue>({
 
 export function AppAuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
+  const [uid, setUid] = useState<string | null>(null);
   const [profile, setProfile] = useState<CreatorProfile>(EMPTY_PROFILE);
   const [loading, setLoading] = useState(true);
 
@@ -73,6 +79,11 @@ export function AppAuthProvider({ children }: { children: ReactNode }) {
       /* geen storage */
     }
     setLoading(false);
+
+    if (firebaseReady) {
+      const unsub = onAuthStateChanged(auth, (u) => setUid(u ? u.uid : null));
+      return () => unsub();
+    }
   }, []);
 
   function login(phone: string) {
@@ -83,6 +94,12 @@ export function AppAuthProvider({ children }: { children: ReactNode }) {
       /* negeer */
     }
     setSession(s);
+    if (firebaseReady && !auth.currentUser) {
+      // Anoniem inloggen zodat we later een sollicitatie mogen wegschrijven.
+      signInAnonymously(auth).catch(() => {
+        /* Anonymous-provider staat mogelijk nog uit; browsen werkt sowieso. */
+      });
+    }
   }
 
   function logout() {
@@ -92,6 +109,7 @@ export function AppAuthProvider({ children }: { children: ReactNode }) {
       /* negeer */
     }
     setSession(null);
+    if (firebaseReady) signOut(auth).catch(() => {});
   }
 
   function saveProfile(p: CreatorProfile) {
@@ -104,7 +122,9 @@ export function AppAuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AppAuthContext.Provider value={{ session, loading, profile, login, logout, saveProfile }}>
+    <AppAuthContext.Provider
+      value={{ session, uid, loading, profile, login, logout, saveProfile }}
+    >
       {children}
     </AppAuthContext.Provider>
   );

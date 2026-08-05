@@ -5,9 +5,37 @@ import {
   doc,
   query,
   where,
+  addDoc,
+  serverTimestamp,
 } from "firebase/firestore";
-import { db, firebaseReady } from "./firebase";
+import { auth, db, firebaseReady } from "./firebase";
 import type { Restaurant, Deal, Review } from "./types";
+
+export type NewApplication = {
+  dealId: string;
+  restaurantId: string;
+  handle: string;
+  volgers: number;
+  platform: string;
+  regio: string;
+  geslacht: "vrouw" | "man" | "";
+};
+
+/**
+ * Sollicitatie wegschrijven. Vereist een (anonieme) Firebase-login.
+ * Gooit een fout als dat niet lukt, zodat de UI het kan melden.
+ */
+export async function createApplication(app: NewApplication): Promise<void> {
+  if (!firebaseReady) throw new Error("firebase-not-ready");
+  const uid = auth.currentUser?.uid;
+  if (!uid) throw new Error("not-signed-in");
+  await addDoc(collection(db, "applications"), {
+    ...app,
+    creatorUid: uid,
+    status: "wacht",
+    createdAt: serverTimestamp(),
+  });
+}
 
 // Publieke leeslaag voor de app. Restaurants/deals/reviews zijn publiek leesbaar
 // (zie firestore.rules), dus hier is geen login nodig om te browsen.

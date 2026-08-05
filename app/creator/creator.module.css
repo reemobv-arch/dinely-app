@@ -1,0 +1,44 @@
+.wrap { min-height: 100dvh; display: flex; flex-direction: column; }
+.head {
+  display: flex; align-items: center; justify-content: space-between; padding: 14px 18px;
+}
+.back { width: 30px; height: 30px; display: grid; place-items: center; font-size: 24px; color: var(--muted); }
+.dots { display: flex; gap: 7px; }
+.dot { width: 26px; height: 4px; border-radius: 4px; background: var(--line-2); transition: 0.2s; }
+.dot.on { background: var(--gold); }
+
+.body { flex: 1; padding: 12px 22px; }
+.stepBox { animation: fade 0.3s ease; }
+@keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.h1 { font-family: var(--ff-display); font-size: 32px; margin: 10px 0 8px; }
+.lead { color: var(--muted); font-size: 14.5px; line-height: 1.5; margin-bottom: 22px; }
+
+.seg { display: flex; gap: 8px; }
+.segBtn {
+  flex: 1; border: 1px solid var(--line-2); background: var(--bg-2); border-radius: 11px;
+  padding: 13px; color: var(--muted); font-size: 14px; transition: 0.18s;
+}
+.segOn { border-color: var(--gold); background: linear-gradient(180deg, var(--surface-2), var(--surface)); color: var(--gold); }
+.fb { margin-top: 18px; }
+
+.summary {
+  background: var(--surface); border: 1px solid var(--line-2); border-radius: 18px;
+  padding: 22px; margin-bottom: 16px;
+}
+.sumTotal { text-align: center; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+.sumTotal b { display: block; font-family: var(--ff-display); font-size: 44px; color: var(--gold); line-height: 1; }
+.sumTotal span {
+  font-family: var(--ff-mono); font-size: 10.5px; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--muted-2);
+}
+.sumRows { margin-top: 14px; display: flex; flex-direction: column; gap: 8px; }
+.sumRows > div {
+  display: flex; justify-content: space-between; font-family: var(--ff-mono); font-size: 13px; color: var(--muted);
+}
+.sumRows b { color: var(--text); }
+.note {
+  font-family: var(--ff-mono); font-size: 11px; line-height: 1.5; color: var(--muted-2);
+  border: 1px dashed var(--line-2); border-radius: 12px; padding: 12px 14px;
+}
+
+.footer { display: flex; gap: 10px; padding: 16px 22px calc(20px + env(safe-area-inset-bottom)); }
