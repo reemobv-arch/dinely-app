@@ -1,0 +1,37 @@
+.wrap {
+  justify-content: center;
+  padding: 0 26px 40px;
+  background:
+    radial-gradient(120% 80% at 80% 0%, rgba(201, 162, 75, 0.10), transparent 55%),
+    var(--bg);
+}
+.top { text-align: center; margin-bottom: 44px; }
+.brand { font-family: var(--ff-display); font-size: 44px; letter-spacing: 0.01em; }
+.brand span { color: var(--gold); }
+.tag {
+  font-family: var(--ff-mono); font-size: 10.5px; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--muted); margin-top: 8px;
+}
+.form { width: 100%; }
+.h1 { font-family: var(--ff-display); font-size: 30px; margin-bottom: 8px; }
+.lead { color: var(--muted); font-size: 14.5px; margin-bottom: 24px; line-height: 1.5; }
+.lead b { color: var(--text); }
+.code {
+  text-align: center; font-family: var(--ff-mono); font-size: 26px;
+  letter-spacing: 0.5em; padding-left: 0.5em;
+}
+.hint {
+  font-family: var(--ff-mono); font-size: 11px; color: var(--muted-2);
+  margin-top: 12px; text-align: center;
+}
+.hint b { color: var(--gold); }
+.err {
+  margin-top: 12px; font-family: var(--ff-mono); font-size: 12.5px;
+  color: var(--crit); line-height: 1.45;
+}
+.link {
+  display: block; width: 100%; text-align: center; margin-top: 18px;
+  font-family: var(--ff-mono); font-size: 11px; letter-spacing: 0.08em;
+  color: var(--muted); text-transform: uppercase;
+}
+.link:hover { color: var(--gold); }

@@ -1,0 +1,43 @@
+.wrap { padding: 0 22px 26px; }
+.head { padding: 22px 0 8px; }
+.brand { font-family: var(--ff-display); font-size: 24px; }
+.brand span { color: var(--gold); }
+
+.intro { margin: 22px 0 26px; }
+.h1 { font-family: var(--ff-display); font-size: 38px; line-height: 1.02; margin-top: 10px; }
+
+.cards { display: flex; flex-direction: column; gap: 16px; flex: 1; }
+.card {
+  flex: 1; min-height: 200px; border-radius: 20px; overflow: hidden;
+  border: 1px solid var(--line-2); position: relative; display: block;
+  transition: transform 0.18s, border-color 0.18s;
+}
+.card:active { transform: scale(0.985); }
+.card:hover { border-color: var(--gold-dim); }
+.discover {
+  background:
+    linear-gradient(180deg, rgba(11,9,6,0.30) 0%, rgba(11,9,6,0.82) 100%),
+    url("/hero.jpg");
+  background-size: cover; background-position: 60% 42%;
+}
+.creator {
+  background: linear-gradient(155deg, var(--surface-2), var(--bg-2));
+}
+.cardInner {
+  position: absolute; inset: 0; padding: 22px; display: flex;
+  flex-direction: column; justify-content: flex-end;
+}
+.num {
+  position: absolute; top: 20px; left: 22px; font-family: var(--ff-mono);
+  font-size: 11px; letter-spacing: 0.2em; color: var(--gold);
+}
+.cardInner h2 { font-family: var(--ff-display); font-size: 27px; margin-bottom: 6px; }
+.cardInner p { color: var(--muted); font-size: 13.5px; max-width: 30ch; line-height: 1.45; }
+.go {
+  margin-top: 16px; display: inline-flex; align-items: center; gap: 9px;
+  font-family: var(--ff-mono); font-size: 11px; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--text);
+}
+.creator .cardInner p { color: var(--muted); }
+.arw { transition: transform 0.18s; }
+.card:hover .arw { transform: translateX(5px); color: var(--gold); }

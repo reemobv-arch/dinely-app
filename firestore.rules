@@ -1,0 +1,44 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Super-admins: mogen alles lezen en aanpassen (zie lib/admins.ts).
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email in ['reemobv@gmail.com', 'hello@dinely.nl'];
+    }
+
+    // Restaurants: iedereen mag lezen (de app toont ze),
+    // alleen de eigenaar (of een admin) mag schrijven.
+    match /restaurants/{uid} {
+      allow read: if true;
+      allow write: if isAdmin() || (request.auth != null && request.auth.uid == uid);
+    }
+
+    // Deals: publiek leesbaar; eigenaar of admin mag aanmaken/wijzigen.
+    match /deals/{dealId} {
+      allow read: if true;
+      allow write: if isAdmin() || (request.auth != null
+        && (request.resource.data.owner == request.auth.uid
+            || resource.data.owner == request.auth.uid));
+    }
+
+    // Sollicitaties: het restaurant (eigenaar) of een admin mag ze lezen en beheren.
+    match /applications/{appId} {
+      allow read: if isAdmin() || (request.auth != null
+        && resource.data.restaurantId == request.auth.uid);
+      allow create: if isAdmin() || (request.auth != null
+        && request.resource.data.restaurantId == request.auth.uid);
+      allow update, delete: if isAdmin() || (request.auth != null
+        && resource.data.restaurantId == request.auth.uid);
+    }
+
+    // Reviews: publiek leesbaar; eigenaar of admin mag schrijven.
+    match /reviews/{reviewId} {
+      allow read: if true;
+      allow write: if isAdmin() || (request.auth != null
+        && (request.resource.data.restaurantId == request.auth.uid
+            || resource.data.restaurantId == request.auth.uid));
+    }
+  }
+}
