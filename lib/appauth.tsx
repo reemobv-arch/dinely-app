@@ -70,9 +70,13 @@ export function AppAuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let hasSession = false;
     try {
       const s = localStorage.getItem(S_KEY);
-      if (s) setSession(JSON.parse(s) as Session);
+      if (s) {
+        setSession(JSON.parse(s) as Session);
+        hasSession = true;
+      }
       const p = localStorage.getItem(P_KEY);
       if (p) setProfile({ ...EMPTY_PROFILE, ...(JSON.parse(p) as CreatorProfile) });
     } catch {
@@ -82,6 +86,11 @@ export function AppAuthProvider({ children }: { children: ReactNode }) {
 
     if (firebaseReady) {
       const unsub = onAuthStateChanged(auth, (u) => setUid(u ? u.uid : null));
+      // Zorg dat er een anonieme Firebase-sessie is zodra iemand lokaal is
+      // ingelogd, ook als die sessie van vóór het aanzetten van Anonymous is.
+      if (hasSession && !auth.currentUser) {
+        signInAnonymously(auth).catch(() => {});
+      }
       return () => unsub();
     }
   }, []);

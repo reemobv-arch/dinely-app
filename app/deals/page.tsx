@@ -111,8 +111,8 @@ export default function DealsPage() {
                   <div className={styles.okBox}>✓ Sollicitatie verstuurd — het restaurant ziet 'm in hun dashboard.</div>
                 ) : st === "err" ? (
                   <div className={styles.errBox}>
-                    Versturen lukte niet. Zet in Firebase de <b>Anonymous</b> inlogmethode aan
-                    (Authentication → Sign-in method), dan werkt solliciteren.
+                    Versturen lukte net niet. Ververs de app en probeer opnieuw. Blijft het
+                    misgaan, log dan uit en opnieuw in.
                   </div>
                 ) : (
                   <button className={styles.apply} disabled={pending === d.id} onClick={() => apply(d)}>
