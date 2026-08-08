@@ -7,8 +7,8 @@
   --gold:#C9A24B; --gold-2:#E4C67E; --gold-dim:#8C7231;
   --good:#77BE9B; --warn:#E0AE55; --crit:#CE7460;
   --ff-display:"Didot","Bodoni 72","Bodoni MT","Hoefler Text",Garamond,"Times New Roman",serif;
-  --ff-body:"Helvetica Neue",Helvetica,"SF Pro Text",-apple-system,system-ui,Arial,sans-serif;
-  --ff-mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace;
+  --ff-body:-apple-system,"Helvetica Neue","Segoe UI",Roboto,system-ui,Arial,sans-serif;
+  --ff-mono:-apple-system,"Helvetica Neue","Segoe UI",Roboto,system-ui,Arial,sans-serif;
   --sh-1:0 1px 0 rgba(255,255,255,.03) inset, 0 10px 30px -12px rgba(0,0,0,.7);
   --sh-2:0 30px 80px -30px rgba(0,0,0,.85);
 }
