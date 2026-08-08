@@ -1,4 +1,4 @@
-.wrap { min-height: 100dvh; padding-bottom: 30px; }
+.wrap { min-height: 100dvh; padding-bottom: calc(92px + env(safe-area-inset-bottom)); }
 .head { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px 6px; }
 .back { width: 30px; height: 30px; display: grid; place-items: center; font-size: 24px; color: var(--muted); }
 .brand { font-family: var(--ff-display); font-size: 22px; }

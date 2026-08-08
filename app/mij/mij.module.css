@@ -1,0 +1,57 @@
+.wrap { min-height: 100dvh; padding: 0 18px calc(90px + env(safe-area-inset-bottom)); }
+.head { padding: 18px 4px 10px; }
+.title { font-family: var(--ff-display); font-size: 32px; }
+
+.card {
+  display: flex; align-items: center; gap: 14px; background: var(--surface);
+  border: 1px solid var(--line-2); border-radius: 18px; padding: 16px;
+}
+.avatar {
+  width: 52px; height: 52px; flex: none; border-radius: 50%;
+  display: grid; place-items: center; font-family: var(--ff-display); font-size: 22px;
+  color: var(--gold); border: 1px solid var(--gold-dim); background: var(--bg-2);
+}
+.pInfo { flex: 1; min-width: 0; }
+.pName { font-family: var(--ff-display); font-size: 20px; }
+.pMeta { font-family: var(--ff-mono); font-size: 11px; color: var(--muted); margin-top: 3px; }
+.edit {
+  flex: none; font-family: var(--ff-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--gold); border: 1px solid var(--gold-dim); border-radius: 100px; padding: 8px 14px;
+}
+
+.socials { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; }
+.social {
+  font-family: var(--ff-mono); font-size: 10.5px; color: var(--muted);
+  border: 1px solid var(--line); border-radius: 100px; padding: 5px 11px;
+}
+
+.section { margin-top: 28px; }
+.h2 { font-family: var(--ff-display); font-size: 22px; margin-bottom: 14px; }
+.subtle { font-family: var(--ff-mono); font-size: 12.5px; color: var(--muted); padding: 8px 0; }
+.empty {
+  font-family: var(--ff-mono); font-size: 12.5px; color: var(--muted); line-height: 1.6;
+  border: 1px dashed var(--line-2); border-radius: 14px; padding: 18px;
+}
+.link { color: var(--gold); }
+
+.list { display: flex; flex-direction: column; gap: 10px; }
+.appRow {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px;
+}
+.appInfo { min-width: 0; }
+.appDeal { font-family: var(--ff-display); font-size: 17px; }
+.appRest { font-family: var(--ff-mono); font-size: 10.5px; letter-spacing: 0.08em; color: var(--gold); margin-top: 3px; text-transform: uppercase; }
+.badge {
+  flex: none; font-family: var(--ff-mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 6px 11px; border-radius: 100px; border: 1px solid var(--line-2); color: var(--muted);
+}
+.wacht { color: var(--warn); border-color: var(--gold-dim); }
+.ok { color: var(--good); border-color: rgba(119,190,155,0.4); }
+.no { color: var(--crit); border-color: rgba(206,116,96,0.4); }
+
+.logout {
+  width: 100%; margin-top: 30px; font-family: var(--ff-mono); font-size: 11px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--muted); border: 1px solid var(--line-2); border-radius: 100px; padding: 14px;
+}
+.logout:hover { color: var(--crit); border-color: var(--crit); }

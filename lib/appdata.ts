@@ -9,7 +9,7 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { auth, db, firebaseReady } from "./firebase";
-import type { Restaurant, Deal, Review } from "./types";
+import type { Restaurant, Deal, Review, Application } from "./types";
 
 export type NewApplication = {
   dealId: string;
@@ -72,6 +72,14 @@ export async function listReviewsFor(id: string): Promise<Review[]> {
     query(collection(db, "reviews"), where("restaurantId", "==", id))
   );
   return snap.docs.map((d) => ({ id: d.id, ...(d.data() as Review) }));
+}
+
+export async function listMyApplications(uid: string): Promise<Application[]> {
+  if (!firebaseReady || !uid) return [];
+  const snap = await getDocs(
+    query(collection(db, "applications"), where("creatorUid", "==", uid))
+  );
+  return snap.docs.map((d) => ({ id: d.id, ...(d.data() as Application) }));
 }
 
 export async function listAllReviews(): Promise<Review[]> {

@@ -10,6 +10,7 @@ import {
   createApplication,
 } from "@/lib/appdata";
 import type { Deal } from "@/lib/types";
+import BottomNav from "../BottomNav";
 import styles from "./deals.module.css";
 
 export default function DealsPage() {
@@ -124,6 +125,8 @@ export default function DealsPage() {
           })
         )}
       </div>
+
+      <BottomNav />
     </div>
   );
 }

@@ -1,0 +1,32 @@
+.bar {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 460px;
+  z-index: 40;
+  display: flex;
+  background: rgba(20, 16, 11, 0.92);
+  backdrop-filter: blur(16px);
+  border-top: 1px solid var(--line-2);
+  padding: 9px 8px calc(9px + env(safe-area-inset-bottom));
+}
+.tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: var(--muted-2);
+  padding: 4px 0;
+  transition: color 0.16s;
+}
+.icon { font-size: 19px; line-height: 1; }
+.lbl {
+  font-family: var(--ff-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.on { color: var(--gold); }

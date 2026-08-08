@@ -12,6 +12,7 @@ import {
   type PublicRestaurant,
 } from "@/lib/appdata";
 import type { Deal, Review } from "@/lib/types";
+import BottomNav from "../BottomNav";
 import styles from "./discover.module.css";
 
 const MapView = dynamic(() => import("./MapView"), { ssr: false });
@@ -148,6 +149,8 @@ export default function DiscoverPage() {
           })
         )}
       </div>
+
+      <BottomNav />
     </div>
   );
 }
