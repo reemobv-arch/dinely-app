@@ -6,6 +6,7 @@ import {
   query,
   where,
   addDoc,
+  updateDoc,
   serverTimestamp,
 } from "firebase/firestore";
 import { auth, db, firebaseReady } from "./firebase";
@@ -19,6 +20,7 @@ export type NewApplication = {
   platform: string;
   regio: string;
   geslacht: "vrouw" | "man" | "";
+  bezoekDatum: string;
 };
 
 /**
@@ -32,9 +34,54 @@ export async function createApplication(app: NewApplication): Promise<void> {
   await addDoc(collection(db, "applications"), {
     ...app,
     creatorUid: uid,
+    reviewed: false,
     status: "wacht",
     createdAt: serverTimestamp(),
   });
+}
+
+export type NewReview = {
+  restaurantId: string;
+  naam: string;
+  sterren: number;
+  vibeGoed: string;
+  vibeMinder: string;
+  etenGoed: string;
+  etenMinder: string;
+};
+
+/** Review wegschrijven. vibe/food-cijfers worden afgeleid uit de sterren
+ *  zodat de dashboard-scores blijven werken. */
+export async function createReview(r: NewReview): Promise<void> {
+  if (!firebaseReady) throw new Error("firebase-not-ready");
+  const uid = auth.currentUser?.uid;
+  if (!uid) throw new Error("not-signed-in");
+  const tekst = [
+    r.vibeGoed && `Vibe (top): ${r.vibeGoed}`,
+    r.vibeMinder && `Vibe (minder): ${r.vibeMinder}`,
+    r.etenGoed && `Eten (top): ${r.etenGoed}`,
+    r.etenMinder && `Eten (minder): ${r.etenMinder}`,
+  ].filter(Boolean).join("\n");
+  await addDoc(collection(db, "reviews"), {
+    restaurantId: r.restaurantId,
+    creatorUid: uid,
+    naam: r.naam || "Creator",
+    sterren: r.sterren,
+    vibe: Math.round(r.sterren * 2 * 10) / 10, // op schaal /10
+    food: r.sterren, // op schaal /5
+    service: r.sterren,
+    vibeGoed: r.vibeGoed,
+    vibeMinder: r.vibeMinder,
+    etenGoed: r.etenGoed,
+    etenMinder: r.etenMinder,
+    tekst,
+    createdAt: serverTimestamp(),
+  });
+}
+
+export async function markApplicationReviewed(id: string): Promise<void> {
+  if (!firebaseReady) return;
+  await updateDoc(doc(db, "applications", id), { reviewed: true });
 }
 
 // Publieke leeslaag voor de app. Restaurants/deals/reviews zijn publiek leesbaar

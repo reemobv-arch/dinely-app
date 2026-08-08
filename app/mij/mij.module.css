@@ -50,6 +50,20 @@
 .ok { color: var(--good); border-color: rgba(119,190,155,0.4); }
 .no { color: var(--crit); border-color: rgba(206,116,96,0.4); }
 
+.dealRow {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  background: var(--surface); border: 1px solid var(--line-2); border-radius: 14px; padding: 14px 16px;
+  transition: 0.18s;
+}
+.clickable:active { transform: scale(0.99); }
+.clickable { border-color: var(--gold-dim); }
+.grey { opacity: 0.55; }
+.dealDate { font-family: var(--ff-mono); font-size: 10.5px; color: var(--muted); margin-top: 5px; }
+.reviewBtn {
+  flex: none; font-family: var(--ff-mono); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: #20180A; background: linear-gradient(180deg, var(--gold-2), var(--gold)); padding: 9px 15px; border-radius: 100px;
+}
+
 .logout {
   width: 100%; margin-top: 30px; font-family: var(--ff-mono); font-size: 11px; letter-spacing: 0.14em;
   text-transform: uppercase; color: var(--muted); border: 1px solid var(--line-2); border-radius: 100px; padding: 14px;

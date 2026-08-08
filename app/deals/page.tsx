@@ -10,6 +10,7 @@ import {
   createApplication,
 } from "@/lib/appdata";
 import type { Deal } from "@/lib/types";
+import { formatNL } from "@/lib/format";
 import BottomNav from "../BottomNav";
 import styles from "./deals.module.css";
 
@@ -22,6 +23,16 @@ export default function DealsPage() {
   const [applied, setApplied] = useState<Record<string, "ok" | "err">>({});
   const [pending, setPending] = useState<string | null>(null);
   const [platforms, setPlatforms] = useState("Instagram");
+  const [pickDeal, setPickDeal] = useState<string | null>(null);
+  const [pickDate, setPickDate] = useState("");
+  const [appliedDate, setAppliedDate] = useState<Record<string, string>>({});
+
+  const todayISO = new Date().toISOString().slice(0, 10);
+  function windowEnd(d: Deal): string {
+    const startMs = d.createdAt?.seconds ? d.createdAt.seconds * 1000 : Date.now();
+    const end = new Date(startMs + (d.looptijdDagen || 14) * 86400000);
+    return end.toISOString().slice(0, 10);
+  }
 
   useEffect(() => {
     if (!loading && !session) router.replace("/login");
@@ -48,7 +59,7 @@ export default function DealsPage() {
   }, []);
 
   async function apply(d: Deal) {
-    if (!d.id) return;
+    if (!d.id || !pickDate) return;
     setPending(d.id);
     try {
       await createApplication({
@@ -59,8 +70,12 @@ export default function DealsPage() {
         platform: platforms,
         regio: profile.regio,
         geslacht: profile.geslacht,
+        bezoekDatum: pickDate,
       });
+      setAppliedDate((p) => ({ ...p, [d.id!]: pickDate }));
       setApplied((p) => ({ ...p, [d.id!]: "ok" }));
+      setPickDeal(null);
+      setPickDate("");
     } catch {
       setApplied((p) => ({ ...p, [d.id!]: "err" }));
     } finally {
@@ -109,15 +124,35 @@ export default function DealsPage() {
                 </div>
 
                 {st === "ok" ? (
-                  <div className={styles.okBox}>✓ Sollicitatie verstuurd — het restaurant ziet 'm in hun dashboard.</div>
+                  <div className={styles.okBox}>✓ Sollicitatie verstuurd — je komt op <b>{formatNL(appliedDate[d.id ?? ""])}</b>. Het restaurant ziet 'm in hun dashboard.</div>
                 ) : st === "err" ? (
                   <div className={styles.errBox}>
                     Versturen lukte net niet. Ververs de app en probeer opnieuw. Blijft het
                     misgaan, log dan uit en opnieuw in.
                   </div>
+                ) : pickDeal === d.id ? (
+                  <div className={styles.pick}>
+                    <label className={styles.pickLbl}>Wanneer kom je langs?</label>
+                    <input
+                      className={styles.pickInput}
+                      type="date"
+                      min={todayISO}
+                      max={windowEnd(d)}
+                      value={pickDate}
+                      onChange={(e) => setPickDate(e.target.value)}
+                    />
+                    <div className={styles.pickHint}>Kies een dag binnen de looptijd van deze deal.</div>
+                    <button
+                      className={styles.apply}
+                      disabled={!pickDate || pending === d.id}
+                      onClick={() => apply(d)}
+                    >
+                      {pending === d.id ? "Versturen…" : "Verstuur sollicitatie →"}
+                    </button>
+                  </div>
                 ) : (
-                  <button className={styles.apply} disabled={pending === d.id} onClick={() => apply(d)}>
-                    {pending === d.id ? "Versturen…" : "Solliciteer op deze deal"}
+                  <button className={styles.apply} onClick={() => { setPickDeal(d.id ?? null); setPickDate(""); }}>
+                    Solliciteer op deze deal
                   </button>
                 )}
               </div>

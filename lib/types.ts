@@ -46,11 +46,14 @@ export type Application = {
   id?: string;
   dealId: string;
   restaurantId: string;
+  creatorUid?: string;
   handle: string;
   volgers: number;
   platform: string;
   regio: string;
-  geslacht: "vrouw" | "man";
+  geslacht: "vrouw" | "man" | "";
+  bezoekDatum?: string; // ISO datum (YYYY-MM-DD) die de creator koos
+  reviewed?: boolean;
   status: "wacht" | "geaccepteerd" | "afgewezen";
   createdAt?: Stamp;
 };
@@ -58,12 +61,17 @@ export type Application = {
 export type Review = {
   id?: string;
   restaurantId: string;
+  creatorUid?: string;
   naam: string;
   food: number;
   vibe: number;
   service: number;
   sterren: number;
   tekst: string;
+  vibeGoed?: string;
+  vibeMinder?: string;
+  etenGoed?: string;
+  etenMinder?: string;
   createdAt?: Stamp;
 };
 

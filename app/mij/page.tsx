@@ -10,6 +10,7 @@ import {
   listRestaurants,
 } from "@/lib/appdata";
 import type { Application, Deal } from "@/lib/types";
+import { formatNL, todayISO } from "@/lib/format";
 import BottomNav from "../BottomNav";
 import styles from "./mij.module.css";
 
@@ -85,32 +86,82 @@ export default function MijPage() {
         </div>
       )}
 
-      <div className={styles.section}>
-        <h2 className={styles.h2}>Mijn sollicitaties</h2>
-        {busy ? (
-          <div className={styles.subtle}>Laden…</div>
-        ) : apps.length === 0 ? (
-          <div className={styles.empty}>
-            Je hebt nog niet gesolliciteerd. Ga naar <Link href="/deals" className={styles.link}>Deals</Link> om te beginnen.
-          </div>
-        ) : (
-          <div className={styles.list}>
-            {apps.map((a) => {
-              const deal = deals[a.dealId];
-              const st = STATUS[a.status] ?? STATUS.wacht;
-              return (
-                <div key={a.id} className={styles.appRow}>
-                  <div className={styles.appInfo}>
-                    <div className={styles.appDeal}>{deal?.titel ?? "Deal"}</div>
-                    <div className={styles.appRest}>{rest[a.restaurantId] ?? "Restaurant"}</div>
-                  </div>
-                  <span className={`${styles.badge} ${styles[st.cls]}`}>{st.label}</span>
+      {(() => {
+        const accepted = apps.filter((a) => a.status === "geaccepteerd");
+        const others = apps.filter((a) => a.status !== "geaccepteerd");
+        const today = todayISO();
+        return (
+          <>
+            {accepted.length > 0 && (
+              <div className={styles.section}>
+                <h2 className={styles.h2}>Mijn deals</h2>
+                <div className={styles.list}>
+                  {accepted.map((a) => {
+                    const deal = deals[a.dealId];
+                    const datum = a.bezoekDatum ?? "";
+                    const past = !datum || datum <= today;
+                    const reviewable = past && !a.reviewed;
+                    const inner = (
+                      <>
+                        <div className={styles.appInfo}>
+                          <div className={styles.appDeal}>{deal?.titel ?? "Deal"}</div>
+                          <div className={styles.appRest}>{rest[a.restaurantId] ?? "Restaurant"}</div>
+                          {datum && <div className={styles.dealDate}>Bezoek: {formatNL(datum)}</div>}
+                        </div>
+                        {a.reviewed ? (
+                          <span className={`${styles.badge} ${styles.ok}`}>Beoordeeld ✓</span>
+                        ) : reviewable ? (
+                          <span className={styles.reviewBtn}>Review →</span>
+                        ) : (
+                          <span className={styles.badge}>Na je bezoek</span>
+                        )}
+                      </>
+                    );
+                    return reviewable ? (
+                      <Link key={a.id} href={`/review/${a.id}`} className={`${styles.dealRow} ${styles.clickable}`}>
+                        {inner}
+                      </Link>
+                    ) : (
+                      <div key={a.id} className={`${styles.dealRow} ${a.reviewed ? "" : styles.grey}`}>
+                        {inner}
+                      </div>
+                    );
+                  })}
                 </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
+              </div>
+            )}
+
+            <div className={styles.section}>
+              <h2 className={styles.h2}>Mijn sollicitaties</h2>
+              {busy ? (
+                <div className={styles.subtle}>Laden…</div>
+              ) : others.length === 0 ? (
+                <div className={styles.empty}>
+                  {accepted.length > 0
+                    ? "Geen openstaande sollicitaties."
+                    : <>Je hebt nog niet gesolliciteerd. Ga naar <Link href="/deals" className={styles.link}>Deals</Link> om te beginnen.</>}
+                </div>
+              ) : (
+                <div className={styles.list}>
+                  {others.map((a) => {
+                    const deal = deals[a.dealId];
+                    const st = STATUS[a.status] ?? STATUS.wacht;
+                    return (
+                      <div key={a.id} className={styles.appRow}>
+                        <div className={styles.appInfo}>
+                          <div className={styles.appDeal}>{deal?.titel ?? "Deal"}</div>
+                          <div className={styles.appRest}>{rest[a.restaurantId] ?? "Restaurant"}</div>
+                        </div>
+                        <span className={`${styles.badge} ${styles[st.cls]}`}>{st.label}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </>
+        );
+      })()}
 
       <button className={styles.logout} onClick={async () => { logout(); router.replace("/login"); }}>
         Uitloggen
