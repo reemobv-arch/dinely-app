@@ -54,7 +54,21 @@ export type Application = {
   geslacht: "vrouw" | "man" | "";
   bezoekDatum?: string; // ISO datum (YYYY-MM-DD) die de creator koos
   reviewed?: boolean;
+  contentPosted?: boolean;
   status: "wacht" | "geaccepteerd" | "afgewezen";
+  createdAt?: Stamp;
+};
+
+export type ContentItem = { url: string; type: "image" | "video" };
+
+export type Content = {
+  id?: string;
+  restaurantId: string;
+  dealId: string;
+  creatorUid: string;
+  naam: string;
+  caption: string;
+  media: ContentItem[];
   createdAt?: Stamp;
 };
 

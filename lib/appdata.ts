@@ -9,8 +9,16 @@ import {
   updateDoc,
   serverTimestamp,
 } from "firebase/firestore";
-import { auth, db, firebaseReady } from "./firebase";
-import type { Restaurant, Deal, Review, Application } from "./types";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { auth, db, storage, firebaseReady } from "./firebase";
+import type {
+  Restaurant,
+  Deal,
+  Review,
+  Application,
+  Content,
+  ContentItem,
+} from "./types";
 
 export type NewApplication = {
   dealId: string;
@@ -82,6 +90,51 @@ export async function createReview(r: NewReview): Promise<void> {
 export async function markApplicationReviewed(id: string): Promise<void> {
   if (!firebaseReady) return;
   await updateDoc(doc(db, "applications", id), { reviewed: true });
+}
+
+// ---------- content (foto's/video die de creator plaatst) ----------
+export async function uploadContentFile(file: File): Promise<ContentItem> {
+  if (!firebaseReady) throw new Error("firebase-not-ready");
+  const uid = auth.currentUser?.uid;
+  if (!uid) throw new Error("not-signed-in");
+  const type: "image" | "video" = file.type.startsWith("video") ? "video" : "image";
+  const name = `${Date.now()}-${Math.floor(Math.random() * 1e6)}`;
+  const r = ref(storage, `content/${uid}/${name}`);
+  await uploadBytes(r, file);
+  const url = await getDownloadURL(r);
+  return { url, type };
+}
+
+export async function createContent(c: {
+  restaurantId: string;
+  dealId: string;
+  naam: string;
+  caption: string;
+  media: ContentItem[];
+}): Promise<void> {
+  if (!firebaseReady) throw new Error("firebase-not-ready");
+  const uid = auth.currentUser?.uid;
+  if (!uid) throw new Error("not-signed-in");
+  await addDoc(collection(db, "content"), {
+    ...c,
+    creatorUid: uid,
+    createdAt: serverTimestamp(),
+  });
+}
+
+export async function markApplicationContentPosted(id: string): Promise<void> {
+  if (!firebaseReady) return;
+  await updateDoc(doc(db, "applications", id), { contentPosted: true });
+}
+
+export async function listContentFor(restaurantId: string): Promise<Content[]> {
+  if (!firebaseReady) return [];
+  const snap = await getDocs(
+    query(collection(db, "content"), where("restaurantId", "==", restaurantId))
+  );
+  return snap.docs
+    .map((d) => ({ id: d.id, ...(d.data() as Content) }))
+    .sort((a, b) => (b.createdAt?.seconds ?? 0) - (a.createdAt?.seconds ?? 0));
 }
 
 // Publieke leeslaag voor de app. Restaurants/deals/reviews zijn publiek leesbaar

@@ -7,9 +7,10 @@ import {
   getRestaurantById,
   listDealsFor,
   listReviewsFor,
+  listContentFor,
   type PublicRestaurant,
 } from "@/lib/appdata";
-import type { Deal, Review } from "@/lib/types";
+import type { Deal, Review, Content } from "@/lib/types";
 import styles from "./restaurant.module.css";
 
 function avg(arr: number[]) {
@@ -22,19 +23,22 @@ export default function RestaurantPage() {
   const [r, setR] = useState<PublicRestaurant | null>(null);
   const [deals, setDeals] = useState<Deal[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [content, setContent] = useState<Content[]>([]);
   const [busy, setBusy] = useState(true);
 
   useEffect(() => {
     (async () => {
       try {
-        const [rr, d, rv] = await Promise.all([
+        const [rr, d, rv, c] = await Promise.all([
           getRestaurantById(id),
           listDealsFor(id),
           listReviewsFor(id),
+          listContentFor(id),
         ]);
         setR(rr);
         setDeals(d.filter((x) => x.status === "open"));
         setReviews(rv);
+        setContent(c);
       } finally {
         setBusy(false);
       }
@@ -82,6 +86,33 @@ export default function RestaurantPage() {
           {photos.slice(1).map((p, i) => (
             <div key={i} className={styles.gphoto} style={{ backgroundImage: `url(${p})` }} />
           ))}
+        </div>
+      )}
+
+      {content.length > 0 && (
+        <div className={styles.section}>
+          <h2 className={styles.h2}>Van creators</h2>
+          <div className={styles.creators}>
+            {content.map((c) => {
+              const m = c.media?.[0];
+              return (
+                <div key={c.id} className={styles.cItem}>
+                  <div className={styles.cMediaWrap}>
+                    {m?.type === "video" ? (
+                      <video src={m.url} className={styles.cMedia} controls playsInline />
+                    ) : m ? (
+                      <img src={m.url} alt="" className={styles.cMedia} />
+                    ) : null}
+                    {c.media && c.media.length > 1 && (
+                      <span className={styles.cCount}>+{c.media.length - 1}</span>
+                    )}
+                  </div>
+                  <div className={styles.cName}>{c.naam}</div>
+                  {c.caption && <p className={styles.cCap}>{c.caption}</p>}
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
 

@@ -100,30 +100,31 @@ export default function MijPage() {
                     const deal = deals[a.dealId];
                     const datum = a.bezoekDatum ?? "";
                     const past = !datum || datum <= today;
-                    const reviewable = past && !a.reviewed;
-                    const inner = (
-                      <>
+                    return (
+                      <div key={a.id} className={`${styles.dealCard} ${!past ? styles.grey : ""}`}>
                         <div className={styles.appInfo}>
                           <div className={styles.appDeal}>{deal?.titel ?? "Deal"}</div>
                           <div className={styles.appRest}>{rest[a.restaurantId] ?? "Restaurant"}</div>
                           {datum && <div className={styles.dealDate}>Bezoek: {formatNL(datum)}</div>}
                         </div>
-                        {a.reviewed ? (
-                          <span className={`${styles.badge} ${styles.ok}`}>Beoordeeld ✓</span>
-                        ) : reviewable ? (
-                          <span className={styles.reviewBtn}>Review →</span>
+                        {!past ? (
+                          <div className={styles.dealActions}>
+                            <span className={styles.badge}>Beschikbaar na je bezoek</span>
+                          </div>
                         ) : (
-                          <span className={styles.badge}>Na je bezoek</span>
+                          <div className={styles.dealActions}>
+                            {a.reviewed ? (
+                              <span className={`${styles.badge} ${styles.ok}`}>Beoordeeld ✓</span>
+                            ) : (
+                              <Link href={`/review/${a.id}`} className={styles.actBtn}>Review</Link>
+                            )}
+                            {a.contentPosted ? (
+                              <span className={`${styles.badge} ${styles.ok}`}>Content ✓</span>
+                            ) : (
+                              <Link href={`/content/${a.id}`} className={styles.actBtnGold}>Plaats content</Link>
+                            )}
+                          </div>
                         )}
-                      </>
-                    );
-                    return reviewable ? (
-                      <Link key={a.id} href={`/review/${a.id}`} className={`${styles.dealRow} ${styles.clickable}`}>
-                        {inner}
-                      </Link>
-                    ) : (
-                      <div key={a.id} className={`${styles.dealRow} ${a.reviewed ? "" : styles.grey}`}>
-                        {inner}
                       </div>
                     );
                   })}

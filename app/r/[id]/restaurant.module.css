@@ -48,6 +48,21 @@
 }
 
 .h2 { font-family: var(--ff-display); font-size: 22px; margin-bottom: 14px; }
+
+.creators { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none; }
+.creators::-webkit-scrollbar { display: none; }
+.cItem { width: 200px; flex: none; }
+.cMediaWrap {
+  position: relative; width: 200px; height: 300px; border-radius: 14px; overflow: hidden;
+  background: var(--surface-2);
+}
+.cMedia { width: 100%; height: 100%; object-fit: cover; display: block; background: #000; }
+.cCount {
+  position: absolute; top: 8px; right: 8px; font-family: var(--ff-mono); font-size: 10px;
+  color: #fff; background: rgba(11,9,6,0.6); padding: 3px 8px; border-radius: 100px;
+}
+.cName { font-family: var(--ff-display); font-size: 15px; margin-top: 8px; }
+.cCap { font-size: 13px; color: var(--muted); line-height: 1.45; margin-top: 3px; }
 .empty { font-family: var(--ff-mono); font-size: 12.5px; color: var(--muted-2); padding: 4px 0 8px; }
 .deals { display: flex; flex-direction: column; gap: 12px; }
 .deal { background: var(--surface); border: 1px solid var(--line-2); border-radius: 16px; padding: 16px 18px; }
