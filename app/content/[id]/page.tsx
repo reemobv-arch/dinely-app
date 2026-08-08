@@ -110,7 +110,7 @@ export default function ContentPage() {
         <h1 className={styles.h1}>Plaats je content</h1>
 
         <div className={styles.note}>
-          <b>Vergeet niet @dinely te taggen</b> in je story/reel op Instagram of TikTok.
+          <b>Vergeet niet @DinelyApp te taggen</b> in je story/reel op Instagram of TikTok.
           Upload daarna dezelfde foto's of video hier{gevraagd ? ` (gevraagd: ${gevraagd})` : ""}.
         </div>
 
