@@ -3,6 +3,7 @@ import {
   getDocs,
   getDoc,
   doc,
+  setDoc,
   query,
   where,
   addDoc,
@@ -172,6 +173,27 @@ export async function listReviewsFor(id: string): Promise<Review[]> {
     query(collection(db, "reviews"), where("restaurantId", "==", id))
   );
   return snap.docs.map((d) => ({ id: d.id, ...(d.data() as Review) }));
+}
+
+export async function saveCreator(p: {
+  naam: string;
+  instagram: string;
+  tiktok: string;
+  volgers: number;
+  regio: string;
+  geslacht: "vrouw" | "man" | "";
+}): Promise<void> {
+  if (!firebaseReady) return;
+  const uid = auth.currentUser?.uid;
+  if (!uid) return;
+  const r = doc(db, "creators", uid);
+  const snap = await getDoc(r);
+  const base: Record<string, unknown> = { ...p, uid, updatedAt: serverTimestamp() };
+  if (!snap.exists()) {
+    base.status = "pending";
+    base.createdAt = serverTimestamp();
+  }
+  await setDoc(r, base, { merge: true });
 }
 
 export async function listMyApplications(uid: string): Promise<Application[]> {

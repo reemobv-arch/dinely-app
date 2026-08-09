@@ -4,7 +4,10 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useApp } from "@/lib/appauth";
+import { saveCreator } from "@/lib/appdata";
 import styles from "./creator.module.css";
+
+const MIN_VOLGERS = 2000;
 
 export default function CreatorPage() {
   const router = useRouter();
@@ -16,7 +19,6 @@ export default function CreatorPage() {
   const [geslacht, setGeslacht] = useState<"vrouw" | "man" | "">("");
   const [ig, setIg] = useState({ handle: "", vol: 0 });
   const [tt, setTt] = useState({ handle: "", vol: 0 });
-  const [fb, setFb] = useState({ handle: "", vol: 0 });
   const [dealParam, setDealParam] = useState("");
 
   useEffect(() => {
@@ -24,7 +26,6 @@ export default function CreatorPage() {
   }, [session, loading, router]);
 
   useEffect(() => {
-    // bestaand profiel voorvullen + eventuele ?deal= bewaren
     if (profile.naam) setNaam(profile.naam);
     if (profile.regio) setRegio(profile.regio);
     if (profile.geslacht) setGeslacht(profile.geslacht);
@@ -39,28 +40,23 @@ export default function CreatorPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const totaal = (ig.vol || 0) + (tt.vol || 0) + (fb.vol || 0);
+  const totaal = (ig.vol || 0) + (tt.vol || 0);
+  const genoeg = totaal >= MIN_VOLGERS;
 
-  function finish() {
-    const platforms = [
-      ig.handle ? "Instagram" : "",
-      tt.handle ? "TikTok" : "",
-      fb.handle ? "Facebook" : "",
-    ].filter(Boolean);
-    saveProfile({
-      naam,
-      instagram: ig.handle,
-      tiktok: tt.handle,
-      facebook: fb.handle,
-      volgers: totaal,
-      regio,
-      geslacht,
-    });
-    // platform-string bewaren we via localStorage voor de sollicitatie
+  async function finish() {
+    if (!genoeg) return;
+    const platforms = [ig.handle ? "Instagram" : "", tt.handle ? "TikTok" : ""].filter(Boolean);
+    const prof = { naam, instagram: ig.handle, tiktok: tt.handle, volgers: totaal, regio, geslacht };
+    saveProfile(prof);
     try {
       localStorage.setItem("dinely-app:platforms", platforms.join(" · "));
     } catch {
       /* negeer */
+    }
+    try {
+      await saveCreator(prof);
+    } catch {
+      /* opslaan ter goedkeuring best-effort */
     }
     router.push(`/deals${dealParam}`);
   }
@@ -116,36 +112,46 @@ export default function CreatorPage() {
             handle={tt.handle} vol={tt.vol}
             onHandle={(v) => setTt((s) => ({ ...s, handle: v }))}
             onVol={(v) => setTt((s) => ({ ...s, vol: v }))}
-            extra={
-              <div className={styles.fb}>
-                <label className="flabel">Facebook (optioneel)</label>
-                <input className="inp" value={fb.handle} placeholder="facebook.com/jouwpagina"
-                  onChange={(e) => setFb((s) => ({ ...s, handle: e.target.value }))} />
-              </div>
-            }
           />
         )}
 
         {step === 3 && (
           <div className={styles.stepBox}>
-            <span className="eyebrow">Klaar</span>
-            <h1 className={styles.h1}>Je profiel staat</h1>
-            <p className={styles.lead}>We tellen je bereik op. Later verifiëren we dit via de socials zelf.</p>
-            <div className={styles.summary}>
-              <div className={styles.sumTotal}>
-                <b>{totaal.toLocaleString("nl-NL")}</b>
-                <span>totaal bereik</span>
-              </div>
-              <div className={styles.sumRows}>
-                {ig.handle && <div><span>Instagram</span><b>{ig.vol.toLocaleString("nl-NL")}</b></div>}
-                {tt.handle && <div><span>TikTok</span><b>{tt.vol.toLocaleString("nl-NL")}</b></div>}
-                {fb.handle && <div><span>Facebook</span><b>{fb.vol.toLocaleString("nl-NL")}</b></div>}
-              </div>
-            </div>
-            <div className={styles.note}>
-              Prototype: bereik is zelf ingevuld. Straks koppelen we de echte
-              Instagram- en TikTok-API voor een geverifieerd-badge.
-            </div>
+            {genoeg ? (
+              <>
+                <span className="eyebrow">Klaar</span>
+                <h1 className={styles.h1}>Je profiel staat</h1>
+                <p className={styles.lead}>We tellen je bereik op. Later verifiëren we dit via de socials zelf.</p>
+                <div className={styles.summary}>
+                  <div className={styles.sumTotal}>
+                    <b>{totaal.toLocaleString("nl-NL")}</b>
+                    <span>totaal bereik</span>
+                  </div>
+                  <div className={styles.sumRows}>
+                    {ig.handle && <div><span>Instagram</span><b>{ig.vol.toLocaleString("nl-NL")}</b></div>}
+                    {tt.handle && <div><span>TikTok</span><b>{tt.vol.toLocaleString("nl-NL")}</b></div>}
+                  </div>
+                </div>
+                <div className={styles.note}>
+                  Je profiel wordt eerst door Dinely beoordeeld. Bereik is nu zelf ingevuld;
+                  straks koppelen we de echte Instagram- en TikTok-API voor een geverifieerd-badge.
+                </div>
+              </>
+            ) : (
+              <>
+                <span className="eyebrow">Bijna</span>
+                <h1 className={styles.h1}>Bedankt voor je interesse</h1>
+                <p className={styles.lead}>
+                  Op dit moment werken we met creators vanaf <b>{MIN_VOLGERS.toLocaleString("nl-NL")} volgers</b>.
+                  Jouw totaal is nu <b>{totaal.toLocaleString("nl-NL")}</b>.
+                </p>
+                <div className={styles.note}>
+                  Groei je nog even door? Kom dan terug, dan zetten we je meteen op weg.
+                  Je kunt intussen wel gewoon restaurants ontdekken.
+                </div>
+                <Link href="/discover" className={styles.altLink}>Ontdek restaurants →</Link>
+              </>
+            )}
           </div>
         )}
       </div>
@@ -163,21 +169,21 @@ export default function CreatorPage() {
           >
             Volgende →
           </button>
-        ) : (
+        ) : genoeg ? (
           <button className="btn btn-gold" style={{ flex: 1 }} onClick={finish}>
             Bekijk deals →
           </button>
-        )}
+        ) : null}
       </div>
     </div>
   );
 }
 
 function PlatformStep({
-  label, nr, color, handle, vol, onHandle, onVol, extra,
+  label, nr, color, handle, vol, onHandle, onVol,
 }: {
   label: string; nr: string; color: string; handle: string; vol: number;
-  onHandle: (v: string) => void; onVol: (v: number) => void; extra?: React.ReactNode;
+  onHandle: (v: string) => void; onVol: (v: number) => void;
 }) {
   return (
     <div className={styles.stepBox}>
@@ -187,11 +193,10 @@ function PlatformStep({
       </h1>
       <p className={styles.lead}>Vul je gebruikersnaam en aantal volgers in.</p>
       <label className="flabel">Gebruikersnaam</label>
-      <input className="inp" value={handle} placeholder={`@jouwnaam`} onChange={(e) => onHandle(e.target.value)} />
+      <input className="inp" value={handle} placeholder="@jouwnaam" onChange={(e) => onHandle(e.target.value)} />
       <label className="flabel" style={{ marginTop: 16 }}>Aantal volgers</label>
       <input className="inp" type="number" min={0} value={vol || ""} placeholder="0"
         onChange={(e) => onVol(Number(e.target.value))} />
-      {extra}
     </div>
   );
 }

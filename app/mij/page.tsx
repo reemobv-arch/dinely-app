@@ -78,11 +78,10 @@ export default function MijPage() {
         <Link href="/creator" className={styles.edit}>{profile.naam ? "Bewerk" : "Start"}</Link>
       </div>
 
-      {(profile.instagram || profile.tiktok || profile.facebook) && (
+      {(profile.instagram || profile.tiktok) && (
         <div className={styles.socials}>
           {profile.instagram && <span className={styles.social}>Instagram · {profile.instagram}</span>}
           {profile.tiktok && <span className={styles.social}>TikTok · {profile.tiktok}</span>}
-          {profile.facebook && <span className={styles.social}>Facebook · {profile.facebook}</span>}
         </div>
       )}
 

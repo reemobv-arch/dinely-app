@@ -1,4 +1,10 @@
-.wrap { min-height: 100dvh; padding: 0 18px calc(90px + env(safe-area-inset-bottom)); }
+.wrap {
+  min-height: 100dvh; padding: 0 18px calc(90px + env(safe-area-inset-bottom));
+  background:
+    linear-gradient(180deg, rgba(11,9,6,0.82) 0%, rgba(11,9,6,0.93) 42%, var(--bg) 78%),
+    url("/demo/4.jpg");
+  background-size: cover; background-position: center top; background-attachment: fixed;
+}
 .head { padding: 18px 4px 10px; }
 .title { font-family: var(--ff-display); font-size: 32px; }
 

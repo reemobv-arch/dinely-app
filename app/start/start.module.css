@@ -21,7 +21,10 @@
   background-size: cover; background-position: 60% 42%;
 }
 .creator {
-  background: linear-gradient(155deg, var(--surface-2), var(--bg-2));
+  background:
+    linear-gradient(180deg, rgba(11,9,6,0.42) 0%, rgba(11,9,6,0.88) 100%),
+    url("/demo/3.jpg");
+  background-size: cover; background-position: center;
 }
 .cardInner {
   position: absolute; inset: 0; padding: 22px; display: flex;

@@ -22,7 +22,6 @@ export type CreatorProfile = {
   naam: string;
   instagram: string;
   tiktok: string;
-  facebook: string;
   volgers: number; // totaal zelf-ingevuld bereik
   regio: string;
   geslacht: "vrouw" | "man" | "";
@@ -32,7 +31,6 @@ const EMPTY_PROFILE: CreatorProfile = {
   naam: "",
   instagram: "",
   tiktok: "",
-  facebook: "",
   volgers: 0,
   regio: "Amsterdam",
   geslacht: "",
