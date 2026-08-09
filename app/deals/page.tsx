@@ -83,6 +83,18 @@ export default function DealsPage() {
     }
   }
 
+  // Voldoet de creator aan de bereik-eis van de deal? (OR over platforms,
+  // zelfde logica als de 'voldoet'-check in het dashboard.)
+  function qualifies(d: Deal): boolean {
+    const eisen = d.eisen ?? [];
+    if (eisen.length === 0) return true;
+    return eisen.some(
+      (e) =>
+        platforms.toLowerCase().includes(e.platform.toLowerCase()) &&
+        profile.volgers >= e.minVolgers
+    );
+  }
+
   return (
     <div className={styles.wrap}>
       <header className={styles.head}>
@@ -105,6 +117,7 @@ export default function DealsPage() {
         ) : (
           deals.map((d) => {
             const st = applied[d.id ?? ""];
+            const meetsReq = qualifies(d);
             return (
               <div key={d.id} className={styles.deal}>
                 <div className={styles.dTop}>
@@ -129,6 +142,16 @@ export default function DealsPage() {
                   <div className={styles.errBox}>
                     Versturen lukte net niet. Ververs de app en probeer opnieuw. Blijft het
                     misgaan, log dan uit en opnieuw in.
+                  </div>
+                ) : !meetsReq ? (
+                  <div className={styles.reqBox}>
+                    {profile.volgers === 0 ? (
+                      <>Koppel eerst je socials om te kunnen solliciteren.{" "}
+                        <Link href="/creator" className={styles.reqLink}>Nu doen →</Link></>
+                    ) : (
+                      <>Je bereik voldoet nog niet aan de eis van deze deal.{" "}
+                        <Link href="/creator" className={styles.reqLink}>Bereik bijwerken →</Link></>
+                    )}
                   </div>
                 ) : pickDeal === d.id ? (
                   <div className={styles.pick}>

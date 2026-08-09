@@ -53,3 +53,8 @@
   border: 1px solid var(--gold-dim); background: rgba(201,162,75,0.06); border-radius: 12px; padding: 12px 14px;
 }
 .errBox b { color: var(--gold); }
+.reqBox {
+  margin-top: 14px; font-size: 13px; line-height: 1.5; color: var(--muted);
+  border: 1px solid var(--line-2); background: var(--bg-2); border-radius: 12px; padding: 12px 14px;
+}
+.reqLink { color: var(--gold); white-space: nowrap; }
