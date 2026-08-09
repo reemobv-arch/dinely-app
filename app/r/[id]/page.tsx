@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useApp } from "@/lib/appauth";
 import {
@@ -49,6 +49,9 @@ export default function RestaurantPage() {
   const [content, setContent] = useState<Content[]>([]);
   const [busy, setBusy] = useState(true);
   const [platforms, setPlatforms] = useState("Instagram");
+  const [heroIdx, setHeroIdx] = useState(0);
+  const [lb, setLb] = useState<{ photos: string[]; start: number } | null>(null);
+  const heroRef = useRef<HTMLDivElement>(null);
 
   const [statusByDeal, setStatusByDeal] = useState<Record<string, string>>({});
   const [dateByDeal, setDateByDeal] = useState<Record<string, string>>({});
@@ -137,6 +140,7 @@ export default function RestaurantPage() {
   if (!r) return <div className={styles.loading}>Restaurant niet gevonden.</div>;
 
   const photos = (r.media?.sfeer ?? []).filter(Boolean) as string[];
+  const eten = (r.media?.eten ?? []).filter(Boolean) as string[];
   const cover = photos[0];
   const vibe = avg(reviews.map((x) => x.vibe ?? 0));
   const food = avg(reviews.map((x) => x.food ?? 0));
@@ -144,9 +148,37 @@ export default function RestaurantPage() {
 
   return (
     <div className={styles.wrap}>
-      <div className={styles.hero} style={cover ? { backgroundImage: `url(${cover})` } : undefined}>
+      <div className={styles.hero}>
+        {photos.length > 0 ? (
+          <div
+            className={styles.heroTrack}
+            ref={heroRef}
+            onScroll={() => {
+              const el = heroRef.current;
+              if (el) setHeroIdx(Math.round(el.scrollLeft / el.clientWidth));
+            }}
+          >
+            {photos.map((p, i) => (
+              <div
+                key={i}
+                className={styles.heroSlide}
+                style={{ backgroundImage: `url(${p})` }}
+                onClick={() => setLb({ photos, start: i })}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className={styles.heroSlide} style={cover ? { backgroundImage: `url(${cover})` } : undefined} />
+        )}
         <div className={styles.heroGrad} />
         <button className={styles.back} onClick={() => router.back()} aria-label="Terug">‹</button>
+        {photos.length > 1 && (
+          <div className={styles.dots}>
+            {photos.map((_, i) => (
+              <span key={i} className={`${styles.dot} ${i === heroIdx ? styles.dotOn : ""}`} />
+            ))}
+          </div>
+        )}
         <div className={styles.heroText}>
           {r.keuken && <span className="eyebrow">{r.keuken}</span>}
           <h1 className={styles.name}>{r.naam || "Naamloos restaurant"}</h1>
@@ -169,11 +201,19 @@ export default function RestaurantPage() {
         </div>
       )}
 
-      {photos.length > 1 && (
-        <div className={styles.gallery}>
-          {photos.slice(1).map((p, i) => (
-            <div key={i} className={styles.gphoto} style={{ backgroundImage: `url(${p})` }} />
-          ))}
+      {eten.length > 0 && (
+        <div className={styles.section}>
+          <h2 className={styles.h2}>Eten &amp; drinken</h2>
+          <div className={styles.gallery}>
+            {eten.map((p, i) => (
+              <div
+                key={i}
+                className={styles.gphoto}
+                style={{ backgroundImage: `url(${p})` }}
+                onClick={() => setLb({ photos: eten, start: i })}
+              />
+            ))}
+          </div>
         </div>
       )}
 
@@ -292,6 +332,28 @@ export default function RestaurantPage() {
             })}
           </div>
         )}
+      </div>
+
+      {lb && <Lightbox photos={lb.photos} start={lb.start} onClose={() => setLb(null)} />}
+    </div>
+  );
+}
+
+function Lightbox({ photos, start, onClose }: { photos: string[]; start: number; onClose: () => void }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (el) el.scrollLeft = start * el.clientWidth;
+  }, [start]);
+  return (
+    <div className={styles.lb} onClick={onClose}>
+      <button className={styles.lbClose} onClick={onClose} aria-label="Sluiten">✕</button>
+      <div className={styles.lbTrack} ref={ref} onClick={(e) => e.stopPropagation()}>
+        {photos.map((p, i) => (
+          <div key={i} className={styles.lbSlide}>
+            <img src={p} alt="" className={styles.lbImg} />
+          </div>
+        ))}
       </div>
     </div>
   );

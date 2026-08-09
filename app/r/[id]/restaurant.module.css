@@ -5,13 +5,28 @@
 }
 
 .hero {
-  position: relative; height: 320px; background-size: cover; background-position: center;
-  background-color: var(--surface-2); display: flex; align-items: flex-end;
+  position: relative; height: 340px; background-color: var(--surface-2);
+  display: flex; align-items: flex-end; overflow: hidden;
+}
+.heroTrack {
+  position: absolute; inset: 0; display: flex; overflow-x: auto; overflow-y: hidden;
+  scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+}
+.heroTrack::-webkit-scrollbar { display: none; }
+.heroSlide {
+  flex: 0 0 100%; width: 100%; height: 100%; scroll-snap-align: start;
+  background-size: cover; background-position: center; background-color: var(--surface-2); cursor: pointer;
 }
 .heroGrad {
-  position: absolute; inset: 0;
-  background: linear-gradient(180deg, rgba(11,9,6,0.35) 0%, transparent 30%, rgba(11,9,6,0.55) 68%, var(--bg) 100%);
+  position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(180deg, rgba(11,9,6,0.32) 0%, transparent 28%, rgba(11,9,6,0.55) 66%, var(--bg) 100%);
 }
+.dots {
+  position: absolute; bottom: 12px; left: 0; right: 0; z-index: 3;
+  display: flex; justify-content: center; gap: 6px; pointer-events: none;
+}
+.dot { width: 6px; height: 6px; border-radius: 100px; background: rgba(255,255,255,0.45); transition: 0.2s; }
+.dotOn { background: #fff; width: 18px; }
 .back {
   position: absolute; top: 14px; left: 14px; z-index: 3; width: 38px; height: 38px;
   display: grid; place-items: center; font-size: 26px; line-height: 1; color: var(--text);
@@ -110,3 +125,22 @@
   margin-top: 14px; font-family: var(--ff-mono); font-size: 12px; line-height: 1.5; color: var(--muted);
   border: 1px solid var(--line-2); background: var(--bg-2); border-radius: 12px; padding: 12px 14px;
 }
+
+.gphoto { cursor: pointer; }
+
+/* lightbox: foto groot met swipe */
+.lb {
+  position: fixed; inset: 0; z-index: 100; background: rgba(6,5,4,0.97); display: flex; align-items: center;
+}
+.lbClose {
+  position: absolute; top: calc(14px + env(safe-area-inset-top)); right: 16px; z-index: 2;
+  width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.12);
+  color: #fff; font-size: 15px; display: grid; place-items: center; backdrop-filter: blur(6px);
+}
+.lbTrack {
+  display: flex; width: 100%; height: 100%; overflow-x: auto; overflow-y: hidden;
+  scroll-snap-type: x mandatory; scrollbar-width: none; align-items: center;
+}
+.lbTrack::-webkit-scrollbar { display: none; }
+.lbSlide { flex: 0 0 100%; height: 100%; scroll-snap-align: center; display: grid; place-items: center; padding: 24px 16px; }
+.lbImg { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 8px; }

@@ -6,10 +6,11 @@ export type PlatformEis = { platform: string; minVolgers: number };
 export type Stamp = { seconds: number };
 
 export type Media = {
-  sfeer: (string | null)[];
+  sfeer: (string | null)[]; // sfeerfoto's (swipebaar in de hero)
+  eten?: (string | null)[]; // eten & drinken
   video: string | null;
-  menu: string | null;
-  drank: string | null;
+  menu?: string | null; // legacy
+  drank?: string | null; // legacy
 };
 
 export type Restaurant = {
