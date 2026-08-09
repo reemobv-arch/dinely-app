@@ -82,9 +82,31 @@
 .dealTop { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
 .dealTop h3 { font-family: var(--ff-display); font-size: 19px; }
 .reward { font-family: var(--ff-mono); font-size: 12px; color: var(--gold); white-space: nowrap; }
-.dealAsk { font-family: var(--ff-mono); font-size: 11.5px; color: var(--muted); margin-top: 8px; }
-.apply {
-  display: inline-flex; margin-top: 14px; font-family: var(--ff-mono); font-size: 11px;
-  letter-spacing: 0.12em; text-transform: uppercase; color: #20180A;
-  background: linear-gradient(180deg, var(--gold-2), var(--gold)); padding: 11px 18px; border-radius: 100px;
+.dealChips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; }
+.dealChip {
+  font-family: var(--ff-mono); font-size: 10.5px; color: var(--muted);
+  border: 1px solid var(--line-2); border-radius: 100px; padding: 5px 10px;
+}
+.applyBtn {
+  width: 100%; margin-top: 14px; font-family: var(--ff-mono); font-size: 11.5px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: #20180A; background: linear-gradient(180deg, var(--gold-2), var(--gold));
+  padding: 13px; border-radius: 100px; transition: 0.18s;
+}
+.applyBtn:disabled { opacity: 0.6; }
+.pick { margin-top: 14px; }
+.pickLbl { display: block; font-family: var(--ff-mono); font-size: 11px; color: var(--muted); margin-bottom: 8px; }
+.pickInput {
+  width: 100%; background: var(--bg-2); border: 1px solid var(--line-2); border-radius: 12px;
+  padding: 13px 15px; color: var(--text); font-size: 15px; color-scheme: dark;
+}
+.statusBox {
+  margin-top: 14px; font-family: var(--ff-mono); font-size: 12px; line-height: 1.5;
+  border: 1px solid var(--line-2); border-radius: 12px; padding: 12px 14px;
+}
+.statusBox.wacht { color: var(--warn); border-color: var(--gold-dim); background: rgba(201,162,75,0.06); }
+.statusBox.ok { color: var(--good); border-color: rgba(119,190,155,0.35); background: rgba(119,190,155,0.08); }
+.statusBox.no { color: var(--crit); border-color: rgba(206,116,96,0.35); background: rgba(206,116,96,0.07); }
+.reqBox {
+  margin-top: 14px; font-family: var(--ff-mono); font-size: 12px; line-height: 1.5; color: var(--muted);
+  border: 1px solid var(--line-2); background: var(--bg-2); border-radius: 12px; padding: 12px 14px;
 }

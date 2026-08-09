@@ -1,32 +1,68 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import { useApp } from "@/lib/appauth";
 import {
   getRestaurantById,
   listDealsFor,
   listReviewsFor,
   listContentFor,
+  listMyApplications,
+  createApplication,
   type PublicRestaurant,
 } from "@/lib/appdata";
 import type { Deal, Review, Content } from "@/lib/types";
 import styles from "./restaurant.module.css";
 
+const STATUS: Record<string, { label: string; cls: string }> = {
+  wacht: { label: "In afwachting", cls: "wacht" },
+  geaccepteerd: { label: "Geaccepteerd", cls: "ok" },
+  afgewezen: { label: "Afgewezen", cls: "no" },
+};
+
 function avg(arr: number[]) {
   return arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : null;
+}
+function todayISO() {
+  return new Date().toISOString().slice(0, 10);
+}
+function addDays(iso: string, n: number) {
+  const d = new Date(iso);
+  d.setDate(d.getDate() + n);
+  return d.toISOString().slice(0, 10);
+}
+function formatNL(iso: string) {
+  if (!iso) return "";
+  return new Date(iso).toLocaleDateString("nl-NL", { weekday: "short", day: "numeric", month: "short" });
 }
 
 export default function RestaurantPage() {
   const params = useParams();
+  const router = useRouter();
   const id = String(params.id);
+  const { uid, profile } = useApp();
+
   const [r, setR] = useState<PublicRestaurant | null>(null);
   const [deals, setDeals] = useState<Deal[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [content, setContent] = useState<Content[]>([]);
   const [busy, setBusy] = useState(true);
+  const [platforms, setPlatforms] = useState("Instagram");
+
+  const [statusByDeal, setStatusByDeal] = useState<Record<string, string>>({});
+  const [dateByDeal, setDateByDeal] = useState<Record<string, string>>({});
+  const [pickDeal, setPickDeal] = useState<string | null>(null);
+  const [pickDate, setPickDate] = useState("");
+  const [pending, setPending] = useState<string | null>(null);
 
   useEffect(() => {
+    try {
+      const p = localStorage.getItem("dinely-app:platforms");
+      if (p) setPlatforms(p);
+    } catch {
+      /* negeer */
+    }
     (async () => {
       try {
         const [rr, d, rv, c] = await Promise.all([
@@ -45,6 +81,58 @@ export default function RestaurantPage() {
     })();
   }, [id]);
 
+  useEffect(() => {
+    if (!uid) return;
+    (async () => {
+      const mine = await listMyApplications(uid);
+      const s: Record<string, string> = {};
+      const dt: Record<string, string> = {};
+      mine.forEach((a) => {
+        if (a.dealId) {
+          s[a.dealId] = a.status;
+          if (a.bezoekDatum) dt[a.dealId] = a.bezoekDatum;
+        }
+      });
+      setStatusByDeal(s);
+      setDateByDeal(dt);
+    })();
+  }, [uid]);
+
+  function qualifies(d: Deal): boolean {
+    const eisen = d.eisen ?? [];
+    if (eisen.length === 0) return true;
+    return eisen.some(
+      (e) =>
+        platforms.toLowerCase().includes(e.platform.toLowerCase()) &&
+        profile.volgers >= e.minVolgers
+    );
+  }
+
+  async function apply(d: Deal) {
+    if (!d.id || !pickDate || !r) return;
+    setPending(d.id);
+    try {
+      await createApplication({
+        dealId: d.id,
+        restaurantId: id,
+        handle: profile.instagram || profile.naam || "Creator",
+        volgers: profile.volgers,
+        platform: platforms,
+        regio: profile.regio,
+        geslacht: profile.geslacht,
+        bezoekDatum: pickDate,
+      });
+      setStatusByDeal((p) => ({ ...p, [d.id!]: "wacht" }));
+      setDateByDeal((p) => ({ ...p, [d.id!]: pickDate }));
+      setPickDeal(null);
+      setPickDate("");
+    } catch {
+      setStatusByDeal((p) => ({ ...p, [d.id!]: "err" }));
+    } finally {
+      setPending(null);
+    }
+  }
+
   if (busy) return <div className={styles.loading}>Laden…</div>;
   if (!r) return <div className={styles.loading}>Restaurant niet gevonden.</div>;
 
@@ -58,7 +146,7 @@ export default function RestaurantPage() {
     <div className={styles.wrap}>
       <div className={styles.hero} style={cover ? { backgroundImage: `url(${cover})` } : undefined}>
         <div className={styles.heroGrad} />
-        <Link href="/discover" className={styles.back}>‹</Link>
+        <button className={styles.back} onClick={() => router.back()} aria-label="Terug">‹</button>
         <div className={styles.heroText}>
           {r.keuken && <span className="eyebrow">{r.keuken}</span>}
           <h1 className={styles.name}>{r.naam || "Naamloos restaurant"}</h1>
@@ -139,26 +227,69 @@ export default function RestaurantPage() {
         </div>
       )}
 
-      <div className={styles.section}>
+      <div className={styles.section} style={{ paddingBottom: 40 }}>
         <h2 className={styles.h2}>Open deals</h2>
         {deals.length === 0 ? (
           <div className={styles.empty}>Dit restaurant heeft nu geen open deals.</div>
         ) : (
           <div className={styles.deals}>
-            {deals.map((d) => (
-              <div key={d.id} className={styles.deal}>
-                <div className={styles.dealTop}>
-                  <h3>{d.titel}</h3>
-                  <span className={styles.reward}>
-                    {d.beloningstype === "betaald" ? `€${d.bedrag} + diner` : "Gratis diner"}
-                  </span>
+            {deals.map((d) => {
+              const stKey = statusByDeal[d.id ?? ""];
+              const st = STATUS[stKey ?? ""];
+              const applied = !!stKey && stKey !== "err";
+              const ok = qualifies(d);
+              return (
+                <div key={d.id} className={styles.deal}>
+                  <div className={styles.dealTop}>
+                    <h3>{d.titel}</h3>
+                    <span className={styles.reward}>
+                      {d.beloningstype === "betaald" ? `€${d.bedrag} + diner` : "Gratis diner"}
+                    </span>
+                  </div>
+                  <div className={styles.dealChips}>
+                    {(d.eisen ?? []).map((e, i) => (
+                      <span key={i} className={styles.dealChip}>{e.platform} ≥ {e.minVolgers.toLocaleString("nl-NL")}</span>
+                    ))}
+                    {d.gevraagd && <span className={styles.dealChip}>{d.gevraagd}</span>}
+                  </div>
+
+                  {applied ? (
+                    <div className={`${styles.statusBox} ${styles[st?.cls ?? "wacht"]}`}>
+                      {stKey === "geaccepteerd"
+                        ? `✓ Geaccepteerd — je komt op ${formatNL(dateByDeal[d.id ?? ""])}.`
+                        : stKey === "afgewezen"
+                        ? "Deze sollicitatie is helaas afgewezen."
+                        : `In afwachting — je solliciteerde voor ${formatNL(dateByDeal[d.id ?? ""])}.`}
+                    </div>
+                  ) : stKey === "err" ? (
+                    <div className={styles.reqBox}>Versturen lukte net niet. Ververs en probeer opnieuw.</div>
+                  ) : !ok ? (
+                    <div className={styles.reqBox}>
+                      Je voldoet nog niet aan de bereik-eis van deze deal.
+                    </div>
+                  ) : pickDeal === d.id ? (
+                    <div className={styles.pick}>
+                      <label className={styles.pickLbl}>Wanneer kom je langs?</label>
+                      <input
+                        className={styles.pickInput}
+                        type="date"
+                        min={todayISO()}
+                        max={addDays(todayISO(), d.looptijdDagen || 30)}
+                        value={pickDate}
+                        onChange={(e) => setPickDate(e.target.value)}
+                      />
+                      <button className={styles.applyBtn} disabled={!pickDate || pending === d.id} onClick={() => apply(d)}>
+                        {pending === d.id ? "Versturen…" : "Verstuur sollicitatie →"}
+                      </button>
+                    </div>
+                  ) : (
+                    <button className={styles.applyBtn} onClick={() => { setPickDeal(d.id ?? null); setPickDate(""); }}>
+                      Solliciteer op deze deal
+                    </button>
+                  )}
                 </div>
-                {d.gevraagd && <div className={styles.dealAsk}>Gevraagd: {d.gevraagd}</div>}
-                <Link href={`/creator?deal=${d.id}`} className={styles.apply}>
-                  Solliciteer als creator →
-                </Link>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

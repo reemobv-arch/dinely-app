@@ -1,99 +1,62 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useApp } from "@/lib/appauth";
 import {
   listAllDeals,
   listRestaurants,
-  createApplication,
+  listMyApplications,
+  type PublicRestaurant,
 } from "@/lib/appdata";
 import type { Deal } from "@/lib/types";
-import { formatNL } from "@/lib/format";
 import BottomNav from "../BottomNav";
 import styles from "./deals.module.css";
 
+const STATUS: Record<string, { label: string; cls: string }> = {
+  wacht: { label: "In afwachting", cls: "wacht" },
+  geaccepteerd: { label: "Geaccepteerd", cls: "ok" },
+  afgewezen: { label: "Afgewezen", cls: "no" },
+};
+
 export default function DealsPage() {
   const router = useRouter();
-  const { session, loading, profile } = useApp();
+  const { session, uid, loading } = useApp();
   const [deals, setDeals] = useState<Deal[]>([]);
-  const [names, setNames] = useState<Record<string, string>>({});
+  const [rest, setRest] = useState<Record<string, PublicRestaurant>>({});
+  const [statusByDeal, setStatusByDeal] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState(true);
-  const [applied, setApplied] = useState<Record<string, "ok" | "err">>({});
-  const [pending, setPending] = useState<string | null>(null);
-  const [platforms, setPlatforms] = useState("Instagram");
-  const [pickDeal, setPickDeal] = useState<string | null>(null);
-  const [pickDate, setPickDate] = useState("");
-  const [appliedDate, setAppliedDate] = useState<Record<string, string>>({});
-
-  const todayISO = new Date().toISOString().slice(0, 10);
-  function windowEnd(d: Deal): string {
-    const startMs = d.createdAt?.seconds ? d.createdAt.seconds * 1000 : Date.now();
-    const end = new Date(startMs + (d.looptijdDagen || 14) * 86400000);
-    return end.toISOString().slice(0, 10);
-  }
 
   useEffect(() => {
     if (!loading && !session) router.replace("/login");
   }, [session, loading, router]);
 
   useEffect(() => {
-    try {
-      const p = localStorage.getItem("dinely-app:platforms");
-      if (p) setPlatforms(p);
-    } catch {
-      /* negeer */
-    }
     (async () => {
       try {
         const [d, r] = await Promise.all([listAllDeals(), listRestaurants()]);
         setDeals(d.filter((x) => x.status === "open"));
-        const m: Record<string, string> = {};
-        r.forEach((x) => (m[x.id] = x.naam));
-        setNames(m);
+        const m: Record<string, PublicRestaurant> = {};
+        r.forEach((x) => (m[x.id] = x));
+        setRest(m);
       } finally {
         setBusy(false);
       }
     })();
   }, []);
 
-  async function apply(d: Deal) {
-    if (!d.id || !pickDate) return;
-    setPending(d.id);
-    try {
-      await createApplication({
-        dealId: d.id,
-        restaurantId: d.owner,
-        handle: profile.instagram || profile.naam || "Creator",
-        volgers: profile.volgers,
-        platform: platforms,
-        regio: profile.regio,
-        geslacht: profile.geslacht,
-        bezoekDatum: pickDate,
+  useEffect(() => {
+    if (!uid) return;
+    (async () => {
+      const mine = await listMyApplications(uid);
+      const s: Record<string, string> = {};
+      mine.forEach((a) => {
+        if (a.dealId) s[a.dealId] = a.status;
       });
-      setAppliedDate((p) => ({ ...p, [d.id!]: pickDate }));
-      setApplied((p) => ({ ...p, [d.id!]: "ok" }));
-      setPickDeal(null);
-      setPickDate("");
-    } catch {
-      setApplied((p) => ({ ...p, [d.id!]: "err" }));
-    } finally {
-      setPending(null);
-    }
-  }
-
-  // Voldoet de creator aan de bereik-eis van de deal? (OR over platforms,
-  // zelfde logica als de 'voldoet'-check in het dashboard.)
-  function qualifies(d: Deal): boolean {
-    const eisen = d.eisen ?? [];
-    if (eisen.length === 0) return true;
-    return eisen.some(
-      (e) =>
-        platforms.toLowerCase().includes(e.platform.toLowerCase()) &&
-        profile.volgers >= e.minVolgers
-    );
-  }
+      setStatusByDeal(s);
+    })();
+  }, [uid]);
 
   return (
     <div className={styles.wrap}>
@@ -103,12 +66,6 @@ export default function DealsPage() {
         <div style={{ width: 30 }} />
       </header>
 
-      {profile.naam && (
-        <div className={styles.me}>
-          <b>{profile.naam}</b> · {profile.volgers.toLocaleString("nl-NL")} volgers · {platforms}
-        </div>
-      )}
-
       <div className={styles.list}>
         {busy ? (
           <div className={styles.subtle}>Laden…</div>
@@ -116,69 +73,34 @@ export default function DealsPage() {
           <div className={styles.subtle}>Er zijn nu geen open deals.</div>
         ) : (
           deals.map((d) => {
-            const st = applied[d.id ?? ""];
-            const meetsReq = qualifies(d);
+            const r = rest[d.owner];
+            const cover = r?.media?.sfeer?.find(Boolean) ?? null;
+            const st = STATUS[statusByDeal[d.id ?? ""] ?? ""];
             return (
-              <div key={d.id} className={styles.deal}>
-                <div className={styles.dTop}>
-                  <div>
-                    <div className={styles.rest}>{names[d.owner] ?? "Restaurant"}</div>
-                    <h3 className={styles.title}>{d.titel}</h3>
-                  </div>
+              <Link key={d.id} href={`/r/${d.owner}`} className={styles.deal}>
+                <div className={styles.thumb} style={cover ? { backgroundImage: `url(${cover})` } : undefined}>
+                  {!cover && <span className={styles.thumbFallback}>Dinely</span>}
                   <span className={styles.reward}>
-                    {d.beloningstype === "betaald" ? `€${d.bedrag}` : "Gratis"}
+                    {d.beloningstype === "betaald" ? `€${d.bedrag} + diner` : "Gratis diner"}
                   </span>
+                  {st && <span className={`${styles.status} ${styles[st.cls]}`}>{st.label}</span>}
                 </div>
-                <div className={styles.chips}>
-                  {(d.eisen ?? []).map((e, i) => (
-                    <span key={i} className={styles.chip}>{e.platform} ≥ {e.minVolgers.toLocaleString("nl-NL")}</span>
-                  ))}
-                  {d.gevraagd && <span className={styles.chip}>{d.gevraagd}</span>}
+                <div className={styles.body}>
+                  <div className={styles.rest}>{r?.naam ?? "Restaurant"}</div>
+                  <h3 className={styles.title}>{d.titel}</h3>
+                  <div className={styles.meta}>
+                    {[r?.keuken, r?.adres].filter(Boolean).join(" · ") || "Amsterdam"}
+                  </div>
+                  <div className={styles.chips}>
+                    {(d.eisen ?? []).map((e, i) => (
+                      <span key={i} className={styles.chip}>
+                        {e.platform} ≥ {e.minVolgers.toLocaleString("nl-NL")}
+                      </span>
+                    ))}
+                    {d.gevraagd && <span className={styles.chip}>{d.gevraagd}</span>}
+                  </div>
                 </div>
-
-                {st === "ok" ? (
-                  <div className={styles.okBox}>✓ Sollicitatie verstuurd — je komt op <b>{formatNL(appliedDate[d.id ?? ""])}</b>. Het restaurant ziet 'm in hun dashboard.</div>
-                ) : st === "err" ? (
-                  <div className={styles.errBox}>
-                    Versturen lukte net niet. Ververs de app en probeer opnieuw. Blijft het
-                    misgaan, log dan uit en opnieuw in.
-                  </div>
-                ) : !meetsReq ? (
-                  <div className={styles.reqBox}>
-                    {profile.volgers === 0 ? (
-                      <>Koppel eerst je socials om te kunnen solliciteren.{" "}
-                        <Link href="/creator" className={styles.reqLink}>Nu doen →</Link></>
-                    ) : (
-                      <>Je bereik voldoet nog niet aan de eis van deze deal.{" "}
-                        <Link href="/creator" className={styles.reqLink}>Bereik bijwerken →</Link></>
-                    )}
-                  </div>
-                ) : pickDeal === d.id ? (
-                  <div className={styles.pick}>
-                    <label className={styles.pickLbl}>Wanneer kom je langs?</label>
-                    <input
-                      className={styles.pickInput}
-                      type="date"
-                      min={todayISO}
-                      max={windowEnd(d)}
-                      value={pickDate}
-                      onChange={(e) => setPickDate(e.target.value)}
-                    />
-                    <div className={styles.pickHint}>Kies een dag binnen de looptijd van deze deal.</div>
-                    <button
-                      className={styles.apply}
-                      disabled={!pickDate || pending === d.id}
-                      onClick={() => apply(d)}
-                    >
-                      {pending === d.id ? "Versturen…" : "Verstuur sollicitatie →"}
-                    </button>
-                  </div>
-                ) : (
-                  <button className={styles.apply} onClick={() => { setPickDeal(d.id ?? null); setPickDate(""); }}>
-                    Solliciteer op deze deal
-                  </button>
-                )}
-              </div>
+              </Link>
             );
           })
         )}
