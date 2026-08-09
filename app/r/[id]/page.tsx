@@ -116,6 +116,29 @@ export default function RestaurantPage() {
         </div>
       )}
 
+      {reviews.some((rv) => rv.tekst && rv.tekst.trim()) && (
+        <div className={styles.section}>
+          <h2 className={styles.h2}>Wat gasten zeggen</h2>
+          <div className={styles.reviews}>
+            {reviews
+              .filter((rv) => rv.tekst && rv.tekst.trim())
+              .map((rv) => (
+                <div key={rv.id} className={styles.reviewCard}>
+                  <div className={styles.rvTop}>
+                    <div className={styles.rvAv}>{(rv.naam || "?").slice(0, 1).toUpperCase()}</div>
+                    <div className={styles.rvName}>{rv.naam || "Gast"}</div>
+                    <div className={styles.rvStars}>
+                      {"★".repeat(Math.round(rv.sterren))}
+                      <span className={styles.rvEmpty}>{"★".repeat(5 - Math.round(rv.sterren))}</span>
+                    </div>
+                  </div>
+                  <p className={styles.rvText}>{rv.tekst}</p>
+                </div>
+              ))}
+          </div>
+        </div>
+      )}
+
       <div className={styles.section}>
         <h2 className={styles.h2}>Open deals</h2>
         {deals.length === 0 ? (
