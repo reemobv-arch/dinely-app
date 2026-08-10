@@ -119,17 +119,29 @@ export default function MijPage() {
                   {accepted.map((a) => {
                     const deal = deals[a.dealId];
                     const datum = a.bezoekDatum ?? "";
-                    const past = !datum || datum <= today;
+                    const bevestigd = a.bezoekBevestigd === true;
+                    const past = !!datum && datum <= today;
+                    const done = !!a.reviewed && !!a.contentPosted;
+                    const actionsOpen = bevestigd && past && !done;
+                    const grey = !done && !actionsOpen;
                     return (
-                      <div key={a.id} className={`${styles.dealCard} ${!past ? styles.grey : ""}`}>
+                      <div key={a.id} className={`${styles.dealCard} ${grey ? styles.grey : ""}`}>
                         <div className={styles.appInfo}>
                           <div className={styles.appDeal}>{deal?.titel ?? "Deal"}</div>
                           <div className={styles.appRest}>{rest[a.restaurantId] ?? "Restaurant"}</div>
                           {datum && <div className={styles.dealDate}>Bezoek: {formatNL(datum)}</div>}
                         </div>
-                        {!past ? (
+                        {done ? (
                           <div className={styles.dealActions}>
-                            <span className={styles.badge}>Beschikbaar na je bezoek</span>
+                            <span className={`${styles.badge} ${styles.ok}`}>Afgerond ✓</span>
+                          </div>
+                        ) : !bevestigd ? (
+                          <div className={styles.dealActions}>
+                            <span className={styles.badge}>Wacht op bevestiging</span>
+                          </div>
+                        ) : !past ? (
+                          <div className={styles.dealActions}>
+                            <span className={`${styles.badge} ${styles.ok}`}>Bezoek bevestigd ✓</span>
                           </div>
                         ) : (
                           <div className={styles.dealActions}>
