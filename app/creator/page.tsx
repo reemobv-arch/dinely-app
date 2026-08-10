@@ -43,6 +43,7 @@ export default function CreatorPage() {
 
   const totaal = (ig.vol || 0) + (tt.vol || 0);
   const genoeg = totaal >= MIN_VOLGERS;
+  const leeftijdOk = typeof leeftijd === "number" && leeftijd >= 16 && leeftijd <= 100;
 
   async function finish() {
     if (!genoeg) return;
@@ -101,13 +102,18 @@ export default function CreatorPage() {
             <input
               className="inp"
               type="number"
-              min={13}
+              min={16}
               max={100}
               inputMode="numeric"
               value={leeftijd === "" ? "" : leeftijd}
               onChange={(e) => setLeeftijd(e.target.value === "" ? "" : Number(e.target.value))}
               placeholder="24"
             />
+            {leeftijd !== "" && !leeftijdOk && (
+              <p style={{ marginTop: 8, fontSize: 13, color: "var(--muted-2)" }}>
+                Vul een leeftijd tussen 16 en 100 in.
+              </p>
+            )}
           </div>
         )}
 
@@ -177,7 +183,7 @@ export default function CreatorPage() {
           <button
             className="btn btn-gold"
             style={{ flex: 1 }}
-            disabled={step === 0 && !naam}
+            disabled={step === 0 && (!naam || !geslacht || !leeftijdOk)}
             onClick={() => setStep((s) => s + 1)}
           >
             Volgende →
