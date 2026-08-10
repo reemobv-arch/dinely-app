@@ -121,6 +121,25 @@ export async function createContent(c: {
     creatorUid: uid,
     createdAt: serverTimestamp(),
   });
+  // Best-effort: het restaurant een mail sturen over de nieuwe content.
+  try {
+    const base = process.env.NEXT_PUBLIC_DASHBOARD_URL;
+    const idToken = await auth.currentUser?.getIdToken();
+    if (base && idToken) {
+      void fetch(`${base}/api/notify-content`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          idToken,
+          restaurantId: c.restaurantId,
+          dealId: c.dealId,
+          naam: c.naam,
+        }),
+      }).catch(() => {});
+    }
+  } catch {
+    /* mail is bijzaak, nooit de content-flow blokkeren */
+  }
 }
 
 export async function markApplicationContentPosted(id: string): Promise<void> {

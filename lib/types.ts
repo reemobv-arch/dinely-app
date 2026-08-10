@@ -73,6 +73,7 @@ export type Content = {
   naam: string;
   caption: string;
   media: ContentItem[];
+  goedgekeurd?: boolean;
   createdAt?: Stamp;
 };
 
