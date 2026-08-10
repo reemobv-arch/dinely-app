@@ -69,10 +69,12 @@ export default function DealsPage() {
       <div className={styles.list}>
         {busy ? (
           <div className={styles.subtle}>Laden…</div>
-        ) : deals.length === 0 ? (
+        ) : deals.filter((d) => rest[d.owner]).length === 0 ? (
           <div className={styles.subtle}>Er zijn nu geen open deals.</div>
         ) : (
-          deals.map((d) => {
+          deals
+            .filter((d) => rest[d.owner])
+            .map((d) => {
             const r = rest[d.owner];
             const cover = r?.media?.sfeer?.find(Boolean) ?? null;
             const st = STATUS[statusByDeal[d.id ?? ""] ?? ""];
