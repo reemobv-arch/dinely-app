@@ -77,3 +77,22 @@
   text-transform: uppercase; color: var(--muted); border: 1px solid var(--line-2); border-radius: 100px; padding: 14px;
 }
 .logout:hover { color: var(--crit); border-color: var(--crit); }
+
+.settingsRow {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--surface); border: 1px solid var(--line-2); border-radius: 14px;
+  padding: 15px 16px; margin-top: 14px; font-size: 14.5px; color: var(--text);
+}
+.settingsRow:active { transform: scale(0.99); }
+.chev { color: var(--muted-2); font-size: 20px; line-height: 1; }
+
+.stats { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px; margin-top: 14px; }
+.stat {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+  padding: 12px 6px; text-align: center;
+}
+.stat b { display: block; font-family: var(--ff-display); font-size: 20px; color: var(--gold); line-height: 1; }
+.stat span {
+  display: block; margin-top: 6px; font-family: var(--ff-mono); font-size: 8.5px;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted-2);
+}

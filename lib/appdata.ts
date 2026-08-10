@@ -202,6 +202,13 @@ export async function getMyCreator(uid: string): Promise<{ status?: string; regi
   return snap.exists() ? (snap.data() as { status?: string; regio?: string }) : null;
 }
 
+export async function updateMyStad(regio: string): Promise<void> {
+  if (!firebaseReady) return;
+  const uid = auth.currentUser?.uid;
+  if (!uid) return;
+  await setDoc(doc(db, "creators", uid), { regio }, { merge: true });
+}
+
 export async function listAllContent(): Promise<Content[]> {
   if (!firebaseReady) return [];
   const snap = await getDocs(collection(db, "content"));
@@ -216,6 +223,14 @@ export async function listMyApplications(uid: string): Promise<Application[]> {
     query(collection(db, "applications"), where("creatorUid", "==", uid))
   );
   return snap.docs.map((d) => ({ id: d.id, ...(d.data() as Application) }));
+}
+
+export async function listMyContent(uid: string): Promise<Content[]> {
+  if (!firebaseReady || !uid) return [];
+  const snap = await getDocs(
+    query(collection(db, "content"), where("creatorUid", "==", uid))
+  );
+  return snap.docs.map((d) => ({ id: d.id, ...(d.data() as Content) }));
 }
 
 export async function listAllReviews(): Promise<Review[]> {

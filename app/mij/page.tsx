@@ -8,6 +8,7 @@ import {
   listMyApplications,
   listAllDeals,
   listRestaurants,
+  listMyContent,
 } from "@/lib/appdata";
 import type { Application, Deal } from "@/lib/types";
 import { formatNL, todayISO } from "@/lib/format";
@@ -26,6 +27,7 @@ export default function MijPage() {
   const [apps, setApps] = useState<Application[]>([]);
   const [deals, setDeals] = useState<Record<string, Deal>>({});
   const [rest, setRest] = useState<Record<string, string>>({});
+  const [contentCount, setContentCount] = useState(0);
   const [busy, setBusy] = useState(true);
 
   useEffect(() => {
@@ -37,10 +39,11 @@ export default function MijPage() {
     (async () => {
       setBusy(true);
       try {
-        const [mine, d, r] = await Promise.all([
+        const [mine, d, r, myContent] = await Promise.all([
           listMyApplications(uid),
           listAllDeals(),
           listRestaurants(),
+          listMyContent(uid),
         ]);
         const dmap: Record<string, Deal> = {};
         d.forEach((x) => { if (x.id) dmap[x.id] = x; });
@@ -48,6 +51,7 @@ export default function MijPage() {
         r.forEach((x) => (rmap[x.id] = x.naam));
         setDeals(dmap);
         setRest(rmap);
+        setContentCount(myContent.reduce((s, c) => s + (c.media?.length ?? 0), 0));
         setApps(
           mine.sort((a, b) => (b.createdAt?.seconds ?? 0) - (a.createdAt?.seconds ?? 0))
         );
@@ -58,6 +62,11 @@ export default function MijPage() {
   }, [uid]);
 
   const initial = (profile.naam || profile.instagram || "?").replace(/[@.]/g, "").slice(0, 1).toUpperCase();
+  const acceptedApps = apps.filter((a) => a.status === "geaccepteerd");
+  const verdiend = acceptedApps.reduce((s, a) => {
+    const d = deals[a.dealId];
+    return s + (d && d.beloningstype === "betaald" ? Math.round(d.bedrag * 0.85) : 0);
+  }, 0);
 
   return (
     <div className={styles.wrap}>
@@ -84,6 +93,18 @@ export default function MijPage() {
           {profile.tiktok && <span className={styles.social}>TikTok · {profile.tiktok}</span>}
         </div>
       )}
+
+      <Link href="/instellingen" className={styles.settingsRow}>
+        <span>Instellingen &amp; notificaties</span>
+        <span className={styles.chev}>›</span>
+      </Link>
+
+      <div className={styles.stats}>
+        <div className={styles.stat}><b>{apps.length}</b><span>Sollicitaties</span></div>
+        <div className={styles.stat}><b>{acceptedApps.length}</b><span>Geaccepteerd</span></div>
+        <div className={styles.stat}><b>{contentCount}</b><span>Content</span></div>
+        <div className={styles.stat}><b>€{verdiend}</b><span>Verdiend</span></div>
+      </div>
 
       {(() => {
         const accepted = apps.filter((a) => a.status === "geaccepteerd");
