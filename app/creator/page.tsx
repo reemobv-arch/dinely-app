@@ -17,6 +17,7 @@ export default function CreatorPage() {
   const [naam, setNaam] = useState("");
   const [regio, setRegio] = useState("Amsterdam");
   const [geslacht, setGeslacht] = useState<"vrouw" | "man" | "">("");
+  const [leeftijd, setLeeftijd] = useState<number | "">("");
   const [ig, setIg] = useState({ handle: "", vol: 0 });
   const [tt, setTt] = useState({ handle: "", vol: 0 });
   const [dealParam, setDealParam] = useState("");
@@ -54,7 +55,8 @@ export default function CreatorPage() {
       /* negeer */
     }
     try {
-      await saveCreator(prof);
+      const extra = typeof leeftijd === "number" && leeftijd > 0 ? { leeftijd } : {};
+      await saveCreator({ ...prof, ...extra });
     } catch {
       /* opslaan ter goedkeuring best-effort */
     }
@@ -95,6 +97,17 @@ export default function CreatorPage() {
                 </button>
               ))}
             </div>
+            <label className="flabel" style={{ marginTop: 16 }}>Leeftijd</label>
+            <input
+              className="inp"
+              type="number"
+              min={13}
+              max={100}
+              inputMode="numeric"
+              value={leeftijd === "" ? "" : leeftijd}
+              onChange={(e) => setLeeftijd(e.target.value === "" ? "" : Number(e.target.value))}
+              placeholder="24"
+            />
           </div>
         )}
 

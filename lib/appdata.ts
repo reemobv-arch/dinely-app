@@ -182,6 +182,7 @@ export async function saveCreator(p: {
   volgers: number;
   regio: string;
   geslacht: "vrouw" | "man" | "";
+  leeftijd?: number;
 }): Promise<void> {
   if (!firebaseReady) return;
   const uid = auth.currentUser?.uid;
