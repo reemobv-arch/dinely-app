@@ -6,6 +6,7 @@ import styles from "./bottomnav.module.css";
 
 const TABS = [
   { href: "/discover", label: "Ontdek", icon: "⌖" },
+  { href: "/feed", label: "Feed", icon: "▶" },
   { href: "/deals", label: "Deals", icon: "✦" },
   { href: "/mij", label: "Mijn", icon: "◍" },
 ];

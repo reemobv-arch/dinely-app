@@ -1,0 +1,50 @@
+.wrap {
+  position: relative;
+  min-height: 100dvh;
+  background: url("/wachten.jpg") center / cover no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.grad {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(11,9,6,0.6) 0%, rgba(11,9,6,0.72) 55%, rgba(11,9,6,0.9) 100%);
+}
+.center {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 0 34px;
+  max-width: 440px;
+}
+.brand {
+  font-family: var(--ff-display);
+  font-size: 30px;
+  margin-bottom: 30px;
+}
+.brand span { color: var(--gold); }
+.title {
+  font-family: var(--ff-display);
+  font-size: 30px;
+  line-height: 1.2;
+  color: #fff;
+}
+.sub {
+  margin-top: 16px;
+  color: rgba(255,255,255,0.8);
+  font-size: 14.5px;
+  line-height: 1.55;
+}
+.link {
+  display: inline-block;
+  margin-top: 30px;
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+  border: 1px solid var(--gold-dim);
+  border-radius: 100px;
+  padding: 13px 22px;
+}

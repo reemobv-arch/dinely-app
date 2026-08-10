@@ -196,6 +196,20 @@ export async function saveCreator(p: {
   await setDoc(r, base, { merge: true });
 }
 
+export async function getMyCreator(uid: string): Promise<{ status?: string; regio?: string } | null> {
+  if (!firebaseReady || !uid) return null;
+  const snap = await getDoc(doc(db, "creators", uid));
+  return snap.exists() ? (snap.data() as { status?: string; regio?: string }) : null;
+}
+
+export async function listAllContent(): Promise<Content[]> {
+  if (!firebaseReady) return [];
+  const snap = await getDocs(collection(db, "content"));
+  return snap.docs
+    .map((d) => ({ id: d.id, ...(d.data() as Content) }))
+    .sort((a, b) => (b.createdAt?.seconds ?? 0) - (a.createdAt?.seconds ?? 0));
+}
+
 export async function listMyApplications(uid: string): Promise<Application[]> {
   if (!firebaseReady || !uid) return [];
   const snap = await getDocs(

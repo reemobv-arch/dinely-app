@@ -58,7 +58,7 @@ export default function CreatorPage() {
     } catch {
       /* opslaan ter goedkeuring best-effort */
     }
-    router.push(`/deals${dealParam}`);
+    router.push("/wachten");
   }
 
   const steps = ["Jij", "Instagram", "TikTok", "Klaar"];
