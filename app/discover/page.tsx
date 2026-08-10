@@ -26,6 +26,20 @@ export default function DiscoverPage() {
   const [q, setQ] = useState("");
   const [stad, setStad] = useState("Amsterdam");
   const [gasten, setGasten] = useState(2);
+  const [keuken, setKeuken] = useState("");
+  const [prijs, setPrijs] = useState("");
+  const [metDeals, setMetDeals] = useState(false);
+
+  const keukens = useMemo(
+    () => [...new Set(rows.map((r) => r.keuken).filter(Boolean))].sort(),
+    [rows]
+  );
+  const filtersActief = !!(keuken || prijs || metDeals);
+  function wisFilters() {
+    setKeuken("");
+    setPrijs("");
+    setMetDeals(false);
+  }
 
   useEffect(() => {
     (async () => {
@@ -50,14 +64,20 @@ export default function DiscoverPage() {
     return rows.filter((r) => {
       const okQ = !qq || `${r.naam} ${r.keuken}`.toLowerCase().includes(qq);
       const okStad = !ss || `${r.adres}`.toLowerCase().includes(ss) || !r.adres;
-      return okQ && okStad;
+      const okKeuken = !keuken || r.keuken === keuken;
+      const okPrijs = !prijs || r.prijs === prijs;
+      const okDeals = !metDeals || deals.some((d) => d.owner === r.id && d.status === "open");
+      return okQ && okStad && okKeuken && okPrijs && okDeals;
     });
-  }, [rows, q, stad]);
+  }, [rows, q, stad, keuken, prijs, metDeals, deals]);
 
   const points = useMemo(
     () =>
       filtered.map((r) => {
-        const [lat, lng] = coordsFor(r.id);
+        const [lat, lng] =
+          typeof r.lat === "number" && typeof r.lng === "number"
+            ? [r.lat, r.lng]
+            : coordsFor(r.id);
         return { id: r.id, name: r.naam || "Restaurant", lat, lng };
       }),
     [filtered]
@@ -104,6 +124,34 @@ export default function DiscoverPage() {
               <button type="button" onClick={() => setGasten((g) => g + 1)}>+</button>
             </div>
           </label>
+        </div>
+        <div className={styles.filterBar}>
+          <select className={styles.fSelect} value={keuken} onChange={(e) => setKeuken(e.target.value)}>
+            <option value="">Alle keukens</option>
+            {keukens.map((k) => (
+              <option key={k} value={k}>{k}</option>
+            ))}
+          </select>
+          {["€", "€€", "€€€", "€€€€"].map((p) => (
+            <button
+              key={p}
+              type="button"
+              className={`${styles.fChip} ${prijs === p ? styles.fChipOn : ""}`}
+              onClick={() => setPrijs(prijs === p ? "" : p)}
+            >
+              {p}
+            </button>
+          ))}
+          <button
+            type="button"
+            className={`${styles.fChip} ${metDeals ? styles.fChipOn : ""}`}
+            onClick={() => setMetDeals((v) => !v)}
+          >
+            Met deals
+          </button>
+          {filtersActief && (
+            <button type="button" className={styles.fClear} onClick={wisFilters}>Wis ✕</button>
+          )}
         </div>
       </div>
 

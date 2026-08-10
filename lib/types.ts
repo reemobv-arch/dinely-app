@@ -22,6 +22,8 @@ export type Restaurant = {
   sfeer: string;
   omschrijving: string;
   media: Media;
+  lat?: number;
+  lng?: number;
   updatedAt?: Stamp;
 };
 
