@@ -2,12 +2,12 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "dashboard",
+      "name": "app",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev"],
-      "port": 3000,
+      "port": 3001,
       "autoPort": true,
-      "cwd": "/Users/maartentervelde/Desktop/claude/tably-dashboard"
+      "cwd": "/Users/maartentervelde/Desktop/Claude/dinely-app"
     }
   ]
 }

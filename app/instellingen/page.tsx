@@ -97,7 +97,7 @@ export default function InstellingenPage() {
           </div>
           <div className={styles.rowStatic}>
             <span>E-mailadres</span>
-            <b>{profile.instagram ? "—" : "—"}</b>
+            <b>—</b>
           </div>
           <div className={styles.rowEdit}>
             <label className={styles.editLbl}>Stad</label>
