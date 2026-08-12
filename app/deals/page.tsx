@@ -12,6 +12,7 @@ import {
 } from "@/lib/appdata";
 import type { Deal } from "@/lib/types";
 import BottomNav from "../BottomNav";
+import EmptyState from "../EmptyState";
 import styles from "./deals.module.css";
 
 const STATUS: Record<string, { label: string; cls: string }> = {
@@ -81,7 +82,13 @@ export default function DealsPage() {
             </div>
           ))
         ) : deals.filter((d) => rest[d.owner]).length === 0 ? (
-          <div className={styles.subtle}>Er zijn nu geen open deals.</div>
+          <EmptyState
+            icon="✦"
+            title="Nog geen open deals"
+            text="Zodra restaurants nieuwe deals plaatsen, verschijnen ze hier. Ontdek intussen restaurants bij jou in de buurt."
+            actionLabel="Ontdek restaurants"
+            actionHref="/discover"
+          />
         ) : (
           deals
             .filter((d) => rest[d.owner])

@@ -13,6 +13,7 @@ import {
 } from "@/lib/appdata";
 import type { Deal, Review } from "@/lib/types";
 import BottomNav from "../BottomNav";
+import EmptyState from "../EmptyState";
 import styles from "./discover.module.css";
 
 const MapView = dynamic(() => import("./MapView"), { ssr: false });
@@ -181,7 +182,16 @@ export default function DiscoverPage() {
             </div>
           ))
         ) : filtered.length === 0 ? (
-          <div className={styles.subtle}>Geen restaurants gevonden. Pas je zoekopdracht aan.</div>
+          <EmptyState
+            icon="⌕"
+            title="Niks gevonden"
+            text="Geen restaurants voor deze zoekopdracht of filters. Pas je selectie aan."
+            actionLabel={q || filtersActief ? "Wis filters" : undefined}
+            onAction={() => {
+              setQ("");
+              wisFilters();
+            }}
+          />
         ) : (
           filtered.map((r) => {
             const img = cover(r);

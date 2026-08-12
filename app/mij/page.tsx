@@ -13,6 +13,7 @@ import {
 import type { Application, Deal } from "@/lib/types";
 import { formatNL, todayISO } from "@/lib/format";
 import BottomNav from "../BottomNav";
+import EmptyState from "../EmptyState";
 import styles from "./mij.module.css";
 
 const STATUS: Record<string, { label: string; cls: string }> = {
@@ -169,11 +170,21 @@ export default function MijPage() {
               {busy ? (
                 <div className={styles.subtle}>Laden…</div>
               ) : others.length === 0 ? (
-                <div className={styles.empty}>
-                  {accepted.length > 0
-                    ? "Geen openstaande sollicitaties."
-                    : <>Je hebt nog niet gesolliciteerd. Ga naar <Link href="/deals" className={styles.link}>Deals</Link> om te beginnen.</>}
-                </div>
+                accepted.length > 0 ? (
+                  <EmptyState
+                    icon="◔"
+                    title="Alles afgehandeld"
+                    text="Je hebt geen openstaande sollicitaties meer. Je geaccepteerde deals staan hierboven."
+                  />
+                ) : (
+                  <EmptyState
+                    icon="✦"
+                    title="Nog niet gesolliciteerd"
+                    text="Vind een deal die bij je past en solliciteer in een tik."
+                    actionLabel="Naar deals"
+                    actionHref="/deals"
+                  />
+                )
               ) : (
                 <div className={styles.list}>
                   {others.map((a) => {
