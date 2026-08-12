@@ -7,6 +7,21 @@
 .dot { width: 26px; height: 4px; border-radius: 4px; background: var(--line-2); transition: 0.2s; }
 .dot.on { background: var(--gold); }
 
+.progress {
+  flex: 1;
+  height: 5px;
+  margin: 0 10px;
+  border-radius: 100px;
+  background: var(--bg-2);
+  overflow: hidden;
+}
+.progressFill {
+  height: 100%;
+  border-radius: 100px;
+  background: linear-gradient(90deg, var(--gold), var(--gold-2));
+  transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 .body { flex: 1; padding: 12px 22px; }
 .stepBox { animation: fade 0.3s ease; }
 @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }

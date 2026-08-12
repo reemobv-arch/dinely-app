@@ -8,6 +8,7 @@ import { saveCreator } from "@/lib/appdata";
 import styles from "./creator.module.css";
 
 const MIN_VOLGERS = 2000;
+const STEPS = 7;
 
 export default function CreatorPage() {
   const router = useRouter();
@@ -20,7 +21,7 @@ export default function CreatorPage() {
   const [leeftijd, setLeeftijd] = useState<number | "">("");
   const [ig, setIg] = useState({ handle: "", vol: 0 });
   const [tt, setTt] = useState({ handle: "", vol: 0 });
-  const [dealParam, setDealParam] = useState("");
+  const [, setDealParam] = useState("");
 
   useEffect(() => {
     if (!loading && !session) router.replace("/login");
@@ -45,6 +46,18 @@ export default function CreatorPage() {
   const genoeg = totaal >= MIN_VOLGERS;
   const leeftijdOk = typeof leeftijd === "number" && leeftijd >= 16 && leeftijd <= 100;
 
+  const canNext =
+    step === 0
+      ? !!naam.trim()
+      : step === 1
+      ? !!regio.trim()
+      : step === 2
+      ? !!geslacht
+      : step === 3
+      ? leeftijdOk
+      : true;
+  const progress = ((step + 1) / STEPS) * 100;
+
   async function finish() {
     if (!genoeg) return;
     const platforms = [ig.handle ? "Instagram" : "", tt.handle ? "TikTok" : ""].filter(Boolean);
@@ -64,16 +77,19 @@ export default function CreatorPage() {
     router.push("/wachten");
   }
 
-  const steps = ["Jij", "Instagram", "TikTok", "Klaar"];
-
   return (
     <div className={styles.wrap}>
       <header className={styles.head}>
-        <Link href="/start" className={styles.back}>‹</Link>
-        <div className={styles.dots}>
-          {steps.map((_, i) => (
-            <span key={i} className={`${styles.dot} ${i <= step ? styles.on : ""}`} />
-          ))}
+        <button
+          type="button"
+          className={styles.back}
+          onClick={() => (step === 0 ? router.push("/start") : setStep((s) => s - 1))}
+          aria-label="Terug"
+        >
+          ‹
+        </button>
+        <div className={styles.progress}>
+          <div className={styles.progressFill} style={{ width: `${progress}%` }} />
         </div>
         <div style={{ width: 30 }} />
       </header>
@@ -81,30 +97,66 @@ export default function CreatorPage() {
       <div className={styles.body}>
         {step === 0 && (
           <div className={styles.stepBox}>
-            <span className="eyebrow">Stap 1 van 4</span>
-            <h1 className={styles.h1}>Wie ben je?</h1>
-            <p className={styles.lead}>We koppelen zo je socials om je bereik te bepalen.</p>
-            <label className="flabel">Naam of artiestennaam</label>
-            <input className="inp" value={naam} onChange={(e) => setNaam(e.target.value)} placeholder="Juul Bakker" />
-            <label className="flabel" style={{ marginTop: 16 }}>Regio</label>
-            <input className="inp" value={regio} onChange={(e) => setRegio(e.target.value)} />
-            <label className="flabel" style={{ marginTop: 16 }}>Ik ben</label>
+            <span className="eyebrow">Stap 1 van {STEPS}</span>
+            <h1 className={styles.h1}>Hoe heet je?</h1>
+            <p className={styles.lead}>Je naam of artiestennaam, zoals restaurants je zien.</p>
+            <input
+              className="inp"
+              autoFocus
+              value={naam}
+              onChange={(e) => setNaam(e.target.value)}
+              placeholder="Juul Bakker"
+            />
+          </div>
+        )}
+
+        {step === 1 && (
+          <div className={styles.stepBox}>
+            <span className="eyebrow">Stap 2 van {STEPS}</span>
+            <h1 className={styles.h1}>In welke stad zit je?</h1>
+            <p className={styles.lead}>Zo tonen we je deals bij jou in de buurt.</p>
+            <input
+              className="inp"
+              autoFocus
+              value={regio}
+              onChange={(e) => setRegio(e.target.value)}
+              placeholder="Amsterdam"
+            />
+          </div>
+        )}
+
+        {step === 2 && (
+          <div className={styles.stepBox}>
+            <span className="eyebrow">Stap 3 van {STEPS}</span>
+            <h1 className={styles.h1}>Ik ben…</h1>
+            <p className={styles.lead}>Restaurants filteren soms op wie ze zoeken.</p>
             <div className={styles.seg}>
               {(["vrouw", "man"] as const).map((g) => (
-                <button key={g} type="button"
+                <button
+                  key={g}
+                  type="button"
                   className={`${styles.segBtn} ${geslacht === g ? styles.segOn : ""}`}
-                  onClick={() => setGeslacht(g)}>
+                  onClick={() => setGeslacht(g)}
+                >
                   {g === "vrouw" ? "Vrouw" : "Man"}
                 </button>
               ))}
             </div>
-            <label className="flabel" style={{ marginTop: 16 }}>Leeftijd</label>
+          </div>
+        )}
+
+        {step === 3 && (
+          <div className={styles.stepBox}>
+            <span className="eyebrow">Stap 4 van {STEPS}</span>
+            <h1 className={styles.h1}>Hoe oud ben je?</h1>
+            <p className={styles.lead}>We werken met creators van 16 jaar en ouder.</p>
             <input
               className="inp"
               type="number"
               min={16}
               max={100}
               inputMode="numeric"
+              autoFocus
               value={leeftijd === "" ? "" : leeftijd}
               onChange={(e) => setLeeftijd(e.target.value === "" ? "" : Number(e.target.value))}
               placeholder="24"
@@ -117,24 +169,30 @@ export default function CreatorPage() {
           </div>
         )}
 
-        {step === 1 && (
+        {step === 4 && (
           <PlatformStep
-            label="Instagram" nr="Stap 2 van 4" color="#E1306C"
-            handle={ig.handle} vol={ig.vol}
+            label="Instagram"
+            nr={`Stap 5 van ${STEPS}`}
+            color="#E1306C"
+            handle={ig.handle}
+            vol={ig.vol}
             onHandle={(v) => setIg((s) => ({ ...s, handle: v }))}
             onVol={(v) => setIg((s) => ({ ...s, vol: v }))}
           />
         )}
-        {step === 2 && (
+        {step === 5 && (
           <PlatformStep
-            label="TikTok" nr="Stap 3 van 4" color="#25F4EE"
-            handle={tt.handle} vol={tt.vol}
+            label="TikTok"
+            nr={`Stap 6 van ${STEPS}`}
+            color="#25F4EE"
+            handle={tt.handle}
+            vol={tt.vol}
             onHandle={(v) => setTt((s) => ({ ...s, handle: v }))}
             onVol={(v) => setTt((s) => ({ ...s, vol: v }))}
           />
         )}
 
-        {step === 3 && (
+        {step === 6 && (
           <div className={styles.stepBox}>
             {genoeg ? (
               <>
@@ -179,11 +237,11 @@ export default function CreatorPage() {
         {step > 0 && (
           <button className="btn btn-ghost" onClick={() => setStep((s) => s - 1)}>Terug</button>
         )}
-        {step < 3 ? (
+        {step < 6 ? (
           <button
             className="btn btn-gold"
             style={{ flex: 1 }}
-            disabled={step === 0 && (!naam || !geslacht || !leeftijdOk)}
+            disabled={!canNext}
             onClick={() => setStep((s) => s + 1)}
           >
             Volgende →
@@ -210,7 +268,7 @@ function PlatformStep({
       <h1 className={styles.h1}>
         Koppel <span style={{ color }}>{label}</span>
       </h1>
-      <p className={styles.lead}>Vul je gebruikersnaam en aantal volgers in.</p>
+      <p className={styles.lead}>Vul je gebruikersnaam en aantal volgers in. Geen {label}? Laat leeg.</p>
       <label className="flabel">Gebruikersnaam</label>
       <input className="inp" value={handle} placeholder="@jouwnaam" onChange={(e) => onHandle(e.target.value)} />
       <label className="flabel" style={{ marginTop: 16 }}>Aantal volgers</label>
