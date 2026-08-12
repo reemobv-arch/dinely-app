@@ -169,7 +169,17 @@ export default function DiscoverPage() {
 
       <div className={styles.list}>
         {busy ? (
-          <div className={styles.subtle}>Laden…</div>
+          Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className={styles.card} aria-hidden>
+              <div className={styles.thumb}>
+                <span className="sk" style={{ position: "absolute", inset: 0 }} />
+              </div>
+              <div className={styles.cardBody}>
+                <span className="sk" style={{ display: "block", height: 18, width: "55%", marginBottom: 11 }} />
+                <span className="sk" style={{ display: "block", height: 12, width: "80%" }} />
+              </div>
+            </div>
+          ))
         ) : filtered.length === 0 ? (
           <div className={styles.subtle}>Geen restaurants gevonden. Pas je zoekopdracht aan.</div>
         ) : (

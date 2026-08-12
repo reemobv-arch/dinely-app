@@ -55,3 +55,8 @@ img{display:block;max-width:100%}
 .notice.err{border:1px solid rgba(206,116,96,.4);background:rgba(206,116,96,.08);color:var(--crit)}
 .notice.ok{border:1px solid rgba(119,190,155,.35);background:rgba(119,190,155,.08);color:var(--good)}
 .notice.warn{border:1px solid var(--gold-dim);background:rgba(201,162,75,.06);color:var(--gold)}
+
+/* skeletons (laad-states) */
+@keyframes sk-shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+.sk{display:block;border-radius:8px;background:linear-gradient(90deg,var(--surface) 25%,var(--surface-3,#463a2e) 37%,var(--surface) 63%);background-size:200% 100%;animation:sk-shimmer 1.4s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){.sk{animation:none}}

@@ -68,7 +68,18 @@ export default function DealsPage() {
 
       <div className={styles.list}>
         {busy ? (
-          <div className={styles.subtle}>Laden…</div>
+          Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className={styles.deal} aria-hidden>
+              <div className={styles.thumb}>
+                <span className="sk" style={{ position: "absolute", inset: 0, borderRadius: 0 }} />
+              </div>
+              <div className={styles.body}>
+                <span className="sk" style={{ display: "block", height: 12, width: "30%", marginBottom: 12 }} />
+                <span className="sk" style={{ display: "block", height: 20, width: "70%", marginBottom: 14 }} />
+                <span className="sk" style={{ display: "block", height: 30, width: "60%", borderRadius: 100 }} />
+              </div>
+            </div>
+          ))
         ) : deals.filter((d) => rest[d.owner]).length === 0 ? (
           <div className={styles.subtle}>Er zijn nu geen open deals.</div>
         ) : (
