@@ -9,13 +9,17 @@
 .title { font-family: var(--ff-display); font-size: 32px; }
 
 .card {
-  display: flex; align-items: center; gap: 14px; background: var(--surface);
+  display: flex; align-items: center; gap: 15px;
+  background: linear-gradient(180deg, var(--surface-2), var(--surface));
   border: 1px solid var(--line-2); border-radius: 18px; padding: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
 }
 .avatar {
-  width: 52px; height: 52px; flex: none; border-radius: 50%;
-  display: grid; place-items: center; font-family: var(--ff-display); font-size: 22px;
-  color: var(--gold); border: 1px solid var(--gold-dim); background: var(--bg-2);
+  width: 60px; height: 60px; flex: none; border-radius: 50%;
+  display: grid; place-items: center; font-family: var(--ff-display); font-size: 24px;
+  color: var(--gold); border: 1px solid var(--gold-dim); background-color: var(--bg-2);
+  background-size: cover; background-position: center;
+  box-shadow: 0 0 0 3px rgba(201, 162, 75, 0.1);
 }
 .pInfo { flex: 1; min-width: 0; }
 .pName { font-family: var(--ff-display); font-size: 20px; }

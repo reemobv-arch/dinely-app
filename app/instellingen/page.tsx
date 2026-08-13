@@ -112,6 +112,19 @@ export default function InstellingenPage() {
       </header>
 
       <div className={styles.body}>
+        <div className={styles.hero}>
+          <div
+            className={styles.avatar}
+            style={profile.foto ? { backgroundImage: `url(${profile.foto})` } : undefined}
+          >
+            {!profile.foto && (
+              <span>{(profile.naam || "?").replace(/[@.]/g, "").slice(0, 1).toUpperCase()}</span>
+            )}
+          </div>
+          <div className={styles.heroName}>{profile.naam || "Jouw profiel"}</div>
+          <div className={styles.heroSub}>Creator{profile.regio ? ` · ${profile.regio}` : ""}</div>
+        </div>
+
         <div className={styles.groupLbl}>Account</div>
         <div className={styles.card}>
           <div className={styles.rowStatic}>
@@ -150,7 +163,7 @@ export default function InstellingenPage() {
             />
           </div>
           <div className={styles.rowEdit}>
-            <label className={styles.editLbl}>Naam op rekening</label>
+            <label className={styles.editLbl}>Rekeninghouder</label>
             <input
               className={styles.editInput}
               value={ibanNaam}

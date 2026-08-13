@@ -76,7 +76,12 @@ export default function MijPage() {
       </header>
 
       <div className={styles.card}>
-        <div className={styles.avatar}>{initial}</div>
+        <div
+          className={styles.avatar}
+          style={profile.foto ? { backgroundImage: `url(${profile.foto})` } : undefined}
+        >
+          {!profile.foto && initial}
+        </div>
         <div className={styles.pInfo}>
           <div className={styles.pName}>{profile.naam || "Nog geen profiel"}</div>
           <div className={styles.pMeta}>
