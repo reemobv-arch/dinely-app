@@ -60,3 +60,10 @@ img{display:block;max-width:100%}
 @keyframes sk-shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
 .sk{display:block;border-radius:8px;background:linear-gradient(90deg,var(--surface) 25%,var(--surface-3,#463a2e) 37%,var(--surface) 63%);background-size:200% 100%;animation:sk-shimmer 1.4s ease-in-out infinite}
 @media (prefers-reduced-motion:reduce){.sk{animation:none}}
+
+/* kaart-popup (klik op marker -> klikbare restaurantnaam) */
+.dinely-popwrap .leaflet-popup-content-wrapper{background:var(--surface-3,#463a2e);border:1px solid var(--line-2);border-radius:100px;box-shadow:0 6px 18px rgba(0,0,0,.45);padding:0}
+.dinely-popwrap .leaflet-popup-content{margin:0}
+.dinely-popwrap .leaflet-popup-tip{background:var(--surface-3,#463a2e);border:1px solid var(--line-2)}
+.dinely-pop{font-family:var(--ff-body);font-size:13px;font-weight:600;color:var(--gold-2,#e4c67e);padding:8px 16px;white-space:nowrap;cursor:pointer;background:none;border:0}
+.dinely-pop::after{content:" →";color:var(--muted);font-weight:400}

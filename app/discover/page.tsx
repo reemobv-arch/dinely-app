@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import {
   listRestaurants,
@@ -19,6 +20,7 @@ import styles from "./discover.module.css";
 const MapView = dynamic(() => import("./MapView"), { ssr: false });
 
 export default function DiscoverPage() {
+  const router = useRouter();
   const [rows, setRows] = useState<PublicRestaurant[]>([]);
   const [deals, setDeals] = useState<Deal[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -157,7 +159,9 @@ export default function DiscoverPage() {
       </div>
 
       <div className={styles.map}>
-        {!busy && points.length > 0 && <MapView points={points} onSelect={() => {}} />}
+        {!busy && points.length > 0 && (
+          <MapView points={points} onSelect={(id) => router.push(`/r/${id}`)} />
+        )}
         {!busy && points.length === 0 && (
           <div className={styles.mapEmpty}>Nog geen restaurants om te tonen.</div>
         )}

@@ -69,12 +69,19 @@ export default function MapView({
     const pts: [number, number][] = [];
     for (const p of points) {
       const m = L.marker([p.lat, p.lng], { icon }).addTo(layerRef.current);
-      m.bindTooltip(p.name, {
-        direction: "top",
-        offset: [0, -10],
-        className: "dinely-tip",
+      // Klik op de marker toont een klein klikbaar naampje -> naar het restaurant.
+      const el = document.createElement("button");
+      el.textContent = p.name;
+      el.className = "dinely-pop";
+      el.addEventListener("click", (e) => {
+        e.preventDefault();
+        onSelectRef.current(p.id);
       });
-      m.on("click", () => onSelectRef.current(p.id));
+      m.bindPopup(el, {
+        closeButton: false,
+        className: "dinely-popwrap",
+        offset: [0, -8],
+      });
       pts.push([p.lat, p.lng]);
     }
     if (pts.length > 1) {
