@@ -59,6 +59,8 @@ export type Application = {
   bezoekBevestigd?: boolean; // restaurant heeft het bezoek bevestigd
   reviewed?: boolean;
   contentPosted?: boolean;
+  betaalStatus?: "open" | "betaald" | "uitbetaald";
+  bedrag?: number;
   status: "wacht" | "geaccepteerd" | "afgewezen";
   createdAt?: Stamp;
 };
