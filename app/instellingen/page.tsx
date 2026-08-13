@@ -4,17 +4,19 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useApp } from "@/lib/appauth";
-import { updateMyStad } from "@/lib/appdata";
+import { updateMyStad, getMyCreator, updateMyPayout } from "@/lib/appdata";
 import { enablePush, savePushPrefs, DEFAULT_PREFS, type PushPrefs } from "@/lib/push";
 import styles from "./instellingen.module.css";
 
 export default function InstellingenPage() {
   const router = useRouter();
-  const { session, loading, profile, saveProfile } = useApp();
+  const { session, uid, loading, profile, saveProfile } = useApp();
 
   const [stad, setStad] = useState(profile.regio || "Amsterdam");
   const [pushOn, setPushOn] = useState(false);
   const [prefs, setPrefs] = useState<PushPrefs>(DEFAULT_PREFS);
+  const [iban, setIban] = useState("");
+  const [ibanNaam, setIbanNaam] = useState("");
   const [msg, setMsg] = useState<string | null>(null);
 
   useEffect(() => {
@@ -41,10 +43,31 @@ export default function InstellingenPage() {
     }
   }
 
+  useEffect(() => {
+    if (!uid) return;
+    (async () => {
+      try {
+        const c = await getMyCreator(uid);
+        if (c?.iban) setIban(c.iban);
+        if (c?.ibanNaam) setIbanNaam(c.ibanNaam);
+      } catch {
+        /* negeer */
+      }
+    })();
+  }, [uid]);
+
   async function saveStad() {
     saveProfile({ ...profile, regio: stad });
     try {
       await updateMyStad(stad);
+    } catch {
+      /* negeer */
+    }
+  }
+
+  async function saveIban() {
+    try {
+      await updateMyPayout(iban.trim().toUpperCase(), ibanNaam.trim());
     } catch {
       /* negeer */
     }
@@ -111,6 +134,33 @@ export default function InstellingenPage() {
           </div>
         </div>
         <p className={styles.hint}>Telefoonnummer en e-mail horen bij je account en kun je niet wijzigen. Je stad wel, bijvoorbeeld als je verhuist.</p>
+
+        <div className={styles.groupLbl}>Uitbetaling</div>
+        <div className={styles.card}>
+          <div className={styles.rowEdit}>
+            <label className={styles.editLbl}>IBAN</label>
+            <input
+              className={styles.editInput}
+              value={iban}
+              onChange={(e) => setIban(e.target.value)}
+              onBlur={saveIban}
+              placeholder="NL00 BANK 0000 0000 00"
+              autoCapitalize="characters"
+              spellCheck={false}
+            />
+          </div>
+          <div className={styles.rowEdit}>
+            <label className={styles.editLbl}>Naam op rekening</label>
+            <input
+              className={styles.editInput}
+              value={ibanNaam}
+              onChange={(e) => setIbanNaam(e.target.value)}
+              onBlur={saveIban}
+              placeholder="J. Bakker"
+            />
+          </div>
+        </div>
+        <p className={styles.hint}>Hierop maken we je verdiensten over zodra een restaurant je content heeft goedgekeurd.</p>
 
         <div className={styles.groupLbl}>Notificaties</div>
         <div className={styles.card}>

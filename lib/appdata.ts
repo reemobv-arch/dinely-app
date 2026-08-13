@@ -235,10 +235,21 @@ export async function saveCreator(p: {
   await setDoc(r, base, { merge: true });
 }
 
-export async function getMyCreator(uid: string): Promise<{ status?: string; regio?: string } | null> {
+export async function getMyCreator(
+  uid: string
+): Promise<{ status?: string; regio?: string; iban?: string; ibanNaam?: string } | null> {
   if (!firebaseReady || !uid) return null;
   const snap = await getDoc(doc(db, "creators", uid));
-  return snap.exists() ? (snap.data() as { status?: string; regio?: string }) : null;
+  return snap.exists()
+    ? (snap.data() as { status?: string; regio?: string; iban?: string; ibanNaam?: string })
+    : null;
+}
+
+export async function updateMyPayout(iban: string, ibanNaam: string): Promise<void> {
+  if (!firebaseReady) return;
+  const uid = auth.currentUser?.uid;
+  if (!uid) return;
+  await setDoc(doc(db, "creators", uid), { iban, ibanNaam }, { merge: true });
 }
 
 export async function updateMyStad(regio: string): Promise<void> {
