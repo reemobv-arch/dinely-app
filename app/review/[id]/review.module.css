@@ -36,7 +36,7 @@
 }
 .ta:focus { outline: none; border-color: var(--gold-dim); }
 
-.preview { background: var(--surface); border: 1px solid var(--line-2); border-radius: 16px; padding: 20px; }
+.preview { background: linear-gradient(180deg, var(--surface-2), var(--surface)); border: 1px solid var(--line-2); border-radius: 16px; padding: 20px; }
 .pvStars { font-size: 24px; color: var(--gold); letter-spacing: 3px; margin-bottom: 14px; }
 .pvEmpty { color: var(--line-2); }
 .pvBlock { padding: 10px 0; border-top: 1px solid var(--line); }

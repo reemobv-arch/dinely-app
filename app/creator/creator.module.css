@@ -72,7 +72,7 @@
 .fb { margin-top: 18px; }
 
 .summary {
-  background: var(--surface); border: 1px solid var(--line-2); border-radius: 18px;
+  background: linear-gradient(180deg, var(--surface-2), var(--surface)); border: 1px solid var(--line-2); border-radius: 18px;
   padding: 22px; margin-bottom: 16px;
 }
 .sumTotal { text-align: center; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
