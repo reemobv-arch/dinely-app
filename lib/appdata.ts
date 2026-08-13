@@ -47,6 +47,25 @@ export async function createApplication(app: NewApplication): Promise<void> {
     status: "wacht",
     createdAt: serverTimestamp(),
   });
+  // Best-effort: het restaurant een mail sturen over de nieuwe sollicitatie.
+  try {
+    const base = process.env.NEXT_PUBLIC_DASHBOARD_URL;
+    const idToken = await auth.currentUser?.getIdToken();
+    if (base && idToken) {
+      void fetch(`${base}/api/notify-application`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          idToken,
+          restaurantId: app.restaurantId,
+          dealId: app.dealId,
+          handle: app.handle,
+        }),
+      }).catch(() => {});
+    }
+  } catch {
+    /* mail is bijzaak, nooit de sollicitatie-flow blokkeren */
+  }
 }
 
 export type NewReview = {
