@@ -70,7 +70,8 @@ export default function CreatorPage() {
     }
     try {
       const extra = typeof leeftijd === "number" && leeftijd > 0 ? { leeftijd } : {};
-      await saveCreator({ ...prof, ...extra });
+      const tel = session?.phone ? { telefoon: session.phone } : {};
+      await saveCreator({ ...prof, ...extra, ...tel });
     } catch {
       /* opslaan ter goedkeuring best-effort */
     }

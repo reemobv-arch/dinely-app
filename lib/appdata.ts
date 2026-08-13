@@ -221,6 +221,7 @@ export async function saveCreator(p: {
   regio: string;
   geslacht: "vrouw" | "man" | "";
   leeftijd?: number;
+  telefoon?: string;
 }): Promise<void> {
   if (!firebaseReady) return;
   const uid = auth.currentUser?.uid;
