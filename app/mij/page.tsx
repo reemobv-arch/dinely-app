@@ -12,6 +12,8 @@ import {
 } from "@/lib/appdata";
 import type { Application, Deal } from "@/lib/types";
 import { formatNL, todayISO } from "@/lib/format";
+import { creatorShare } from "@/lib/money";
+import { perChannelVolgers } from "@/lib/volgers";
 import BottomNav from "../BottomNav";
 import EmptyState from "../EmptyState";
 import styles from "./mij.module.css";
@@ -66,7 +68,7 @@ export default function MijPage() {
   const acceptedApps = apps.filter((a) => a.status === "geaccepteerd");
   const verdiend = acceptedApps.reduce((s, a) => {
     const d = deals[a.dealId];
-    return s + (d && d.beloningstype === "betaald" ? Math.round(d.bedrag * 0.85) : 0);
+    return s + (d && d.beloningstype === "betaald" ? creatorShare(d.bedrag) : 0);
   }, 0);
 
   return (
@@ -85,16 +87,10 @@ export default function MijPage() {
         <div className={styles.pInfo}>
           <div className={styles.pName}>{profile.naam || "Nog geen profiel"}</div>
           <div className={styles.pMeta}>
-            {profile.igVolgers || profile.ttVolgers
-              ? [
-                  profile.igVolgers ? `Instagram ${profile.igVolgers.toLocaleString("nl-NL")}` : "",
-                  profile.ttVolgers ? `TikTok ${profile.ttVolgers.toLocaleString("nl-NL")}` : "",
-                ]
-                  .filter(Boolean)
-                  .join(" · ")
-              : profile.volgers > 0
-              ? `${profile.regio || "—"}`
-              : "Koppel je socials om te solliciteren"}
+            {perChannelVolgers(profile.igVolgers, profile.ttVolgers) ||
+              (profile.volgers > 0
+                ? `${profile.regio || "—"}`
+                : "Koppel je socials om te solliciteren")}
           </div>
         </div>
         <Link href="/creator" className={styles.edit}>{profile.naam ? "Bewerk" : "Start"}</Link>
@@ -116,7 +112,7 @@ export default function MijPage() {
         <div className={styles.stat}><b>{apps.length}</b><span>Sollicitaties</span></div>
         <div className={styles.stat}><b>{acceptedApps.length}</b><span>Geaccepteerd</span></div>
         <div className={styles.stat}><b>{contentCount}</b><span>Content</span></div>
-        <div className={styles.stat}><b>€{verdiend}</b><span>Verdiend</span></div>
+        <div className={styles.stat}><b>€{Math.round(verdiend)}</b><span>Verdiend</span></div>
       </div>
 
       {(() => {
