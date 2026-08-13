@@ -50,7 +50,7 @@
   background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px;
 }
 .appInfo { min-width: 0; }
-.appDeal { font-family: var(--ff-display); font-size: 17px; }
+.appDeal { font-family: var(--ff-body); font-weight: 600; font-size: 15.5px; }
 .appRest { font-family: var(--ff-mono); font-size: 10.5px; letter-spacing: 0.08em; color: var(--gold); margin-top: 3px; text-transform: uppercase; }
 .badge {
   flex: none; font-family: var(--ff-mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;

@@ -35,7 +35,7 @@
 .rest {
   font-family: var(--ff-mono); font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold);
 }
-.title { font-family: var(--ff-display); font-size: 21px; margin: 5px 0 6px; }
+.title { font-family: var(--ff-body); font-weight: 600; font-size: 18px; margin: 5px 0 6px; }
 .meta { font-family: var(--ff-mono); font-size: 11.5px; color: var(--muted); margin-bottom: 12px; }
 .chips { display: flex; flex-wrap: wrap; gap: 7px; }
 .chip {
