@@ -213,27 +213,62 @@ export async function listReviewsFor(id: string): Promise<Review[]> {
   return snap.docs.map((d) => ({ id: d.id, ...(d.data() as Review) }));
 }
 
+// Profielfoto van de creator uploaden (verplicht in de onboarding).
+export async function uploadCreatorPhoto(file: File): Promise<string> {
+  if (!firebaseReady) throw new Error("firebase-not-ready");
+  const uid = auth.currentUser?.uid;
+  if (!uid) throw new Error("not-signed-in");
+  const r = ref(storage, `creators/${uid}/foto-${Date.now()}`);
+  await uploadBytes(r, file);
+  return getDownloadURL(r);
+}
+
 export async function saveCreator(p: {
   naam: string;
   instagram: string;
   tiktok: string;
   volgers: number;
+  igVolgers?: number;
+  ttVolgers?: number;
   regio: string;
   geslacht: "vrouw" | "man" | "";
   leeftijd?: number;
   telefoon?: string;
+  foto?: string;
 }): Promise<void> {
   if (!firebaseReady) return;
   const uid = auth.currentUser?.uid;
   if (!uid) return;
   const r = doc(db, "creators", uid);
   const snap = await getDoc(r);
+  const isNew = !snap.exists();
   const base: Record<string, unknown> = { ...p, uid, updatedAt: serverTimestamp() };
-  if (!snap.exists()) {
+  if (isNew) {
     base.status = "pending";
     base.createdAt = serverTimestamp();
   }
   await setDoc(r, base, { merge: true });
+
+  // Publieke directory (leesbaar voor restaurants): geen telefoon/IBAN.
+  const pub: Record<string, unknown> = {
+    uid,
+    naam: p.naam,
+    regio: p.regio,
+    instagram: p.instagram,
+    tiktok: p.tiktok,
+    volgers: p.volgers,
+    igVolgers: p.igVolgers ?? 0,
+    ttVolgers: p.ttVolgers ?? 0,
+    geslacht: p.geslacht,
+    updatedAt: serverTimestamp(),
+  };
+  if (p.foto) pub.foto = p.foto;
+  if (typeof p.leeftijd === "number") pub.leeftijd = p.leeftijd;
+  if (isNew) {
+    pub.status = "pending";
+    pub.createdAt = serverTimestamp();
+  }
+  await setDoc(doc(db, "creatorProfiles", uid), pub, { merge: true });
 }
 
 export async function getMyCreator(

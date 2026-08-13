@@ -23,6 +23,9 @@ export type CreatorProfile = {
   instagram: string;
   tiktok: string;
   volgers: number; // totaal zelf-ingevuld bereik
+  igVolgers?: number;
+  ttVolgers?: number;
+  foto?: string;
   regio: string;
   geslacht: "vrouw" | "man" | "";
 };

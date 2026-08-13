@@ -80,8 +80,15 @@ export default function MijPage() {
         <div className={styles.pInfo}>
           <div className={styles.pName}>{profile.naam || "Nog geen profiel"}</div>
           <div className={styles.pMeta}>
-            {profile.volgers > 0
-              ? `${profile.volgers.toLocaleString("nl-NL")} volgers · ${profile.regio || "—"}`
+            {profile.igVolgers || profile.ttVolgers
+              ? [
+                  profile.igVolgers ? `Instagram ${profile.igVolgers.toLocaleString("nl-NL")}` : "",
+                  profile.ttVolgers ? `TikTok ${profile.ttVolgers.toLocaleString("nl-NL")}` : "",
+                ]
+                  .filter(Boolean)
+                  .join(" · ")
+              : profile.volgers > 0
+              ? `${profile.regio || "—"}`
               : "Koppel je socials om te solliciteren"}
           </div>
         </div>

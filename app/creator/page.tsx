@@ -4,11 +4,11 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useApp } from "@/lib/appauth";
-import { saveCreator } from "@/lib/appdata";
+import { saveCreator, uploadCreatorPhoto } from "@/lib/appdata";
 import styles from "./creator.module.css";
 
 const MIN_VOLGERS = 2000;
-const STEPS = 7;
+const STEPS = 8;
 
 export default function CreatorPage() {
   const router = useRouter();
@@ -19,6 +19,8 @@ export default function CreatorPage() {
   const [regio, setRegio] = useState("Amsterdam");
   const [geslacht, setGeslacht] = useState<"vrouw" | "man" | "">("");
   const [leeftijd, setLeeftijd] = useState<number | "">("");
+  const [foto, setFoto] = useState("");
+  const [fotoBusy, setFotoBusy] = useState(false);
   const [ig, setIg] = useState({ handle: "", vol: 0 });
   const [tt, setTt] = useState({ handle: "", vol: 0 });
   const [, setDealParam] = useState("");
@@ -55,13 +57,25 @@ export default function CreatorPage() {
       ? !!geslacht
       : step === 3
       ? leeftijdOk
+      : step === 4
+      ? !!foto
       : true;
   const progress = ((step + 1) / STEPS) * 100;
 
   async function finish() {
     if (!genoeg) return;
     const platforms = [ig.handle ? "Instagram" : "", tt.handle ? "TikTok" : ""].filter(Boolean);
-    const prof = { naam, instagram: ig.handle, tiktok: tt.handle, volgers: totaal, regio, geslacht };
+    const prof = {
+      naam,
+      instagram: ig.handle,
+      tiktok: tt.handle,
+      volgers: totaal,
+      igVolgers: ig.vol || 0,
+      ttVolgers: tt.vol || 0,
+      foto,
+      regio,
+      geslacht,
+    };
     saveProfile(prof);
     try {
       localStorage.setItem("dinely-app:platforms", platforms.join(" · "));
@@ -171,9 +185,44 @@ export default function CreatorPage() {
         )}
 
         {step === 4 && (
+          <div className={styles.stepBox}>
+            <span className="eyebrow">Stap 5 van {STEPS}</span>
+            <h1 className={styles.h1}>Zet je beste foto neer</h1>
+            <p className={styles.lead}>Deze foto zien restaurants als ze je uitkiezen. Kies er een die opvalt.</p>
+            <label className={styles.fotoTile} style={foto ? { backgroundImage: `url(${foto})` } : undefined}>
+              <input
+                type="file"
+                accept="image/*"
+                hidden
+                onChange={async (e) => {
+                  const f = e.target.files?.[0];
+                  e.currentTarget.value = "";
+                  if (!f) return;
+                  setFotoBusy(true);
+                  try {
+                    setFoto(await uploadCreatorPhoto(f));
+                  } catch {
+                    /* upload mislukt */
+                  } finally {
+                    setFotoBusy(false);
+                  }
+                }}
+              />
+              {fotoBusy ? (
+                <span className={styles.fotoHint}>Uploaden…</span>
+              ) : foto ? (
+                <span className={styles.fotoChange}>Andere foto</span>
+              ) : (
+                <span className={styles.fotoHint}>＋ Kies een foto</span>
+              )}
+            </label>
+          </div>
+        )}
+
+        {step === 5 && (
           <PlatformStep
             label="Instagram"
-            nr={`Stap 5 van ${STEPS}`}
+            nr={`Stap 6 van ${STEPS}`}
             color="#E1306C"
             handle={ig.handle}
             vol={ig.vol}
@@ -181,10 +230,10 @@ export default function CreatorPage() {
             onVol={(v) => setIg((s) => ({ ...s, vol: v }))}
           />
         )}
-        {step === 5 && (
+        {step === 6 && (
           <PlatformStep
             label="TikTok"
-            nr={`Stap 6 van ${STEPS}`}
+            nr={`Stap 7 van ${STEPS}`}
             color="#25F4EE"
             handle={tt.handle}
             vol={tt.vol}
@@ -193,7 +242,7 @@ export default function CreatorPage() {
           />
         )}
 
-        {step === 6 && (
+        {step === 7 && (
           <div className={styles.stepBox}>
             {genoeg ? (
               <>
@@ -238,7 +287,7 @@ export default function CreatorPage() {
         {step > 0 && (
           <button className="btn btn-ghost" onClick={() => setStep((s) => s - 1)}>Terug</button>
         )}
-        {step < 6 ? (
+        {step < 7 ? (
           <button
             className="btn btn-gold"
             style={{ flex: 1 }}

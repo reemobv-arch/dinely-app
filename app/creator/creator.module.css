@@ -7,6 +7,41 @@
 .dot { width: 26px; height: 4px; border-radius: 4px; background: var(--line-2); transition: 0.2s; }
 .dot.on { background: var(--gold); }
 
+.fotoTile {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  max-width: 240px;
+  aspect-ratio: 3 / 4;
+  margin: 6px auto 0;
+  border-radius: 20px;
+  border: 1px dashed var(--line-2);
+  background-color: var(--bg-2);
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.16s;
+}
+.fotoTile:hover {
+  border-color: var(--gold-dim);
+}
+.fotoHint {
+  font-family: var(--ff-mono);
+  font-size: 12.5px;
+  color: var(--muted);
+}
+.fotoChange {
+  background: rgba(11, 9, 6, 0.62);
+  color: #fff;
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  padding: 7px 13px;
+  border-radius: 100px;
+  align-self: end;
+  margin-bottom: 12px;
+}
+
 .progress {
   flex: 1;
   height: 5px;
