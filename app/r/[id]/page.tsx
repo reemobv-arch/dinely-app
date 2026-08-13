@@ -13,6 +13,7 @@ import {
   type PublicRestaurant,
 } from "@/lib/appdata";
 import type { Deal, Review, Content } from "@/lib/types";
+import { qualifiesForDeal } from "@/lib/qualify";
 import styles from "./restaurant.module.css";
 
 const STATUS: Record<string, { label: string; cls: string }> = {
@@ -102,13 +103,7 @@ export default function RestaurantPage() {
   }, [uid]);
 
   function qualifies(d: Deal): boolean {
-    const eisen = d.eisen ?? [];
-    if (eisen.length === 0) return true;
-    return eisen.some(
-      (e) =>
-        platforms.toLowerCase().includes(e.platform.toLowerCase()) &&
-        profile.volgers >= e.minVolgers
-    );
+    return qualifiesForDeal(d.eisen, platforms, profile.volgers);
   }
 
   async function apply(d: Deal) {

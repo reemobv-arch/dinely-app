@@ -15,6 +15,7 @@ import {
 import type { Deal, Review } from "@/lib/types";
 import BottomNav from "../BottomNav";
 import EmptyState from "../EmptyState";
+import { filterRestaurants } from "@/lib/discoverFilter";
 import styles from "./discover.module.css";
 
 const MapView = dynamic(() => import("./MapView"), { ssr: false });
@@ -61,18 +62,10 @@ export default function DiscoverPage() {
     })();
   }, []);
 
-  const filtered = useMemo(() => {
-    const qq = q.trim().toLowerCase();
-    const ss = stad.trim().toLowerCase();
-    return rows.filter((r) => {
-      const okQ = !qq || `${r.naam} ${r.keuken}`.toLowerCase().includes(qq);
-      const okStad = !ss || `${r.adres}`.toLowerCase().includes(ss) || !r.adres;
-      const okKeuken = !keuken || r.keuken === keuken;
-      const okPrijs = !prijs || r.prijs === prijs;
-      const okDeals = !metDeals || deals.some((d) => d.owner === r.id && d.status === "open");
-      return okQ && okStad && okKeuken && okPrijs && okDeals;
-    });
-  }, [rows, q, stad, keuken, prijs, metDeals, deals]);
+  const filtered = useMemo(
+    () => filterRestaurants(rows, { q, stad, keuken, prijs, metDeals }, deals),
+    [rows, q, stad, keuken, prijs, metDeals, deals]
+  );
 
   const points = useMemo(
     () =>
