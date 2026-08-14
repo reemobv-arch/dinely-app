@@ -58,6 +58,7 @@ export default function RestaurantPage() {
   const [dateByDeal, setDateByDeal] = useState<Record<string, string>>({});
   const [pickDeal, setPickDeal] = useState<string | null>(null);
   const [pickDate, setPickDate] = useState("");
+  const [motivatie, setMotivatie] = useState("");
   const [pending, setPending] = useState<string | null>(null);
 
   useEffect(() => {
@@ -109,6 +110,7 @@ export default function RestaurantPage() {
   async function apply(d: Deal) {
     if (!d.id || !pickDate || !r) return;
     setPending(d.id);
+    const toel = motivatie.trim();
     try {
       await createApplication({
         dealId: d.id,
@@ -119,11 +121,13 @@ export default function RestaurantPage() {
         regio: profile.regio,
         geslacht: profile.geslacht,
         bezoekDatum: pickDate,
+        ...(toel ? { toelichting: toel } : {}),
       });
       setStatusByDeal((p) => ({ ...p, [d.id!]: "wacht" }));
       setDateByDeal((p) => ({ ...p, [d.id!]: pickDate }));
       setPickDeal(null);
       setPickDate("");
+      setMotivatie("");
     } catch {
       setStatusByDeal((p) => ({ ...p, [d.id!]: "err" }));
     } finally {
@@ -298,12 +302,23 @@ export default function RestaurantPage() {
                     </div>
                   ) : stKey === "err" ? (
                     <div className={styles.reqBox}>Versturen lukte net niet. Ververs en probeer opnieuw.</div>
-                  ) : !ok ? (
-                    <div className={styles.reqBox}>
-                      Je voldoet nog niet aan de bereik-eis van deze deal.
-                    </div>
                   ) : pickDeal === d.id ? (
                     <div className={styles.pick}>
+                      {!ok && (
+                        <>
+                          <div className={styles.reqBox} style={{ marginBottom: 10 }}>
+                            Je zit nog onder de bereik-eis. Vertel kort waarom je tóch een goede
+                            match bent, dan kan het restaurant je alsnog kiezen.
+                          </div>
+                          <textarea
+                            className={styles.pickInput}
+                            rows={3}
+                            placeholder="Bijv. ik heb 1.000 volgers, maar het zijn allemaal echte food-fans uit de buurt."
+                            value={motivatie}
+                            onChange={(e) => setMotivatie(e.target.value)}
+                          />
+                        </>
+                      )}
                       <label className={styles.pickLbl}>Wanneer kom je langs?</label>
                       <input
                         className={styles.pickInput}
@@ -313,13 +328,17 @@ export default function RestaurantPage() {
                         value={pickDate}
                         onChange={(e) => setPickDate(e.target.value)}
                       />
-                      <button className={styles.applyBtn} disabled={!pickDate || pending === d.id} onClick={() => apply(d)}>
+                      <button
+                        className={styles.applyBtn}
+                        disabled={!pickDate || (!ok && !motivatie.trim()) || pending === d.id}
+                        onClick={() => apply(d)}
+                      >
                         {pending === d.id ? "Versturen…" : "Verstuur sollicitatie →"}
                       </button>
                     </div>
                   ) : (
-                    <button className={styles.applyBtn} onClick={() => { setPickDeal(d.id ?? null); setPickDate(""); }}>
-                      Solliciteer op deze deal
+                    <button className={styles.applyBtn} onClick={() => { setPickDeal(d.id ?? null); setPickDate(""); setMotivatie(""); }}>
+                      {ok ? "Solliciteer op deze deal" : "Toch solliciteren met toelichting"}
                     </button>
                   )}
                 </div>

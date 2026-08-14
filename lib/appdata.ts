@@ -30,6 +30,7 @@ export type NewApplication = {
   regio: string;
   geslacht: "vrouw" | "man" | "";
   bezoekDatum: string;
+  toelichting?: string; // motivatie als de creator (nog) niet aan de bereik-eis voldoet
 };
 
 /**

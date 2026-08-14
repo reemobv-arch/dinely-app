@@ -56,6 +56,7 @@ export type Application = {
   regio: string;
   geslacht: "vrouw" | "man" | "";
   bezoekDatum?: string; // ISO datum (YYYY-MM-DD) die de creator koos
+  toelichting?: string; // motivatie als de creator onder de bereik-eis zit
   bezoekBevestigd?: boolean; // restaurant heeft het bezoek bevestigd
   reviewed?: boolean;
   contentPosted?: boolean;
