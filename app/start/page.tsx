@@ -29,7 +29,7 @@ export default function StartPage() {
   return (
     <div className={`screen ${styles.wrap}`}>
       <header className={styles.head}>
-        <div className={styles.brand}>Dinel<span>y</span></div>
+        <div className={styles.brand}>Dine<span>ly</span></div>
       </header>
 
       <div className={styles.intro}>

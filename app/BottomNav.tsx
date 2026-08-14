@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useApp } from "@/lib/appauth";
 import styles from "./bottomnav.module.css";
 
 const TABS = [
@@ -13,6 +14,10 @@ const TABS = [
 
 export default function BottomNav() {
   const pathname = usePathname();
+  const { profile } = useApp();
+  // De nav is alleen voor creators. Een restaurantzoeker (geen creator-profiel)
+  // ziet 'm niet; voor hen is Ontdek genoeg.
+  if (!profile?.naam) return null;
   return (
     <nav className={styles.bar}>
       {TABS.map((t) => {

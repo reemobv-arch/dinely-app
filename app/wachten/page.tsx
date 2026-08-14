@@ -28,7 +28,7 @@ export default function WachtenPage() {
     <div className={styles.wrap}>
       <div className={styles.grad} />
       <div className={styles.center}>
-        <div className={styles.brand}>Dinel<span>y</span></div>
+        <div className={styles.brand}>Dine<span>ly</span></div>
         <h1 className={styles.title}>Your account is waiting for Dinely&apos;s approval.</h1>
         <p className={styles.sub}>
           We laten het je weten via mail én een melding zodra je bent goedgekeurd.

@@ -40,7 +40,7 @@ export default function LoginPage() {
   return (
     <div className={`screen ${styles.wrap}`}>
       <div className={styles.top}>
-        <div className={styles.brand}>Dinel<span>y</span></div>
+        <div className={styles.brand}>Dine<span>ly</span></div>
         <div className={styles.tag}>Zie de vibe voordat je aankomt</div>
       </div>
 

@@ -93,7 +93,7 @@ export default function DiscoverPage() {
     <div className={styles.wrap}>
       <header className={styles.head}>
         <Link href="/start" className={styles.back}>‹</Link>
-        <div className={styles.brand}>Dinel<span>y</span></div>
+        <div className={styles.brand}>Dine<span>ly</span></div>
         <div style={{ width: 30 }} />
       </header>
 
