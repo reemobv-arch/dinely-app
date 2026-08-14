@@ -79,7 +79,8 @@ export default function RestaurantPage() {
         setR(rr);
         setDeals(d.filter((x) => x.status === "open"));
         setReviews(rv);
-        setContent(c);
+        // Alleen content die het restaurant zelf op zijn profiel heeft gezet.
+        setContent(c.filter((x) => x.uitgelicht));
       } finally {
         setBusy(false);
       }

@@ -77,6 +77,7 @@ export type Content = {
   caption: string;
   media: ContentItem[];
   goedgekeurd?: boolean;
+  uitgelicht?: boolean; // door het restaurant op het publieke profiel gezet
   createdAt?: Stamp;
 };
 
