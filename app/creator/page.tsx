@@ -21,6 +21,7 @@ export default function CreatorPage() {
   const [leeftijd, setLeeftijd] = useState<number | "">("");
   const [foto, setFoto] = useState("");
   const [fotoBusy, setFotoBusy] = useState(false);
+  const [fotoError, setFotoError] = useState("");
   const [ig, setIg] = useState({ handle: "", vol: 0 });
   const [tt, setTt] = useState({ handle: "", vol: 0 });
   const [, setDealParam] = useState("");
@@ -199,10 +200,11 @@ export default function CreatorPage() {
                   e.currentTarget.value = "";
                   if (!f) return;
                   setFotoBusy(true);
+                  setFotoError("");
                   try {
                     setFoto(await uploadCreatorPhoto(f));
                   } catch {
-                    /* upload mislukt */
+                    setFotoError("Uploaden mislukt. Probeer het opnieuw of kies een andere foto.");
                   } finally {
                     setFotoBusy(false);
                   }
@@ -216,6 +218,9 @@ export default function CreatorPage() {
                 <span className={styles.fotoHint}>＋ Kies een foto</span>
               )}
             </label>
+            {fotoError && (
+              <p style={{ marginTop: 10, fontSize: 13, color: "var(--crit)" }}>{fotoError}</p>
+            )}
           </div>
         )}
 
