@@ -19,6 +19,8 @@ import type {
   Application,
   Content,
   ContentItem,
+  ReferralLink,
+  Reservation,
 } from "./types";
 
 export type NewApplication = {
@@ -175,6 +177,47 @@ export async function listContentFor(restaurantId: string): Promise<Content[]> {
   return snap.docs
     .map((d) => ({ id: d.id, ...(d.data() as Content) }))
     .sort((a, b) => (b.createdAt?.seconds ?? 0) - (a.createdAt?.seconds ?? 0));
+}
+
+// ---------- deel-links + reserveringen (gast-flow) ----------
+
+// Haalt een deel-link op via zijn code. Publiek leesbaar (geen login nodig).
+export async function getReferralLink(code: string): Promise<ReferralLink | null> {
+  if (!firebaseReady || !code) return null;
+  const snap = await getDoc(doc(db, "links", code));
+  return snap.exists() ? (snap.data() as ReferralLink) : null;
+}
+
+export type NewReservation = {
+  naam: string;
+  email: string;
+  telefoon: string;
+  leeftijd?: number;
+  aantal: number;
+  metWie?: string;
+};
+
+// Legt een reservering vast die aan een deel-link (en dus creator/deal) hangt.
+// Geen login nodig: de gast komt binnen via de link.
+export async function createReservation(
+  link: ReferralLink,
+  data: NewReservation
+): Promise<void> {
+  if (!firebaseReady) throw new Error("firebase-not-ready");
+  const payload: Omit<Reservation, "id"> = {
+    restaurantId: link.restaurantId,
+    dealId: link.dealId,
+    creatorUid: link.creatorUid,
+    linkCode: link.code,
+    naam: data.naam,
+    email: data.email,
+    telefoon: data.telefoon,
+    aantal: data.aantal,
+    ...(data.leeftijd != null ? { leeftijd: data.leeftijd } : {}),
+    ...(data.metWie ? { metWie: data.metWie } : {}),
+    createdAt: serverTimestamp() as unknown as Reservation["createdAt"],
+  };
+  await addDoc(collection(db, "reservations"), payload);
 }
 
 // Publieke leeslaag voor de app. Restaurants/deals/reviews zijn publiek leesbaar

@@ -100,3 +100,63 @@
   display: block; margin-top: 6px; font-family: var(--ff-mono); font-size: 8.5px;
   letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted-2);
 }
+
+/* Deel-link onder een geaccepteerde deal */
+.dealWrap {
+  display: flex;
+  flex-direction: column;
+}
+.share {
+  margin-top: -4px;
+  margin-bottom: 4px;
+  padding: 13px 15px;
+  border: 1px solid var(--gold-dim);
+  border-top: none;
+  border-radius: 0 0 14px 14px;
+  background: linear-gradient(180deg, rgba(201, 162, 75, 0.09), rgba(201, 162, 75, 0.03));
+}
+.shareLbl {
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 9px;
+}
+.shareRow {
+  display: flex;
+  gap: 8px;
+}
+.shareInput {
+  flex: 1;
+  min-width: 0;
+  background: var(--bg-2);
+  border: 1px solid var(--line-2);
+  border-radius: 10px;
+  padding: 10px 12px;
+  color: var(--text);
+  font-size: 13px;
+  font-family: var(--ff-mono);
+}
+.shareInput:focus {
+  outline: none;
+  border-color: var(--gold-dim);
+}
+.shareBtn {
+  flex: none;
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: linear-gradient(180deg, var(--gold-2), var(--gold));
+  color: #20180a;
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.shareHint {
+  margin-top: 9px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--muted);
+}

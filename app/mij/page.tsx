@@ -32,6 +32,22 @@ export default function MijPage() {
   const [rest, setRest] = useState<Record<string, string>>({});
   const [contentCount, setContentCount] = useState(0);
   const [busy, setBusy] = useState(true);
+  const [origin, setOrigin] = useState("https://app.dinely.nl");
+  const [copied, setCopied] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") setOrigin(window.location.origin);
+  }, []);
+
+  async function copyLink(code: string) {
+    try {
+      await navigator.clipboard.writeText(`${origin}/b/${code}`);
+      setCopied(code);
+      setTimeout(() => setCopied((c) => (c === code ? null : c)), 1800);
+    } catch {
+      /* clipboard kan geblokkeerd zijn; de link staat zichtbaar in het veld */
+    }
+  }
 
   useEffect(() => {
     if (!loading && !session) router.replace("/login");
@@ -133,8 +149,10 @@ export default function MijPage() {
                     const done = !!a.reviewed && !!a.contentPosted;
                     const actionsOpen = bevestigd && past && !done;
                     const grey = !done && !actionsOpen;
+                    const korting = deal?.kortingPct ?? 20;
                     return (
-                      <div key={a.id} className={`${styles.dealCard} ${grey ? styles.grey : ""}`}>
+                      <div key={a.id} className={styles.dealWrap}>
+                      <div className={`${styles.dealCard} ${grey ? styles.grey : ""}`}>
                         <div className={styles.appInfo}>
                           <div className={styles.appDeal}>{deal?.titel ?? "Deal"}</div>
                           <div className={styles.appRest}>{rest[a.restaurantId] ?? "Restaurant"}</div>
@@ -166,6 +184,33 @@ export default function MijPage() {
                             )}
                           </div>
                         )}
+                      </div>
+
+                      {a.linkCode && (
+                        <div className={styles.share}>
+                          <div className={styles.shareLbl}>
+                            Jouw deel-link · gasten krijgen {korting}% korting
+                          </div>
+                          <div className={styles.shareRow}>
+                            <input
+                              readOnly
+                              className={styles.shareInput}
+                              value={`${origin.replace(/^https?:\/\//, "")}/b/${a.linkCode}`}
+                              onFocus={(e) => e.currentTarget.select()}
+                            />
+                            <button
+                              type="button"
+                              className={styles.shareBtn}
+                              onClick={() => copyLink(a.linkCode!)}
+                            >
+                              {copied === a.linkCode ? "Gekopieerd ✓" : "Kopieer"}
+                            </button>
+                          </div>
+                          <p className={styles.shareHint}>
+                            Zet 'm in je story: “Kom ook eten, {korting}% korting via mijn link.”
+                          </p>
+                        </div>
+                      )}
                       </div>
                     );
                   })}

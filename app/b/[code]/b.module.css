@@ -1,0 +1,160 @@
+.wrap {
+  min-height: 100dvh;
+  background: #0b0906;
+}
+
+.state {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  font-size: 14px;
+  padding: 40px;
+  text-align: center;
+}
+.stateInner {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: center;
+}
+
+.logo {
+  font-family: var(--ff-display);
+  font-size: 26px;
+  letter-spacing: 0.01em;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.logo span {
+  color: var(--gold);
+}
+
+.hero {
+  position: relative;
+  height: 230px;
+  background-color: var(--surface);
+  background-size: cover;
+  background-position: center;
+}
+.heroGrad {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(11, 9, 6, 0.25) 0%, rgba(11, 9, 6, 0.35) 45%, #0b0906 100%);
+}
+.heroText {
+  position: absolute;
+  left: 22px;
+  right: 22px;
+  bottom: 18px;
+  z-index: 2;
+}
+.name {
+  font-family: var(--ff-display);
+  font-size: 30px;
+  line-height: 1.1;
+  color: var(--text);
+  margin-top: 4px;
+}
+
+.body {
+  padding: 20px 22px 48px;
+}
+
+.kortingBadge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  text-align: center;
+  padding: 16px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(201, 162, 75, 0.16), rgba(201, 162, 75, 0.05));
+  border: 1px solid var(--gold-dim);
+  margin-bottom: 18px;
+}
+.kortingBadge b {
+  font-family: var(--ff-display);
+  font-size: 30px;
+  color: var(--gold-2);
+  line-height: 1;
+}
+.kortingBadge span {
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.intro {
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--muted);
+  margin-bottom: 22px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.row2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.small {
+  margin-top: 12px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--muted-2);
+}
+
+/* bevestiging */
+.doneCard {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 30px;
+  gap: 12px;
+}
+.check {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 30px;
+  color: #20180a;
+  background: linear-gradient(180deg, var(--gold-2), var(--gold));
+  box-shadow: 0 10px 30px -8px rgba(201, 162, 75, 0.6);
+  margin-bottom: 8px;
+}
+.doneTitle {
+  font-family: var(--ff-display);
+  font-size: 28px;
+  color: var(--text);
+}
+.doneText {
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: var(--muted);
+  max-width: 340px;
+}
+.doneText b {
+  color: var(--gold-2);
+}
+.doneMeta {
+  margin-top: 10px;
+  font-family: var(--ff-mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--muted-2);
+  padding: 8px 16px;
+  border: 1px solid var(--line-2);
+  border-radius: 100px;
+}

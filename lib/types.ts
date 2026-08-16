@@ -35,6 +35,7 @@ export type Deal = {
   omschrijving: string;
   beloningstype: "betaald" | "gratis";
   bedrag: number;
+  kortingPct?: number; // korting voor de gast via de creator-deellink (default 20)
   eisen: PlatformEis[];
   eisRegio: string;
   geslacht: Gender;
@@ -57,6 +58,7 @@ export type Application = {
   geslacht: "vrouw" | "man" | "";
   bezoekDatum?: string; // ISO datum (YYYY-MM-DD) die de creator koos
   toelichting?: string; // motivatie als de creator onder de bereik-eis zit
+  linkCode?: string; // unieke deel-link die de creator na acceptatie krijgt
   bezoekBevestigd?: boolean; // restaurant heeft het bezoek bevestigd
   reviewed?: boolean;
   contentPosted?: boolean;
@@ -78,6 +80,33 @@ export type Content = {
   media: ContentItem[];
   goedgekeurd?: boolean;
   uitgelicht?: boolean; // door het restaurant op het publieke profiel gezet
+  createdAt?: Stamp;
+};
+
+// Unieke deel-link van een creator voor een deal (collectie "links"), publiek leesbaar.
+export type ReferralLink = {
+  code: string;
+  restaurantId: string;
+  dealId: string;
+  creatorUid: string;
+  creatorNaam?: string;
+  kortingPct: number;
+  createdAt?: Stamp;
+};
+
+// Reservering die een gast via zo'n deel-link achterlaat (collectie "reservations").
+export type Reservation = {
+  id?: string;
+  restaurantId: string;
+  dealId: string;
+  creatorUid: string;
+  linkCode: string;
+  naam: string;
+  email: string;
+  telefoon: string;
+  leeftijd?: number;
+  aantal: number;
+  metWie?: string;
   createdAt?: Stamp;
 };
 
