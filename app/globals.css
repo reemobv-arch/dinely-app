@@ -46,6 +46,9 @@ body{background:#0B0906;color:var(--text);font-family:var(--ff-body);-webkit-fon
       0 40px 90px -20px rgba(0,0,0,.85);/* schaduw op de achtergrond */
   }
   .app-shell::-webkit-scrollbar{display:none}
+  /* Volledig-hoge schermen (100dvh) moeten binnen het frame de framehoogte
+     aanhouden i.p.v. de vensterhoogte, anders valt een onderaan gepinde knop weg. */
+  .app-shell > *{min-height:100%}
   /* dynamic island */
   .device-frame::before{
     content:"";position:fixed;z-index:1000;pointer-events:none;

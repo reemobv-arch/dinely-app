@@ -329,6 +329,9 @@ function PlatformStep({
       <label className="flabel" style={{ marginTop: 16 }}>Aantal volgers</label>
       <input className="inp" type="number" min={0} value={vol || ""} placeholder="0"
         onChange={(e) => onVol(Number(e.target.value))} />
+      <p className={styles.volgersHint}>
+        We controleren je aantal volgers, dus vul een eerlijk aantal in. Afronden mag.
+      </p>
     </div>
   );
 }
