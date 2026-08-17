@@ -32,7 +32,9 @@ export default function RootLayout({
     <html lang="nl">
       <body>
         <AppAuthProvider>
-          <div className="app-shell">{children}</div>
+          <div className="device-frame">
+            <div className="app-shell">{children}</div>
+          </div>
         </AppAuthProvider>
         <RegisterSW />
       </body>
