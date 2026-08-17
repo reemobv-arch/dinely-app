@@ -33,23 +33,13 @@ export default function StartPage() {
       </header>
 
       <div className={styles.intro}>
-        <span className="eyebrow">Amsterdam</span>
-        <h1 className={styles.h1}>Waar ben je<br />naar op zoek?</h1>
+        <span className="eyebrow">Voor creators</span>
+        <h1 className={styles.h1}>Welkom bij<br />Dinely.</h1>
       </div>
 
       <div className={styles.cards}>
-        <Link href="/discover" className={`${styles.card} ${styles.discover}`}>
-          <div className={styles.cardInner}>
-            <span className={styles.num}>01</span>
-            <h2>Ontdek restaurants</h2>
-            <p>Zie de sfeer van binnenuit en vind je volgende tafel.</p>
-            <span className={styles.go}>Op de kaart <span className={styles.arw}>→</span></span>
-          </div>
-        </Link>
-
         <Link href="/creator" className={`${styles.card} ${styles.creator}`}>
           <div className={styles.cardInner}>
-            <span className={styles.num}>02</span>
             <h2>Ik ben creator</h2>
             <p>Koppel je socials en verdien met deals bij restaurants.</p>
             <span className={styles.go}>Aan de slag <span className={styles.arw}>→</span></span>
