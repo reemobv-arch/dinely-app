@@ -217,7 +217,20 @@ export async function createReservation(
     ...(data.metWie ? { metWie: data.metWie } : {}),
     createdAt: serverTimestamp() as unknown as Reservation["createdAt"],
   };
-  await addDoc(collection(db, "reservations"), payload);
+  const ref = await addDoc(collection(db, "reservations"), payload);
+  // Best-effort: het restaurant mailen over de nieuwe reservering.
+  try {
+    const base = process.env.NEXT_PUBLIC_DASHBOARD_URL;
+    if (base) {
+      void fetch(`${base}/api/notify-reservation`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reservationId: ref.id }),
+      }).catch(() => {});
+    }
+  } catch {
+    /* mail is bijzaak, nooit de reservering blokkeren */
+  }
 }
 
 // Publieke leeslaag voor de app. Restaurants/deals/reviews zijn publiek leesbaar
