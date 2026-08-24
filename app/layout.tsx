@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { AppAuthProvider } from "@/lib/appauth";
 import RegisterSW from "./RegisterSW";
+import DeviceFrame from "./DeviceFrame";
 
 export const metadata: Metadata = {
   title: "Dinely",
@@ -32,9 +33,7 @@ export default function RootLayout({
     <html lang="nl">
       <body>
         <AppAuthProvider>
-          <div className="device-frame">
-            <div className="app-shell">{children}</div>
-          </div>
+          <DeviceFrame>{children}</DeviceFrame>
         </AppAuthProvider>
         <RegisterSW />
       </body>
