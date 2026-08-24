@@ -20,7 +20,8 @@ export default function StartPage() {
     if (!uid) return;
     (async () => {
       const c = await getMyCreator(uid);
-      if (c && c.status === "pending") router.replace("/wachten");
+      // Alleen goedgekeurde creators mogen door; anders (in behandeling/afgewezen) wachten.
+      if (c && c.status !== "approved") router.replace("/wachten");
     })();
   }, [uid, router]);
 

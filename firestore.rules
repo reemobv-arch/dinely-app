@@ -28,9 +28,12 @@ service cloud.firestore {
       allow read: if isAdmin()
         || (request.auth != null && resource.data.restaurantId == request.auth.uid)
         || (request.auth != null && resource.data.creatorUid == request.auth.uid);
+      // Een creator mag alleen solliciteren als die goedgekeurd is (approved).
       allow create: if isAdmin()
         || (request.auth != null && request.resource.data.restaurantId == request.auth.uid)
-        || (request.auth != null && request.resource.data.creatorUid == request.auth.uid);
+        || (request.auth != null && request.resource.data.creatorUid == request.auth.uid
+            && exists(/databases/$(database)/documents/creators/$(request.auth.uid))
+            && get(/databases/$(database)/documents/creators/$(request.auth.uid)).data.status == 'approved');
       allow update: if isAdmin()
         || (request.auth != null && resource.data.restaurantId == request.auth.uid)
         || (request.auth != null && resource.data.creatorUid == request.auth.uid);

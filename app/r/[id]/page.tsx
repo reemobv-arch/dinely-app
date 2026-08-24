@@ -10,6 +10,7 @@ import {
   listContentFor,
   listMyApplications,
   createApplication,
+  getMyCreator,
   type PublicRestaurant,
 } from "@/lib/appdata";
 import type { Deal, Review, Content } from "@/lib/types";
@@ -60,6 +61,14 @@ export default function RestaurantPage() {
   const [pickDate, setPickDate] = useState("");
   const [motivatie, setMotivatie] = useState("");
   const [pending, setPending] = useState<string | null>(null);
+  const [approved, setApproved] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    if (!uid) return;
+    getMyCreator(uid)
+      .then((c) => setApproved(c?.status === "approved"))
+      .catch(() => setApproved(false));
+  }, [uid]);
 
   useEffect(() => {
     try {
@@ -300,6 +309,11 @@ export default function RestaurantPage() {
                         : stKey === "afgewezen"
                         ? "Deze sollicitatie is helaas afgewezen."
                         : `In afwachting — je solliciteerde voor ${formatNL(dateByDeal[d.id ?? ""])}.`}
+                    </div>
+                  ) : approved === false ? (
+                    <div className={styles.reqBox}>
+                      Je profiel moet eerst worden goedgekeurd voordat je kunt solliciteren. Rond
+                      je aanmelding af in <b>Mijn</b>.
                     </div>
                   ) : stKey === "err" ? (
                     <div className={styles.reqBox}>Versturen lukte net niet. Ververs en probeer opnieuw.</div>
