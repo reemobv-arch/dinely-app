@@ -9,6 +9,7 @@ import {
   listAllDeals,
   listRestaurants,
   listMyContent,
+  getMyCreator,
 } from "@/lib/appdata";
 import type { Application, Deal } from "@/lib/types";
 import { formatNL, todayISO } from "@/lib/format";
@@ -31,6 +32,7 @@ export default function MijPage() {
   const [deals, setDeals] = useState<Record<string, Deal>>({});
   const [rest, setRest] = useState<Record<string, string>>({});
   const [contentCount, setContentCount] = useState(0);
+  const [punten, setPunten] = useState(0);
   const [busy, setBusy] = useState(true);
   const [origin, setOrigin] = useState("https://app.dinely.nl");
   const [copied, setCopied] = useState<string | null>(null);
@@ -58,12 +60,14 @@ export default function MijPage() {
     (async () => {
       setBusy(true);
       try {
-        const [mine, d, r, myContent] = await Promise.all([
+        const [mine, d, r, myContent, cre] = await Promise.all([
           listMyApplications(uid),
           listAllDeals(),
           listRestaurants(),
           listMyContent(uid),
+          getMyCreator(uid),
         ]);
+        setPunten(cre?.punten ?? 0);
         const dmap: Record<string, Deal> = {};
         d.forEach((x) => { if (x.id) dmap[x.id] = x; });
         const rmap: Record<string, string> = {};
@@ -123,6 +127,16 @@ export default function MijPage() {
         <span>Instellingen &amp; notificaties</span>
         <span className={styles.chev}>›</span>
       </Link>
+
+      <div className={styles.points}>
+        <div className={styles.pointsStar}>★</div>
+        <div className={styles.pointsInfo}>
+          <div className={styles.pointsVal}>{punten.toLocaleString("nl-NL")} punten</div>
+          <div className={styles.pointsSub}>
+            Verdien punten met goede samenwerkingen. Restaurants waarderen je na elke deal.
+          </div>
+        </div>
+      </div>
 
       <div className={styles.stats}>
         <div className={styles.stat}><b>{apps.length}</b><span>Sollicitaties</span></div>

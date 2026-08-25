@@ -74,38 +74,35 @@ export async function createApplication(app: NewApplication): Promise<void> {
 export type NewReview = {
   restaurantId: string;
   naam: string;
-  sterren: number;
-  vibeGoed: string;
-  vibeMinder: string;
-  etenGoed: string;
-  etenMinder: string;
+  communicatie: number; // 0-5
+  voedsel: number; // 0-5
+  sfeer: number; // 0-5
+  waarde: number; // 0-5 (waard voor je geld)
+  toelichting?: string;
 };
 
-/** Review wegschrijven. vibe/food-cijfers worden afgeleid uit de sterren
- *  zodat de dashboard-scores blijven werken. */
+/** Review wegschrijven. De creator geeft sterren op vier categorieën.
+ *  food/vibe/service worden afgeleid zodat bestaande dashboard-weergaven blijven werken. */
 export async function createReview(r: NewReview): Promise<void> {
   if (!firebaseReady) throw new Error("firebase-not-ready");
   const uid = auth.currentUser?.uid;
   if (!uid) throw new Error("not-signed-in");
-  const tekst = [
-    r.vibeGoed && `Vibe (top): ${r.vibeGoed}`,
-    r.vibeMinder && `Vibe (minder): ${r.vibeMinder}`,
-    r.etenGoed && `Eten (top): ${r.etenGoed}`,
-    r.etenMinder && `Eten (minder): ${r.etenMinder}`,
-  ].filter(Boolean).join("\n");
+  const cats = [r.communicatie, r.voedsel, r.sfeer, r.waarde];
+  const sterren = Math.round(cats.reduce((a, b) => a + b, 0) / cats.length);
   await addDoc(collection(db, "reviews"), {
     restaurantId: r.restaurantId,
     creatorUid: uid,
     naam: r.naam || "Creator",
-    sterren: r.sterren,
-    vibe: Math.round(r.sterren * 2 * 10) / 10, // op schaal /10
-    food: r.sterren, // op schaal /5
-    service: r.sterren,
-    vibeGoed: r.vibeGoed,
-    vibeMinder: r.vibeMinder,
-    etenGoed: r.etenGoed,
-    etenMinder: r.etenMinder,
-    tekst,
+    communicatie: r.communicatie,
+    voedsel: r.voedsel,
+    sfeer: r.sfeer,
+    waarde: r.waarde,
+    sterren,
+    // Afgeleid voor compatibiliteit (overzicht/preview gebruiken deze nog):
+    food: r.voedsel,
+    vibe: Math.round(r.sfeer * 2 * 10) / 10, // op schaal /10
+    service: r.communicatie,
+    tekst: r.toelichting?.trim() || "",
     createdAt: serverTimestamp(),
   });
 }
@@ -331,11 +328,11 @@ export async function saveCreator(p: {
 
 export async function getMyCreator(
   uid: string
-): Promise<{ status?: string; regio?: string; iban?: string; ibanNaam?: string } | null> {
+): Promise<{ status?: string; regio?: string; iban?: string; ibanNaam?: string; punten?: number } | null> {
   if (!firebaseReady || !uid) return null;
   const snap = await getDoc(doc(db, "creators", uid));
   return snap.exists()
-    ? (snap.data() as { status?: string; regio?: string; iban?: string; ibanNaam?: string })
+    ? (snap.data() as { status?: string; regio?: string; iban?: string; ibanNaam?: string; punten?: number })
     : null;
 }
 

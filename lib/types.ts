@@ -115,15 +115,17 @@ export type Review = {
   restaurantId: string;
   creatorUid?: string;
   naam: string;
+  // Sterren-categorieën (0-5) die de creator geeft.
+  communicatie?: number;
+  voedsel?: number;
+  sfeer?: number;
+  waarde?: number;
+  // Afgeleid, voor compatibiliteit met bestaande weergaven.
   food: number;
   vibe: number;
   service: number;
   sterren: number;
   tekst: string;
-  vibeGoed?: string;
-  vibeMinder?: string;
-  etenGoed?: string;
-  etenMinder?: string;
   createdAt?: Stamp;
 };
 
