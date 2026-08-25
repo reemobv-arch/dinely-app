@@ -7,14 +7,17 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { signInAnonymously, onAuthStateChanged, signOut } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth, firebaseReady } from "./firebase";
 
-// Prototype-auth voor de Dinely-app.
-// Login = telefoonnummer -> (mock) code 123456 -> code invoeren.
-// De sessie wordt lokaal bewaard. Onder water loggen we anoniem in bij Firebase
-// (indien de Anonymous-provider aanstaat) zodat sollicitaties naar Firestore
-// geschreven kunnen worden. De echte SMS-login komt bij de native app.
+// Auth voor de Dinely-app.
+// Login = telefoonnummer -> echte SMS-code via Firebase Phone Authentication.
+// De uid die Firebase teruggeeft is stabiel per telefoonnummer, dus uitloggen
+// en opnieuw inloggen levert hetzelfde account (en dezelfde creator) op.
+// De feitelijke SMS-flow (reCAPTCHA + code invoeren) staat in app/login.
+//
+// Zonder Firebase-config (lokaal ontwikkelen zonder .env) valt de app terug op
+// een demo-login met een vaste code, zodat de UI ook zonder SMS te testen is.
 
 export const DEMO_CODE = "123456";
 
@@ -43,10 +46,10 @@ type Session = { phone: string };
 
 type AppAuthValue = {
   session: Session | null;
-  uid: string | null; // Firebase anonieme uid (null als provider uit staat)
+  uid: string | null; // Firebase-uid (stabiel per telefoonnummer)
   loading: boolean;
   profile: CreatorProfile;
-  login: (phone: string) => void;
+  loginDemo: (phone: string) => void; // alleen als Firebase niet geconfigureerd is
   logout: () => void;
   saveProfile: (p: CreatorProfile) => void;
 };
@@ -59,7 +62,7 @@ const AppAuthContext = createContext<AppAuthValue>({
   uid: null,
   loading: true,
   profile: EMPTY_PROFILE,
-  login: () => {},
+  loginDemo: () => {},
   logout: () => {},
   saveProfile: () => {},
 });
@@ -71,32 +74,43 @@ export function AppAuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let hasSession = false;
+    // Profiel-cache altijd inladen (los van de auth-modus).
     try {
-      const s = localStorage.getItem(S_KEY);
-      if (s) {
-        setSession(JSON.parse(s) as Session);
-        hasSession = true;
-      }
       const p = localStorage.getItem(P_KEY);
       if (p) setProfile({ ...EMPTY_PROFILE, ...(JSON.parse(p) as CreatorProfile) });
     } catch {
       /* geen storage */
     }
-    setLoading(false);
 
-    if (firebaseReady) {
-      const unsub = onAuthStateChanged(auth, (u) => setUid(u ? u.uid : null));
-      // Zorg dat er een anonieme Firebase-sessie is zodra iemand lokaal is
-      // ingelogd, ook als die sessie van vóór het aanzetten van Anonymous is.
-      if (hasSession && !auth.currentUser) {
-        signInAnonymously(auth).catch(() => {});
+    // Demo-modus: geen Firebase-config -> sessie uit localStorage halen.
+    if (!firebaseReady) {
+      try {
+        const s = localStorage.getItem(S_KEY);
+        if (s) setSession(JSON.parse(s) as Session);
+      } catch {
+        /* negeer */
       }
-      return () => unsub();
+      setLoading(false);
+      return;
     }
+
+    // Echte modus: Firebase is de bron van waarheid. Firebase bewaart de sessie
+    // zelf (ook na herladen), dus we luisteren alleen naar wijzigingen.
+    const unsub = onAuthStateChanged(auth, (u) => {
+      if (u) {
+        setUid(u.uid);
+        setSession({ phone: u.phoneNumber ?? "" });
+      } else {
+        setUid(null);
+        setSession(null);
+      }
+      setLoading(false);
+    });
+    return () => unsub();
   }, []);
 
-  function login(phone: string) {
+  // Alleen gebruikt in demo-modus (Firebase niet geconfigureerd).
+  function loginDemo(phone: string) {
     const s = { phone };
     try {
       localStorage.setItem(S_KEY, JSON.stringify(s));
@@ -104,12 +118,6 @@ export function AppAuthProvider({ children }: { children: ReactNode }) {
       /* negeer */
     }
     setSession(s);
-    if (firebaseReady && !auth.currentUser) {
-      // Anoniem inloggen zodat we later een sollicitatie mogen wegschrijven.
-      signInAnonymously(auth).catch(() => {
-        /* Anonymous-provider staat mogelijk nog uit; browsen werkt sowieso. */
-      });
-    }
   }
 
   function logout() {
@@ -133,7 +141,7 @@ export function AppAuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AppAuthContext.Provider
-      value={{ session, uid, loading, profile, login, logout, saveProfile }}
+      value={{ session, uid, loading, profile, loginDemo, logout, saveProfile }}
     >
       {children}
     </AppAuthContext.Provider>
