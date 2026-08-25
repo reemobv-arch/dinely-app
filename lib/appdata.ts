@@ -358,6 +358,19 @@ export async function listAllContent(): Promise<Content[]> {
     .sort((a, b) => (b.createdAt?.seconds ?? 0) - (a.createdAt?.seconds ?? 0));
 }
 
+// De deal-id's waarvoor deze creator een uitnodiging heeft gekregen (invite-only).
+export async function listMyInvites(uid: string): Promise<Set<string>> {
+  if (!firebaseReady || !uid) return new Set();
+  try {
+    const snap = await getDocs(
+      query(collection(db, "invites"), where("creatorUid", "==", uid))
+    );
+    return new Set(snap.docs.map((d) => (d.data() as { dealId?: string }).dealId).filter(Boolean) as string[]);
+  } catch {
+    return new Set();
+  }
+}
+
 export async function listMyApplications(uid: string): Promise<Application[]> {
   if (!firebaseReady || !uid) return [];
   const snap = await getDocs(

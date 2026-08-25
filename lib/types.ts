@@ -42,6 +42,7 @@ export type Deal = {
   plekken: number;
   gevraagd: string;
   looptijdDagen: number;
+  zichtbaarheid?: "open" | "invite"; // invite = exclusief, alleen genodigde creators
   status: "open" | "gesloten";
   createdAt?: Stamp;
 };

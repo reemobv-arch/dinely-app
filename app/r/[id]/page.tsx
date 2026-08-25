@@ -9,6 +9,7 @@ import {
   listReviewsFor,
   listContentFor,
   listMyApplications,
+  listMyInvites,
   createApplication,
   getMyCreator,
   type PublicRestaurant,
@@ -62,12 +63,14 @@ export default function RestaurantPage() {
   const [motivatie, setMotivatie] = useState("");
   const [pending, setPending] = useState<string | null>(null);
   const [approved, setApproved] = useState<boolean | null>(null);
+  const [invited, setInvited] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if (!uid) return;
     getMyCreator(uid)
       .then((c) => setApproved(c?.status === "approved"))
       .catch(() => setApproved(false));
+    listMyInvites(uid).then(setInvited).catch(() => {});
   }, [uid]);
 
   useEffect(() => {
@@ -287,12 +290,18 @@ export default function RestaurantPage() {
               const st = STATUS[stKey ?? ""];
               const applied = !!stKey && stKey !== "err";
               const ok = qualifies(d);
+              const inviteLocked =
+                d.zichtbaarheid === "invite" && !invited.has(d.id ?? "") && !applied;
               return (
-                <div key={d.id} className={styles.deal}>
+                <div key={d.id} className={`${styles.deal} ${inviteLocked ? styles.dealLocked : ""}`}>
                   <div className={styles.dealTop}>
                     <h3>{d.titel}</h3>
                     <span className={styles.reward}>
-                      {d.beloningstype === "betaald" ? `€${d.bedrag} + diner` : "Gratis diner"}
+                      {inviteLocked
+                        ? "🔒 Invite only"
+                        : d.beloningstype === "betaald"
+                        ? `€${d.bedrag} + diner`
+                        : "Gratis diner"}
                     </span>
                   </div>
                   <div className={styles.dealChips}>
@@ -302,7 +311,12 @@ export default function RestaurantPage() {
                     {d.gevraagd && <span className={styles.dealChip}>{d.gevraagd}</span>}
                   </div>
 
-                  {applied ? (
+                  {inviteLocked ? (
+                    <div className={styles.reqBox}>
+                      Deze deal is <b>exclusief</b> en alleen op uitnodiging. Word je uitgenodigd door
+                      dit restaurant, dan kun je hier reageren.
+                    </div>
+                  ) : applied ? (
                     <div className={`${styles.statusBox} ${styles[st?.cls ?? "wacht"]}`}>
                       {stKey === "geaccepteerd"
                         ? `✓ Geaccepteerd — je komt op ${formatNL(dateByDeal[d.id ?? ""])}.`

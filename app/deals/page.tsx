@@ -8,6 +8,7 @@ import {
   listAllDeals,
   listRestaurants,
   listMyApplications,
+  listMyInvites,
   getMyCreator,
   type PublicRestaurant,
 } from "@/lib/appdata";
@@ -30,6 +31,7 @@ export default function DealsPage() {
   const [statusByDeal, setStatusByDeal] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState(true);
   const [approved, setApproved] = useState<boolean | null>(null);
+  const [invited, setInvited] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if (!loading && !session) router.replace("/login");
@@ -62,7 +64,14 @@ export default function DealsPage() {
     getMyCreator(uid)
       .then((c) => setApproved(c?.status === "approved"))
       .catch(() => setApproved(false));
+    listMyInvites(uid).then(setInvited).catch(() => {});
   }, [uid]);
+
+  // In de algemene feed tonen we alleen open deals en invite-only deals waarvoor
+  // je bent uitgenodigd. (Op de restaurantpagina zie je invite-only deals wél,
+  // maar grijs.)
+  const zichtbaar = (d: Deal) =>
+    d.zichtbaarheid !== "invite" || invited.has(d.id ?? "");
 
   return (
     <div className={styles.wrap}>
@@ -93,7 +102,7 @@ export default function DealsPage() {
               </div>
             </div>
           ))
-        ) : deals.filter((d) => rest[d.owner]).length === 0 ? (
+        ) : deals.filter((d) => rest[d.owner] && zichtbaar(d)).length === 0 ? (
           <EmptyState
             icon="✦"
             title="Nog geen open deals"
@@ -103,7 +112,7 @@ export default function DealsPage() {
           />
         ) : (
           deals
-            .filter((d) => rest[d.owner])
+            .filter((d) => rest[d.owner] && zichtbaar(d))
             .map((d) => {
             const r = rest[d.owner];
             const cover = r?.media?.sfeer?.find(Boolean) ?? null;
