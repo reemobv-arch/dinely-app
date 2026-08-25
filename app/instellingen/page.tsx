@@ -133,7 +133,7 @@ export default function InstellingenPage() {
           </div>
           <div className={styles.rowStatic}>
             <span>E-mailadres</span>
-            <b>—</b>
+            <b>{profile.email || "—"}</b>
           </div>
           <div className={styles.rowEdit}>
             <label className={styles.editLbl}>Stad</label>

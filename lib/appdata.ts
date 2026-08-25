@@ -282,6 +282,7 @@ export async function uploadCreatorPhoto(file: File): Promise<string> {
 
 export async function saveCreator(p: {
   naam: string;
+  email?: string;
   instagram: string;
   tiktok: string;
   volgers: number;

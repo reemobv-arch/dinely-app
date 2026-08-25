@@ -16,6 +16,7 @@ export default function CreatorPage() {
 
   const [step, setStep] = useState(0);
   const [naam, setNaam] = useState("");
+  const [email, setEmail] = useState("");
   const [regio, setRegio] = useState("Amsterdam");
   const [geslacht, setGeslacht] = useState<"vrouw" | "man" | "">("");
   const [leeftijd, setLeeftijd] = useState<number | "">("");
@@ -32,6 +33,7 @@ export default function CreatorPage() {
 
   useEffect(() => {
     if (profile.naam) setNaam(profile.naam);
+    if (profile.email) setEmail(profile.email);
     if (profile.regio) setRegio(profile.regio);
     if (profile.geslacht) setGeslacht(profile.geslacht);
     if (profile.instagram) setIg((s) => ({ ...s, handle: profile.instagram }));
@@ -48,10 +50,11 @@ export default function CreatorPage() {
   const totaal = (ig.vol || 0) + (tt.vol || 0);
   const genoeg = totaal >= MIN_VOLGERS;
   const leeftijdOk = typeof leeftijd === "number" && leeftijd >= 16 && leeftijd <= 100;
+  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
 
   const canNext =
     step === 0
-      ? !!naam.trim()
+      ? !!naam.trim() && emailOk
       : step === 1
       ? !!regio.trim()
       : step === 2
@@ -68,6 +71,7 @@ export default function CreatorPage() {
     const platforms = [ig.handle ? "Instagram" : "", tt.handle ? "TikTok" : ""].filter(Boolean);
     const prof = {
       naam,
+      email: email.trim(),
       instagram: ig.handle,
       tiktok: tt.handle,
       volgers: totaal,
@@ -123,6 +127,24 @@ export default function CreatorPage() {
               onChange={(e) => setNaam(e.target.value)}
               placeholder="Juul Bakker"
             />
+            <label className="flabel" style={{ marginTop: 16 }}>E-mailadres</label>
+            <input
+              className="inp"
+              type="email"
+              inputMode="email"
+              autoComplete="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="jij@email.nl"
+            />
+            <p className={styles.lead} style={{ marginTop: 8, fontSize: 13 }}>
+              Hier laten we je weten zodra je bent goedgekeurd.
+            </p>
+            {email.trim() !== "" && !emailOk && (
+              <p style={{ marginTop: 4, fontSize: 13, color: "var(--muted-2)" }}>
+                Vul een geldig e-mailadres in.
+              </p>
+            )}
           </div>
         )}
 

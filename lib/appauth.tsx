@@ -23,6 +23,7 @@ export const DEMO_CODE = "123456";
 
 export type CreatorProfile = {
   naam: string;
+  email: string; // account-e-mail, o.a. voor de goedkeuringsmail
   instagram: string;
   tiktok: string;
   volgers: number; // totaal zelf-ingevuld bereik
@@ -35,6 +36,7 @@ export type CreatorProfile = {
 
 const EMPTY_PROFILE: CreatorProfile = {
   naam: "",
+  email: "",
   instagram: "",
   tiktok: "",
   volgers: 0,
