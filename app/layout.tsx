@@ -3,6 +3,7 @@ import "./globals.css";
 import { AppAuthProvider } from "@/lib/appauth";
 import RegisterSW from "./RegisterSW";
 import DeviceFrame from "./DeviceFrame";
+import InstallPrompt from "./InstallPrompt";
 
 export const metadata: Metadata = {
   title: "Dinely",
@@ -35,6 +36,7 @@ export default function RootLayout({
         <AppAuthProvider>
           <DeviceFrame>{children}</DeviceFrame>
         </AppAuthProvider>
+        <InstallPrompt />
         <RegisterSW />
       </body>
     </html>
