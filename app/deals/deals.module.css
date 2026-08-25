@@ -42,3 +42,35 @@
   font-family: var(--ff-mono); font-size: 10.5px; color: var(--muted);
   border: 1px solid var(--line-2); border-radius: 100px; padding: 5px 10px;
 }
+
+/* Niet-goedgekeurd: deals grijs en niet klikbaar */
+.lockNote {
+  margin: 0 22px 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--gold-dim, #8c7231);
+  background: rgba(201, 162, 75, 0.07);
+  border-radius: 12px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--gold-2, #e4c67e);
+}
+.locked {
+  opacity: 0.5;
+  filter: grayscale(0.6);
+  pointer-events: none;
+  cursor: default;
+}
+.lockBadge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  font-family: var(--ff-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  color: var(--text);
+  background: rgba(11, 9, 6, 0.6);
+  border: 1px solid var(--line-2);
+  padding: 5px 10px;
+  border-radius: 100px;
+  backdrop-filter: blur(4px);
+}

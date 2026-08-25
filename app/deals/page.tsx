@@ -8,6 +8,7 @@ import {
   listAllDeals,
   listRestaurants,
   listMyApplications,
+  getMyCreator,
   type PublicRestaurant,
 } from "@/lib/appdata";
 import type { Deal } from "@/lib/types";
@@ -28,6 +29,7 @@ export default function DealsPage() {
   const [rest, setRest] = useState<Record<string, PublicRestaurant>>({});
   const [statusByDeal, setStatusByDeal] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState(true);
+  const [approved, setApproved] = useState<boolean | null>(null);
 
   useEffect(() => {
     if (!loading && !session) router.replace("/login");
@@ -57,6 +59,9 @@ export default function DealsPage() {
       });
       setStatusByDeal(s);
     })();
+    getMyCreator(uid)
+      .then((c) => setApproved(c?.status === "approved"))
+      .catch(() => setApproved(false));
   }, [uid]);
 
   return (
@@ -66,6 +71,13 @@ export default function DealsPage() {
         <div className={styles.brand}>Deals</div>
         <div style={{ width: 30 }} />
       </header>
+
+      {approved === false && (
+        <div className={styles.lockNote}>
+          Je account wacht op goedkeuring. Je kunt deals alvast bekijken, maar pas reageren zodra je
+          bent goedgekeurd.
+        </div>
+      )}
 
       <div className={styles.list}>
         {busy ? (
@@ -96,14 +108,16 @@ export default function DealsPage() {
             const r = rest[d.owner];
             const cover = r?.media?.sfeer?.find(Boolean) ?? null;
             const st = STATUS[statusByDeal[d.id ?? ""] ?? ""];
-            return (
-              <Link key={d.id} href={`/r/${d.owner}`} className={styles.deal}>
+            const locked = approved === false;
+            const inner = (
+              <>
                 <div className={styles.thumb} style={cover ? { backgroundImage: `url(${cover})` } : undefined}>
                   {!cover && <span className={styles.thumbFallback}>Dinely</span>}
                   <span className={styles.reward}>
                     {d.beloningstype === "betaald" ? `€${d.bedrag} + diner` : "Gratis diner"}
                   </span>
-                  {st && <span className={`${styles.status} ${styles[st.cls]}`}>{st.label}</span>}
+                  {locked && <span className={styles.lockBadge}>🔒 In afwachting</span>}
+                  {!locked && st && <span className={`${styles.status} ${styles[st.cls]}`}>{st.label}</span>}
                 </div>
                 <div className={styles.body}>
                   <div className={styles.rest}>{r?.naam ?? "Restaurant"}</div>
@@ -120,6 +134,15 @@ export default function DealsPage() {
                     {d.gevraagd && <span className={styles.chip}>{d.gevraagd}</span>}
                   </div>
                 </div>
+              </>
+            );
+            return locked ? (
+              <div key={d.id} className={`${styles.deal} ${styles.locked}`} aria-disabled="true">
+                {inner}
+              </div>
+            ) : (
+              <Link key={d.id} href={`/r/${d.owner}`} className={styles.deal}>
+                {inner}
               </Link>
             );
           })
