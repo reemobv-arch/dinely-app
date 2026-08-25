@@ -115,10 +115,12 @@ export function AppAuthProvider({ children }: { children: ReactNode }) {
   function logout() {
     try {
       localStorage.removeItem(S_KEY);
+      localStorage.removeItem(P_KEY);
     } catch {
       /* negeer */
     }
     setSession(null);
+    setProfile(EMPTY_PROFILE);
     if (firebaseReady) signOut(auth).catch(() => {});
   }
 
