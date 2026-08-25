@@ -2,12 +2,12 @@
 
 .head {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 14px 18px 8px; position: sticky; top: 0; z-index: 20;
+  padding: 14px 18px 8px; padding-top: calc(env(safe-area-inset-top, 0px) + 16px); position: sticky; top: 0; z-index: 20;
   background: linear-gradient(180deg, var(--bg) 70%, transparent);
 }
 .back {
-  width: 30px; height: 30px; display: grid; place-items: center;
-  font-size: 24px; color: var(--muted); line-height: 1;
+  width: 42px; height: 42px; padding-right: 2px; display: grid; place-items: center;
+  font-size: 30px; color: var(--text); line-height: 1;
 }
 .brand { font-family: var(--ff-display); font-size: 20px; }
 .brand span { color: var(--gold); }

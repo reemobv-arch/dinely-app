@@ -1,6 +1,6 @@
 .wrap { min-height: 100dvh; padding-bottom: 42px; }
-.head { display: flex; align-items: center; justify-content: space-between; padding: 16px 18px 6px; }
-.back { width: 30px; height: 30px; display: grid; place-items: center; font-size: 24px; color: var(--muted); }
+.head { display: flex; align-items: center; justify-content: space-between; padding: 16px 18px 6px; padding-top: calc(env(safe-area-inset-top, 0px) + 16px); }
+.back { width: 42px; height: 42px; padding-right: 2px; display: grid; place-items: center; font-size: 30px; color: var(--text); }
 .brand { font-family: var(--ff-display); font-size: 22px; }
 
 .body { padding: 6px 18px 0; }

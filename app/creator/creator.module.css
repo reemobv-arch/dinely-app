@@ -1,8 +1,8 @@
 .wrap { min-height: 100dvh; display: flex; flex-direction: column; }
 .head {
-  display: flex; align-items: center; justify-content: space-between; padding: 14px 18px;
+  display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; padding-top: calc(env(safe-area-inset-top, 0px) + 16px);
 }
-.back { width: 30px; height: 30px; display: grid; place-items: center; font-size: 24px; color: var(--muted); }
+.back { width: 42px; height: 42px; padding-right: 2px; display: grid; place-items: center; font-size: 30px; color: var(--text); }
 .dots { display: flex; gap: 7px; }
 .dot { width: 26px; height: 4px; border-radius: 4px; background: var(--line-2); transition: 0.2s; }
 .dot.on { background: var(--gold); }

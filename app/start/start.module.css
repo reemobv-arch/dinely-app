@@ -1,5 +1,5 @@
 .wrap { padding: 0 22px 26px; }
-.head { padding: 22px 0 8px; }
+.head { padding: 22px 0 8px; padding-top: calc(env(safe-area-inset-top, 0px) + 16px); }
 .brand { font-family: var(--ff-display); font-size: 24px; }
 .brand span { color: var(--gold); }
 
