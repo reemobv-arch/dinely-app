@@ -34,6 +34,7 @@ export default function MijPage() {
   const [rest, setRest] = useState<Record<string, string>>({});
   const [contentCount, setContentCount] = useState(0);
   const [punten, setPunten] = useState(0);
+  const [incompleet, setIncompleet] = useState(false);
   const [busy, setBusy] = useState(true);
   const [origin, setOrigin] = useState("https://app.dinely.nl");
   const [copied, setCopied] = useState<string | null>(null);
@@ -69,6 +70,9 @@ export default function MijPage() {
           getMyCreator(uid),
         ]);
         setPunten(cre?.punten ?? 0);
+        setIncompleet(
+          !cre?.iban || !cre?.ibanNaam || (!profile.instagram && !profile.tiktok)
+        );
         const dmap: Record<string, Deal> = {};
         d.forEach((x) => { if (x.id) dmap[x.id] = x; });
         const rmap: Record<string, string> = {};
@@ -125,7 +129,10 @@ export default function MijPage() {
       )}
 
       <Link href="/instellingen" className={styles.settingsRow}>
-        <span>Instellingen &amp; notificaties</span>
+        <span className={styles.settingsLbl}>
+          Instellingen &amp; notificaties
+          {incompleet && <span className={styles.dot} aria-label="Profiel afmaken" />}
+        </span>
         <span className={styles.chev}>›</span>
       </Link>
 

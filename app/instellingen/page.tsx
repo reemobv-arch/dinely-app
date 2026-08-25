@@ -25,13 +25,46 @@ export default function InstellingenPage() {
 
   useEffect(() => {
     setStad(profile.regio || "Amsterdam");
+    // Notificaties staan standaard AAN (alleen "0" = bewust uitgezet).
+    let on = true;
+    let storedPrefs = DEFAULT_PREFS;
     try {
-      setPushOn(localStorage.getItem("dinely-app:pushOn") === "1");
+      on = localStorage.getItem("dinely-app:pushOn") !== "0";
       const p = localStorage.getItem("dinely-app:pushPrefs");
-      if (p) setPrefs({ ...DEFAULT_PREFS, ...JSON.parse(p) });
+      if (p) storedPrefs = { ...DEFAULT_PREFS, ...JSON.parse(p) };
     } catch {
       /* negeer */
     }
+    setPrefs(storedPrefs);
+    setPushOn(on);
+
+    // Standaard aan: registreer zodra het kan, zonder te blijven vragen.
+    if (on && typeof Notification !== "undefined") {
+      const perm = Notification.permission;
+      let autoTried = false;
+      try {
+        autoTried = localStorage.getItem("dinely-app:pushAutoTried") === "1";
+      } catch {
+        /* negeer */
+      }
+      if (perm === "granted" || (perm === "default" && !autoTried)) {
+        try {
+          localStorage.setItem("dinely-app:pushAutoTried", "1");
+        } catch {
+          /* negeer */
+        }
+        enablePush(storedPrefs).then((r) => {
+          if (r === "ok") {
+            setPushOn(true);
+            persistPrefs(storedPrefs, true);
+          } else if (r === "denied") {
+            setPushOn(false);
+            persistPrefs(storedPrefs, false);
+          }
+        });
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profile.regio]);
 
   function persistPrefs(next: PushPrefs, on: boolean) {

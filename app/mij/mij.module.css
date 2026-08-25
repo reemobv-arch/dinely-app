@@ -205,3 +205,16 @@
   border: 1px solid currentColor;
   vertical-align: middle;
 }
+
+/* Rood puntje op de instellingen-rij (profiel nog niet compleet) */
+.settingsLbl { display: inline-flex; align-items: center; gap: 8px; }
+.settingsLbl .dot,
+.dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #e5484d;
+  display: inline-block;
+  flex: none;
+  box-shadow: 0 0 0 3px rgba(229, 72, 77, 0.18);
+}
