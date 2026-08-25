@@ -191,3 +191,17 @@
   margin-top: 3px;
   line-height: 1.45;
 }
+
+/* Niveau-chip op de puntenkaart */
+.tierChip {
+  display: inline-block;
+  margin-left: 10px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 2px 9px;
+  border-radius: 100px;
+  border: 1px solid currentColor;
+  vertical-align: middle;
+}

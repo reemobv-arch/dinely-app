@@ -15,6 +15,7 @@ import type { Application, Deal } from "@/lib/types";
 import { formatNL, todayISO } from "@/lib/format";
 import { creatorShare } from "@/lib/money";
 import { perChannelVolgers } from "@/lib/volgers";
+import { creatorTier, nextTier, TIER_LABEL, TIER_COLOR } from "@/lib/tier";
 import BottomNav from "../BottomNav";
 import EmptyState from "../EmptyState";
 import styles from "./mij.module.css";
@@ -128,15 +129,38 @@ export default function MijPage() {
         <span className={styles.chev}>›</span>
       </Link>
 
-      <div className={styles.points}>
-        <div className={styles.pointsStar}>★</div>
-        <div className={styles.pointsInfo}>
-          <div className={styles.pointsVal}>{punten.toLocaleString("nl-NL")} punten</div>
-          <div className={styles.pointsSub}>
-            Verdien punten met goede samenwerkingen. Restaurants waarderen je na elke deal.
+      {(() => {
+        const tier = creatorTier(punten);
+        const next = nextTier(punten);
+        return (
+          <div className={styles.points}>
+            <div
+              className={styles.pointsStar}
+              style={tier ? { color: TIER_COLOR[tier] } : undefined}
+            >
+              ★
+            </div>
+            <div className={styles.pointsInfo}>
+              <div className={styles.pointsVal}>
+                {punten.toLocaleString("nl-NL")} punten
+                {tier && (
+                  <span
+                    className={styles.tierChip}
+                    style={{ color: TIER_COLOR[tier], borderColor: TIER_COLOR[tier] }}
+                  >
+                    {TIER_LABEL[tier]}
+                  </span>
+                )}
+              </div>
+              <div className={styles.pointsSub}>
+                {next
+                  ? `Nog ${next.over} punten tot ${TIER_LABEL[next.tier]}. Restaurants waarderen je na elke deal.`
+                  : "Je hebt het hoogste niveau bereikt. Blijf top content leveren!"}
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+        );
+      })()}
 
       <div className={styles.stats}>
         <div className={styles.stat}><b>{apps.length}</b><span>Sollicitaties</span></div>
