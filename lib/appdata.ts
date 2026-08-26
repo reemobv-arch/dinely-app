@@ -290,6 +290,8 @@ export async function saveCreator(p: {
   leeftijd?: number;
   telefoon?: string;
   foto?: string;
+  statsFoto?: string;
+  categorie?: string;
 }): Promise<void> {
   if (!firebaseReady) return;
   const uid = auth.currentUser?.uid;
@@ -318,6 +320,8 @@ export async function saveCreator(p: {
     updatedAt: serverTimestamp(),
   };
   if (p.foto) pub.foto = p.foto;
+  if (p.statsFoto) pub.statsFoto = p.statsFoto;
+  if (p.categorie) pub.categorie = p.categorie;
   if (typeof p.leeftijd === "number") pub.leeftijd = p.leeftijd;
   if (isNew) {
     pub.status = "pending";

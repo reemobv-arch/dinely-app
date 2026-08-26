@@ -30,6 +30,8 @@ export type CreatorProfile = {
   igVolgers?: number;
   ttVolgers?: number;
   foto?: string;
+  statsFoto?: string; // screenshot van de insights (bereik-bewijs)
+  categorie?: string; // Food / Lifestyle / …
   regio: string;
   geslacht: "vrouw" | "man" | "";
 };

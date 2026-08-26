@@ -120,3 +120,21 @@
 @keyframes dinely-spin {
   to { transform: rotate(360deg); }
 }
+
+/* Content-categorie chips (onboarding) */
+.cats { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.catChip {
+  flex: 0 0 auto;
+  border: 1px solid var(--line-2);
+  background: var(--bg-2);
+  border-radius: 100px;
+  padding: 9px 15px;
+  color: var(--muted);
+  font-size: 13.5px;
+  transition: 0.16s;
+}
+.catChipOn {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: linear-gradient(180deg, var(--surface-2), var(--surface));
+}

@@ -9,7 +9,8 @@ import Waiting from "../Waiting";
 import styles from "./creator.module.css";
 
 const MIN_VOLGERS = 2000;
-const STEPS = 8;
+const STEPS = 9;
+const CATEGORIEEN = ["Food", "Lifestyle", "Fashion", "Travel", "Fitness", "Beauty", "Familie", "Overig"];
 
 export default function CreatorPage() {
   const router = useRouter();
@@ -24,6 +25,10 @@ export default function CreatorPage() {
   const [foto, setFoto] = useState("");
   const [fotoBusy, setFotoBusy] = useState(false);
   const [fotoError, setFotoError] = useState("");
+  const [statsFoto, setStatsFoto] = useState("");
+  const [statsBusy, setStatsBusy] = useState(false);
+  const [statsError, setStatsError] = useState("");
+  const [categorie, setCategorie] = useState("");
   const [ig, setIg] = useState({ handle: "", vol: 0 });
   const [tt, setTt] = useState({ handle: "", vol: 0 });
   const [, setDealParam] = useState("");
@@ -39,6 +44,8 @@ export default function CreatorPage() {
     if (profile.geslacht) setGeslacht(profile.geslacht);
     if (profile.instagram) setIg((s) => ({ ...s, handle: profile.instagram }));
     if (profile.tiktok) setTt((s) => ({ ...s, handle: profile.tiktok }));
+    if (profile.statsFoto) setStatsFoto(profile.statsFoto);
+    if (profile.categorie) setCategorie(profile.categorie);
     try {
       const p = new URLSearchParams(window.location.search).get("deal");
       if (p) setDealParam(`?deal=${p}`);
@@ -64,6 +71,8 @@ export default function CreatorPage() {
       ? leeftijdOk
       : step === 4
       ? !!foto
+      : step === 5
+      ? !!statsFoto && !!categorie
       : true;
   const progress = ((step + 1) / STEPS) * 100;
 
@@ -79,6 +88,8 @@ export default function CreatorPage() {
       igVolgers: ig.vol || 0,
       ttVolgers: tt.vol || 0,
       foto,
+      statsFoto,
+      categorie,
       regio,
       geslacht,
     };
@@ -248,9 +259,66 @@ export default function CreatorPage() {
         )}
 
         {step === 5 && (
+          <div className={styles.stepBox}>
+            <span className="eyebrow">Stap 6 van {STEPS}</span>
+            <h1 className={styles.h1}>Bewijs je bereik</h1>
+            <p className={styles.lead}>
+              Upload een screenshot van je statistieken van je meest recente story of post
+              (Instagram of TikTok). Zo zien restaurants je echte bereik en views.
+            </p>
+            <label
+              className={styles.fotoTile}
+              style={statsFoto ? { backgroundImage: `url(${statsFoto})` } : undefined}
+            >
+              <input
+                type="file"
+                accept="image/*"
+                hidden
+                onChange={async (e) => {
+                  const f = e.target.files?.[0];
+                  e.currentTarget.value = "";
+                  if (!f) return;
+                  setStatsBusy(true);
+                  setStatsError("");
+                  try {
+                    setStatsFoto(await uploadCreatorPhoto(f));
+                  } catch {
+                    setStatsError("Uploaden mislukt. Probeer het opnieuw.");
+                  } finally {
+                    setStatsBusy(false);
+                  }
+                }}
+              />
+              {statsBusy ? (
+                <span className={styles.uploading}><Waiting label="Uploaden" /></span>
+              ) : statsFoto ? (
+                <span className={styles.fotoChange}>Andere screenshot</span>
+              ) : (
+                <span className={styles.fotoHint}>＋ Upload screenshot</span>
+              )}
+            </label>
+            {statsError && (
+              <p style={{ marginTop: 10, fontSize: 13, color: "var(--crit)" }}>{statsError}</p>
+            )}
+            <label className="flabel" style={{ marginTop: 18, display: "block" }}>Wat voor content maak je?</label>
+            <div className={styles.cats}>
+              {CATEGORIEEN.map((c) => (
+                <button
+                  key={c}
+                  type="button"
+                  className={`${styles.catChip} ${categorie === c ? styles.catChipOn : ""}`}
+                  onClick={() => setCategorie(c)}
+                >
+                  {c}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+        {step === 6 && (
           <PlatformStep
             label="Instagram"
-            nr={`Stap 6 van ${STEPS}`}
+            nr={`Stap 7 van ${STEPS}`}
             color="#E1306C"
             handle={ig.handle}
             vol={ig.vol}
@@ -258,10 +326,10 @@ export default function CreatorPage() {
             onVol={(v) => setIg((s) => ({ ...s, vol: v }))}
           />
         )}
-        {step === 6 && (
+        {step === 7 && (
           <PlatformStep
             label="TikTok"
-            nr={`Stap 7 van ${STEPS}`}
+            nr={`Stap 8 van ${STEPS}`}
             color="#25F4EE"
             handle={tt.handle}
             vol={tt.vol}
@@ -270,7 +338,7 @@ export default function CreatorPage() {
           />
         )}
 
-        {step === 7 && (
+        {step === 8 && (
           <div className={styles.stepBox}>
             {genoeg ? (
               <>
@@ -312,7 +380,7 @@ export default function CreatorPage() {
       </div>
 
       <div className={styles.footer}>
-        {step < 7 ? (
+        {step < 8 ? (
           <button
             className="btn btn-gold"
             style={{ flex: 1 }}
