@@ -131,12 +131,16 @@ export async function createContent(c: {
   naam: string;
   caption: string;
   media: ContentItem[];
+  soort?: "food" | "sfeer";
+  gerecht?: string;
 }): Promise<void> {
   if (!firebaseReady) throw new Error("firebase-not-ready");
   const uid = auth.currentUser?.uid;
   if (!uid) throw new Error("not-signed-in");
   await addDoc(collection(db, "content"), {
     ...c,
+    soort: c.soort ?? "sfeer",
+    gerecht: c.gerecht ?? "",
     creatorUid: uid,
     createdAt: serverTimestamp(),
   });

@@ -231,32 +231,39 @@ export default function RestaurantPage() {
         </div>
       )}
 
-      {content.length > 0 && (
-        <div className={styles.section}>
-          <h2 className={styles.h2}>Van creators</h2>
-          <div className={styles.creators}>
-            {content.map((c) => {
-              const m = c.media?.[0];
-              return (
-                <div key={c.id} className={styles.cItem}>
-                  <div className={styles.cMediaWrap}>
-                    {m?.type === "video" ? (
-                      <video src={m.url} className={styles.cMedia} controls playsInline />
-                    ) : m ? (
-                      <img src={m.url} alt="" className={styles.cMedia} />
-                    ) : null}
-                    {c.media && c.media.length > 1 && (
-                      <span className={styles.cCount}>+{c.media.length - 1}</span>
-                    )}
+      {(["food", "sfeer"] as const).map((soort) => {
+        const items = content.filter((c) =>
+          soort === "food" ? c.soort === "food" : c.soort !== "food"
+        );
+        if (items.length === 0) return null;
+        return (
+          <div key={soort} className={styles.section}>
+            <h2 className={styles.h2}>{soort === "food" ? "Food" : "Sfeer"}</h2>
+            <div className={styles.creators}>
+              {items.map((c) => {
+                const m = c.media?.[0];
+                return (
+                  <div key={c.id} className={styles.cItem}>
+                    <div className={styles.cMediaWrap}>
+                      {m?.type === "video" ? (
+                        <video src={m.url} className={styles.cMedia} controls playsInline />
+                      ) : m ? (
+                        <img src={m.url} alt="" className={styles.cMedia} />
+                      ) : null}
+                      {c.media && c.media.length > 1 && (
+                        <span className={styles.cCount}>+{c.media.length - 1}</span>
+                      )}
+                    </div>
+                    {soort === "food" && c.gerecht && <div className={styles.cDish}>{c.gerecht}</div>}
+                    <div className={styles.cName}>{c.naam}</div>
+                    {c.caption && <p className={styles.cCap}>{c.caption}</p>}
                   </div>
-                  <div className={styles.cName}>{c.naam}</div>
-                  {c.caption && <p className={styles.cCap}>{c.caption}</p>}
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
-        </div>
-      )}
+        );
+      })}
 
       {reviews.some((rv) => rv.tekst && rv.tekst.trim()) && (
         <div className={styles.section}>

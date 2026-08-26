@@ -29,6 +29,8 @@ export default function ContentPage() {
   const [notFound, setNotFound] = useState(false);
 
   const [picked, setPicked] = useState<Picked[]>([]);
+  const [soort, setSoort] = useState<"" | "food" | "sfeer">("");
+  const [gerecht, setGerecht] = useState("");
   const [caption, setCaption] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -80,6 +82,8 @@ export default function ContentPage() {
         naam: profile.naam || app.handle || "Creator",
         caption,
         media,
+        soort: soort || "sfeer",
+        gerecht: soort === "food" ? gerecht.trim() : "",
       });
       if (app.id) await markApplicationContentPosted(app.id);
       router.replace("/mij");
@@ -114,6 +118,45 @@ export default function ContentPage() {
           <b>Vergeet niet @DinelyApp te taggen</b> in je story/reel op Instagram of TikTok.
           Upload daarna dezelfde foto's of video hier{gevraagd ? ` (gevraagd: ${gevraagd})` : ""}.
         </div>
+
+        <label className={styles.lbl}>Wat voor content is dit?</label>
+        <div className={styles.soortRow}>
+          <button
+            type="button"
+            className={`${styles.soortBtn} ${soort === "food" ? styles.soortOn : ""}`}
+            onClick={() => setSoort("food")}
+          >
+            🍽️ Food
+            <span>Van het eten/gerecht</span>
+          </button>
+          <button
+            type="button"
+            className={`${styles.soortBtn} ${soort === "sfeer" ? styles.soortOn : ""}`}
+            onClick={() => setSoort("sfeer")}
+          >
+            ✨ Sfeer
+            <span>Interieur, vibe, beleving</span>
+          </button>
+        </div>
+        <p className={styles.soortHint}>
+          {soort === "food"
+            ? "Deze content komt bij het restaurant onder Food te staan."
+            : soort === "sfeer"
+            ? "Deze content komt bij het restaurant onder Sfeer te staan."
+            : "Kies of dit food- of sfeer-content is."}
+        </p>
+
+        {soort === "food" && (
+          <>
+            <label className={styles.lbl}>Welk gerecht is dit? (optioneel)</label>
+            <input
+              className={styles.inp}
+              value={gerecht}
+              onChange={(e) => setGerecht(e.target.value)}
+              placeholder="Bijv. Short rib met truffelpuree"
+            />
+          </>
+        )}
 
         {picked.length > 0 && (
           <div className={styles.grid}>
@@ -158,7 +201,7 @@ export default function ContentPage() {
         <button
           className="btn btn-gold"
           style={{ flex: 1 }}
-          disabled={busy || picked.length === 0}
+          disabled={busy || picked.length === 0 || !soort}
           onClick={submit}
         >
           {busy ? <Waiting label="Uploaden" /> : `Plaats op ${restNaam}`}

@@ -158,3 +158,11 @@
 
 /* Invite-only deal (grijs, niet klikbaar) */
 .dealLocked { opacity: 0.6; }
+
+/* Gerechtnaam bij food-content */
+.cDish {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gold, #c9a24b);
+  margin-top: 7px;
+}

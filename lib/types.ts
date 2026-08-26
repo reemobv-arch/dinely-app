@@ -79,6 +79,8 @@ export type Content = {
   naam: string;
   caption: string;
   media: ContentItem[];
+  soort?: "food" | "sfeer"; // food-content of sfeer-content
+  gerecht?: string; // welk gerecht (bij food)
   goedgekeurd?: boolean;
   uitgelicht?: boolean; // door het restaurant op het publieke profiel gezet
   createdAt?: Stamp;

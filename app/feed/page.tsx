@@ -57,7 +57,7 @@ export default function FeedPage() {
                 caption: c.caption,
                 restaurantId: c.restaurantId,
                 restNaam: r?.naam ?? "Restaurant",
-                locatie: r?.adres || r?.regio || "",
+                locatie: r?.adres || "",
                 prijs: r?.prijs || "",
                 type: r?.keuken || "",
               });
