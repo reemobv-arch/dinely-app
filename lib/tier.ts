@@ -11,6 +11,11 @@ export const TIER_COLOR: Record<Tier, string> = {
 };
 export const TIER_ORDER: Tier[] = ["bronze", "silver", "gold"];
 
+// Voldoet een creator aan minimaal dit niveau? (voor het niveau-filter)
+export function meetsMinTier(punten: number | undefined, min: Tier): boolean {
+  return (punten ?? 0) >= TIER_MIN[min];
+}
+
 export function creatorTier(punten?: number): Tier | null {
   const p = punten ?? 0;
   if (p >= TIER_MIN.gold) return "gold";

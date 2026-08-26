@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { creatorTier, nextTier, TIER_MIN } from "./tier";
+import { creatorTier, nextTier, meetsMinTier, TIER_MIN } from "./tier";
 
 describe("creatorTier (Bronze 25 / Silver 75 / Gold 250)", () => {
   it("geen niveau onder de 25", () => {
@@ -40,5 +40,27 @@ describe("nextTier (volgende niveau + resterende punten)", () => {
   it("is null zodra je Gold hebt", () => {
     expect(nextTier(250)).toBeNull();
     expect(nextTier(1000)).toBeNull();
+  });
+});
+
+describe("meetsMinTier (niveau-filter: minimaal)", () => {
+  it("Bronze+ vanaf 25 punten", () => {
+    expect(meetsMinTier(24, "bronze")).toBe(false);
+    expect(meetsMinTier(25, "bronze")).toBe(true);
+    expect(meetsMinTier(999, "bronze")).toBe(true);
+  });
+
+  it("Silver+ vanaf 75 punten (Bronze valt af)", () => {
+    expect(meetsMinTier(74, "silver")).toBe(false);
+    expect(meetsMinTier(75, "silver")).toBe(true);
+  });
+
+  it("Gold vanaf 250 punten", () => {
+    expect(meetsMinTier(249, "gold")).toBe(false);
+    expect(meetsMinTier(250, "gold")).toBe(true);
+  });
+
+  it("undefined punten telt als 0", () => {
+    expect(meetsMinTier(undefined, "bronze")).toBe(false);
   });
 });
