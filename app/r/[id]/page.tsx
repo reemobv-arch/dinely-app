@@ -17,6 +17,7 @@ import {
 import type { Deal, Review, Content } from "@/lib/types";
 import { qualifiesForDeal } from "@/lib/qualify";
 import { isInviteLocked } from "@/lib/dealVisibility";
+import Waiting from "../../Waiting";
 import styles from "./restaurant.module.css";
 
 const STATUS: Record<string, { label: string; cls: string }> = {
@@ -362,7 +363,7 @@ export default function RestaurantPage() {
                         disabled={!pickDate || (!ok && !motivatie.trim()) || pending === d.id}
                         onClick={() => apply(d)}
                       >
-                        {pending === d.id ? "Versturen…" : "Verstuur sollicitatie →"}
+                        {pending === d.id ? <Waiting label="Versturen" /> : "Verstuur sollicitatie →"}
                       </button>
                     </div>
                   ) : (

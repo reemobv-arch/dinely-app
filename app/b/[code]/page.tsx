@@ -9,6 +9,7 @@ import {
 } from "@/lib/appdata";
 import { createReservation } from "@/lib/appdata";
 import type { ReferralLink } from "@/lib/types";
+import Waiting from "../../Waiting";
 import styles from "./b.module.css";
 
 export default function BookingPage() {
@@ -204,7 +205,7 @@ export default function BookingPage() {
           </div>
 
           <button className="btn btn-gold" style={{ width: "100%", marginTop: 6 }} disabled={sending}>
-            {sending ? "Versturen…" : `Reserveer met ${korting}% korting →`}
+            {sending ? <Waiting label="Versturen" /> : `Reserveer met ${korting}% korting →`}
           </button>
           <p className={styles.small}>
             Je gegevens gaan alleen naar {naamRest} voor deze reservering.

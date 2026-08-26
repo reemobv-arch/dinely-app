@@ -12,6 +12,7 @@ import {
   markApplicationContentPosted,
 } from "@/lib/appdata";
 import type { Application } from "@/lib/types";
+import Waiting from "../../Waiting";
 import styles from "./content.module.css";
 
 type Picked = { file: File; url: string; type: "image" | "video" };
@@ -160,7 +161,7 @@ export default function ContentPage() {
           disabled={busy || picked.length === 0}
           onClick={submit}
         >
-          {busy ? "Uploaden…" : `Plaats op ${restNaam}`}
+          {busy ? <Waiting label="Uploaden" /> : `Plaats op ${restNaam}`}
         </button>
       </div>
     </div>

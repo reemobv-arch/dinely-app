@@ -167,11 +167,12 @@
   align-items: center;
   gap: 14px;
   padding: 14px 16px;
-  margin-bottom: 14px;
+  margin: 14px 0;
   border-radius: 16px;
   border: 1px solid var(--gold-dim, #8c7231);
   background: linear-gradient(180deg, rgba(201,162,75,0.14), rgba(201,162,75,0.04));
 }
+.pointsInfo { min-width: 0; flex: 1; }
 .pointsStar {
   font-size: 26px;
   color: var(--gold, #c9a24b);

@@ -10,6 +10,7 @@ import {
   markApplicationReviewed,
 } from "@/lib/appdata";
 import type { Application } from "@/lib/types";
+import Waiting from "../../Waiting";
 import styles from "./review.module.css";
 
 const CATS = [
@@ -148,7 +149,7 @@ export default function ReviewPage() {
           disabled={saving || !alleGescoord}
           onClick={submit}
         >
-          {saving ? "Opslaan…" : "Plaats review"}
+          {saving ? <Waiting label="Opslaan" /> : "Plaats review"}
         </button>
       </div>
     </div>

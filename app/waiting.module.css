@@ -1,0 +1,20 @@
+/* Herbruikbare wacht-indicator (spinner + teller). Neemt de tekstkleur over. */
+.wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 1;
+}
+.spinner {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  opacity: 0.9;
+  animation: dinely-wait-spin 0.7s linear infinite;
+  flex: none;
+}
+@keyframes dinely-wait-spin {
+  to { transform: rotate(360deg); }
+}

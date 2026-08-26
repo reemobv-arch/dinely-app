@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useApp } from "@/lib/appauth";
 import { saveCreator, uploadCreatorPhoto } from "@/lib/appdata";
+import Waiting from "../Waiting";
 import styles from "./creator.module.css";
 
 const MIN_VOLGERS = 2000;
@@ -233,7 +234,7 @@ export default function CreatorPage() {
                 }}
               />
               {fotoBusy ? (
-                <span className={styles.fotoHint}>Uploaden…</span>
+                <span className={styles.uploading}><Waiting label="Uploaden" /></span>
               ) : foto ? (
                 <span className={styles.fotoChange}>Andere foto</span>
               ) : (
@@ -311,9 +312,6 @@ export default function CreatorPage() {
       </div>
 
       <div className={styles.footer}>
-        {step > 0 && (
-          <button className="btn btn-ghost" onClick={() => setStep((s) => s - 1)}>Terug</button>
-        )}
         {step < 7 ? (
           <button
             className="btn btn-gold"
@@ -345,7 +343,7 @@ function PlatformStep({
       <h1 className={styles.h1}>
         Koppel <span style={{ color }}>{label}</span>
       </h1>
-      <p className={styles.lead}>Vul je gebruikersnaam en aantal volgers in. Geen {label}? Laat leeg.</p>
+      <p className={styles.lead}>Geen {label}? Laat dan leeg.</p>
       <label className="flabel">Gebruikersnaam</label>
       <input className="inp" value={handle} placeholder="@jouwnaam" onChange={(e) => onHandle(e.target.value)} />
       <label className="flabel" style={{ marginTop: 16 }}>Aantal volgers</label>

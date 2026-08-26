@@ -10,6 +10,7 @@ import {
 import { auth, firebaseReady } from "@/lib/firebase";
 import { useApp, DEMO_CODE } from "@/lib/appauth";
 import { toE164NL } from "@/lib/phone";
+import Waiting from "../Waiting";
 import styles from "./login.module.css";
 
 // Firebase-foutcodes vertalen naar begrijpelijke meldingen.
@@ -175,7 +176,7 @@ export default function LoginPage() {
           />
           {error && <div className={styles.err}>{error}</div>}
           <button className="btn btn-gold" style={{ width: "100%", marginTop: 18 }} disabled={busy}>
-            {busy ? "Versturen…" : "Stuur code →"}
+            {busy ? <Waiting label="Versturen" /> : "Stuur code →"}
           </button>
         </form>
       ) : (
@@ -200,7 +201,7 @@ export default function LoginPage() {
           )}
           {error && <div className={styles.err}>{error}</div>}
           <button className="btn btn-gold" style={{ width: "100%", marginTop: 18 }} disabled={busy}>
-            {busy ? "Controleren…" : "Inloggen →"}
+            {busy ? <Waiting label="Controleren" /> : "Inloggen →"}
           </button>
           <button type="button" className={styles.link} onClick={opnieuw} disabled={busy}>
             Ander nummer gebruiken

@@ -27,7 +27,10 @@ export default function MapView({
       if (cancelled || !elRef.current || mapRef.current) return;
       const map = L.map(elRef.current, {
         zoomControl: false,
-        attributionControl: true,
+        // Attributie-strip verborgen op verzoek. Let op: OSM/CARTO vragen in
+        // productie wél bronvermelding (zie hun voorwaarden) — evt. subtiel
+        // elders tonen.
+        attributionControl: false,
       }).setView([52.3676, 4.9041], 13);
       L.tileLayer(
         "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
