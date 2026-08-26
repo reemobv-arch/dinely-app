@@ -354,6 +354,18 @@ export async function updateMyStad(regio: string): Promise<void> {
   await setDoc(doc(db, "creators", uid), { regio }, { merge: true });
 }
 
+// Publieke creator-foto's (uit creatorProfiles), voor het bolletje in de feed.
+export async function listCreatorFotos(): Promise<Record<string, string>> {
+  if (!firebaseReady) return {};
+  const snap = await getDocs(collection(db, "creatorProfiles"));
+  const m: Record<string, string> = {};
+  snap.docs.forEach((d) => {
+    const x = d.data() as { foto?: string };
+    if (x.foto) m[d.id] = x.foto;
+  });
+  return m;
+}
+
 export async function listAllContent(): Promise<Content[]> {
   if (!firebaseReady) return [];
   const snap = await getDocs(collection(db, "content"));

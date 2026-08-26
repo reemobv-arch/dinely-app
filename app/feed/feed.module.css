@@ -40,17 +40,54 @@
   padding: 0 20px;
   z-index: 2;
 }
-.rest {
-  display: inline-block;
+/* Restaurant-info bovenin */
+.topbar {
+  position: absolute;
+  top: calc(env(safe-area-inset-top, 0px) + 16px);
+  left: 16px;
+  right: 16px;
+  z-index: 3;
+  display: block;
+  text-decoration: none;
+}
+.restNaam {
+  font-family: var(--ff-display);
+  font-size: 20px;
+  color: #fff;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.75);
+}
+.restMeta {
   font-family: var(--ff-mono);
   font-size: 11px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--gold);
-  margin-bottom: 6px;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.85);
+  margin-top: 2px;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
 }
-.creator { font-family: var(--ff-display); font-size: 23px; color: #fff; text-shadow: 0 2px 16px rgba(0,0,0,0.6); }
-.caption { color: rgba(255,255,255,0.92); font-size: 14px; line-height: 1.45; margin-top: 6px; max-width: 30ch; text-shadow: 0 1px 10px rgba(0,0,0,0.5); }
+
+/* Creator-bolletje onderin */
+.creator {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  flex: none;
+  background-size: cover;
+  background-position: center;
+  background-color: rgba(255, 255, 255, 0.15);
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
+  display: grid;
+  place-items: center;
+  font-size: 14px;
+  color: #fff;
+  font-family: var(--ff-display);
+}
+.creatorNaam { font-family: var(--ff-display); font-size: 18px; color: #fff; text-shadow: 0 2px 16px rgba(0,0,0,0.6); }
+.caption { color: rgba(255,255,255,0.92); font-size: 14px; line-height: 1.45; margin-top: 8px; max-width: 30ch; text-shadow: 0 1px 10px rgba(0,0,0,0.5); }
 
 .center {
   position: absolute; inset: 0; display: flex; flex-direction: column;
