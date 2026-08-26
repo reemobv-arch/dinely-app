@@ -21,9 +21,9 @@ import EmptyState from "../EmptyState";
 import styles from "./mij.module.css";
 
 const STATUS: Record<string, { label: string; cls: string }> = {
-  wacht: { label: "In afwachting", cls: "wacht" },
-  geaccepteerd: { label: "Geaccepteerd", cls: "ok" },
-  afgewezen: { label: "Afgewezen", cls: "no" },
+  wacht: { label: "Aangevraagd", cls: "wacht" },
+  geaccepteerd: { label: "Je bent gekozen ✓", cls: "ok" },
+  afgewezen: { label: "Deze keer niet", cls: "no" },
 };
 
 export default function MijPage() {
@@ -115,7 +115,7 @@ export default function MijPage() {
             {perChannelVolgers(profile.igVolgers, profile.ttVolgers) ||
               (profile.volgers > 0
                 ? `${profile.regio || "—"}`
-                : "Koppel je socials om te solliciteren")}
+                : "Koppel je socials om deals aan te vragen")}
           </div>
         </div>
         <Link href="/creator" className={styles.edit}>{profile.naam ? "Bewerk" : "Start"}</Link>
@@ -170,8 +170,8 @@ export default function MijPage() {
       })()}
 
       <div className={styles.stats}>
-        <div className={styles.stat}><b>{apps.length}</b><span>Sollicitaties</span></div>
-        <div className={styles.stat}><b>{acceptedApps.length}</b><span>Geaccepteerd</span></div>
+        <div className={styles.stat}><b>{apps.length}</b><span>Aanvragen</span></div>
+        <div className={styles.stat}><b>{acceptedApps.length}</b><span>Gekozen</span></div>
         <div className={styles.stat}><b>{contentCount}</b><span>Content</span></div>
         <div className={styles.stat}><b>€{Math.round(verdiend)}</b><span>Verdiend</span></div>
       </div>
@@ -264,7 +264,7 @@ export default function MijPage() {
             )}
 
             <div className={styles.section}>
-              <h2 className={styles.h2}>Mijn sollicitaties</h2>
+              <h2 className={styles.h2}>Mijn aanvragen</h2>
               {busy ? (
                 <div className={styles.subtle}>Laden…</div>
               ) : others.length === 0 ? (
@@ -272,13 +272,13 @@ export default function MijPage() {
                   <EmptyState
                     icon="◔"
                     title="Alles afgehandeld"
-                    text="Je hebt geen openstaande sollicitaties meer. Je geaccepteerde deals staan hierboven."
+                    text="Je hebt geen openstaande aanvragen meer. Je gekozen deals staan hierboven."
                   />
                 ) : (
                   <EmptyState
                     icon="✦"
-                    title="Nog niet gesolliciteerd"
-                    text="Vind een deal die bij je past en solliciteer in een tik."
+                    title="Nog geen deals aangevraagd"
+                    text="Vind een deal die bij je past en vraag 'm aan in een tik."
                     actionLabel="Naar deals"
                     actionHref="/deals"
                   />

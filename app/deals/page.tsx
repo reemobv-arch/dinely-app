@@ -19,9 +19,9 @@ import EmptyState from "../EmptyState";
 import styles from "./deals.module.css";
 
 const STATUS: Record<string, { label: string; cls: string }> = {
-  wacht: { label: "In afwachting", cls: "wacht" },
-  geaccepteerd: { label: "Geaccepteerd", cls: "ok" },
-  afgewezen: { label: "Afgewezen", cls: "no" },
+  wacht: { label: "Aangevraagd", cls: "wacht" },
+  geaccepteerd: { label: "Je bent gekozen ✓", cls: "ok" },
+  afgewezen: { label: "Deze keer niet", cls: "no" },
 };
 
 export default function DealsPage() {

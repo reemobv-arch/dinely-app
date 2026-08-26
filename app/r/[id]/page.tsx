@@ -21,9 +21,9 @@ import Waiting from "../../Waiting";
 import styles from "./restaurant.module.css";
 
 const STATUS: Record<string, { label: string; cls: string }> = {
-  wacht: { label: "In afwachting", cls: "wacht" },
-  geaccepteerd: { label: "Geaccepteerd", cls: "ok" },
-  afgewezen: { label: "Afgewezen", cls: "no" },
+  wacht: { label: "Aangevraagd", cls: "wacht" },
+  geaccepteerd: { label: "Je bent gekozen ✓", cls: "ok" },
+  afgewezen: { label: "Deze keer niet", cls: "no" },
 };
 
 function avg(arr: number[]) {
@@ -320,15 +320,15 @@ export default function RestaurantPage() {
                   ) : applied ? (
                     <div className={`${styles.statusBox} ${styles[st?.cls ?? "wacht"]}`}>
                       {stKey === "geaccepteerd"
-                        ? `✓ Geaccepteerd — je komt op ${formatNL(dateByDeal[d.id ?? ""])}.`
+                        ? `✓ Je bent gekozen — je komt op ${formatNL(dateByDeal[d.id ?? ""])}.`
                         : stKey === "afgewezen"
-                        ? "Deze sollicitatie is helaas afgewezen."
-                        : `In afwachting — je solliciteerde voor ${formatNL(dateByDeal[d.id ?? ""])}.`}
+                        ? "Deze keer niet gelukt, volgende kans komt snel."
+                        : `Aangevraagd — je koos ${formatNL(dateByDeal[d.id ?? ""])}.`}
                     </div>
                   ) : approved === false ? (
                     <div className={styles.reqBox}>
-                      Je profiel moet eerst worden goedgekeurd voordat je kunt solliciteren. Rond
-                      je aanmelding af in <b>Mijn</b>.
+                      Je profiel moet eerst worden goedgekeurd voordat je een deal kunt aanvragen.
+                      Rond je aanmelding af in <b>Mijn</b>.
                     </div>
                   ) : stKey === "err" ? (
                     <div className={styles.reqBox}>Versturen lukte net niet. Ververs en probeer opnieuw.</div>
@@ -363,12 +363,12 @@ export default function RestaurantPage() {
                         disabled={!pickDate || (!ok && !motivatie.trim()) || pending === d.id}
                         onClick={() => apply(d)}
                       >
-                        {pending === d.id ? <Waiting label="Versturen" /> : "Verstuur sollicitatie →"}
+                        {pending === d.id ? <Waiting label="Versturen" /> : "Verstuur aanvraag →"}
                       </button>
                     </div>
                   ) : (
                     <button className={styles.applyBtn} onClick={() => { setPickDeal(d.id ?? null); setPickDate(""); setMotivatie(""); }}>
-                      {ok ? "Solliciteer op deze deal" : "Toch solliciteren met toelichting"}
+                      {ok ? "Ik wil deze deal →" : "Ik wil deze deal (kort toelichten) →"}
                     </button>
                   )}
                 </div>
