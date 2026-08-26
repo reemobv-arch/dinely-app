@@ -118,3 +118,13 @@ html{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
 * ::-webkit-scrollbar{width:8px;height:8px}
 * ::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:100px}
 * ::-webkit-scrollbar-track{background:transparent}
+
+/* Kaart-attributie (OSM/CARTO) subtiel/donker: blijft staan maar valt niet op. */
+.leaflet-control-attribution{
+  background:transparent !important;
+  color:#2b2b2b !important;
+  font-size:9px !important;
+  padding:0 5px !important;
+  box-shadow:none !important;
+}
+.leaflet-control-attribution a{ color:#333 !important; text-decoration:none !important; }

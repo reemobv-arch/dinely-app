@@ -29,7 +29,6 @@ export default function DiscoverPage() {
 
   const [q, setQ] = useState("");
   const [stad, setStad] = useState("Amsterdam");
-  const [gasten, setGasten] = useState(2);
   const [keuken, setKeuken] = useState("");
   const [prijs, setPrijs] = useState("");
   const [metDeals, setMetDeals] = useState(false);
@@ -111,14 +110,6 @@ export default function DiscoverPage() {
           <label className={styles.filter}>
             <span>Stad</span>
             <input value={stad} onChange={(e) => setStad(e.target.value)} />
-          </label>
-          <label className={styles.filter}>
-            <span>Personen</span>
-            <div className={styles.stepper}>
-              <button type="button" onClick={() => setGasten((g) => Math.max(1, g - 1))}>−</button>
-              <b>{gasten}</b>
-              <button type="button" onClick={() => setGasten((g) => g + 1)}>+</button>
-            </div>
           </label>
         </div>
         <div className={styles.filterBar}>

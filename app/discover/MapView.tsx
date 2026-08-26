@@ -27,10 +27,9 @@ export default function MapView({
       if (cancelled || !elRef.current || mapRef.current) return;
       const map = L.map(elRef.current, {
         zoomControl: false,
-        // Attributie-strip verborgen op verzoek. Let op: OSM/CARTO vragen in
-        // productie wél bronvermelding (zie hun voorwaarden) — evt. subtiel
-        // elders tonen.
-        attributionControl: false,
+        // Attributie blijft staan (OSM/CARTO vereisen bronvermelding), maar wordt
+        // via CSS donker/subtiel gemaakt zodat 'ie niet opvalt op de donkere kaart.
+        attributionControl: true,
       }).setView([52.3676, 4.9041], 13);
       L.tileLayer(
         "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
@@ -40,6 +39,8 @@ export default function MapView({
             '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
         }
       ).addTo(map);
+      // "Leaflet"-prefix weg (niet verplicht); OSM/CARTO-bronvermelding blijft.
+      map.attributionControl.setPrefix(false);
       mapRef.current = map;
       layerRef.current = L.layerGroup().addTo(map);
       draw(L);
