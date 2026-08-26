@@ -16,6 +16,7 @@ import {
 } from "@/lib/appdata";
 import type { Deal, Review, Content } from "@/lib/types";
 import { qualifiesForDeal } from "@/lib/qualify";
+import { isInviteLocked } from "@/lib/dealVisibility";
 import styles from "./restaurant.module.css";
 
 const STATUS: Record<string, { label: string; cls: string }> = {
@@ -290,8 +291,7 @@ export default function RestaurantPage() {
               const st = STATUS[stKey ?? ""];
               const applied = !!stKey && stKey !== "err";
               const ok = qualifies(d);
-              const inviteLocked =
-                d.zichtbaarheid === "invite" && !invited.has(d.id ?? "") && !applied;
+              const inviteLocked = isInviteLocked(d, invited, applied);
               return (
                 <div key={d.id} className={`${styles.deal} ${inviteLocked ? styles.dealLocked : ""}`}>
                   <div className={styles.dealTop}>

@@ -13,6 +13,7 @@ import {
   type PublicRestaurant,
 } from "@/lib/appdata";
 import type { Deal } from "@/lib/types";
+import { showsInFeed } from "@/lib/dealVisibility";
 import BottomNav from "../BottomNav";
 import EmptyState from "../EmptyState";
 import styles from "./deals.module.css";
@@ -70,8 +71,7 @@ export default function DealsPage() {
   // In de algemene feed tonen we alleen open deals en invite-only deals waarvoor
   // je bent uitgenodigd. (Op de restaurantpagina zie je invite-only deals wél,
   // maar grijs.)
-  const zichtbaar = (d: Deal) =>
-    d.zichtbaarheid !== "invite" || invited.has(d.id ?? "");
+  const zichtbaar = (d: Deal) => showsInFeed(d, invited);
 
   return (
     <div className={styles.wrap}>
