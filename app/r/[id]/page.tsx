@@ -231,7 +231,7 @@ export default function RestaurantPage() {
         </div>
       )}
 
-      {(["food", "sfeer"] as const).map((soort) => {
+      {(["sfeer", "food"] as const).map((soort) => {
         const items = content.filter((c) =>
           soort === "food" ? c.soort === "food" : c.soort !== "food"
         );
