@@ -44,6 +44,27 @@ export default function FeedPage() {
         const rmap: Record<string, PublicRestaurant> = {};
         rests.forEach((r) => (rmap[r.id] = r));
         const s: FeedSlide[] = [];
+
+        // Restaurant-eigen video's komen ook in de feed (de sfeervideo van het profiel).
+        rests.forEach((r) => {
+          const v = r.media?.video;
+          if (v) {
+            const cover = r.media?.sfeer?.find(Boolean) ?? undefined;
+            s.push({
+              key: `rest-${r.id}`,
+              media: { url: v, type: "video" },
+              creatorNaam: r.naam || "Restaurant",
+              creatorFoto: cover ?? undefined,
+              caption: r.omschrijving || "",
+              restaurantId: r.id,
+              restNaam: r.naam ?? "Restaurant",
+              locatie: r.adres || "",
+              prijs: r.prijs || "",
+              type: r.keuken || "",
+            });
+          }
+        });
+
         content.forEach((c) => {
           const r = rmap[c.restaurantId];
           // Alleen video's komen in de feed (geen foto's).
