@@ -8,7 +8,8 @@ import {
   type ReactNode,
 } from "react";
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import { auth, firebaseReady } from "./firebase";
+import { doc, getDoc } from "firebase/firestore";
+import { auth, db, firebaseReady } from "./firebase";
 
 // Auth voor de Dinely-app.
 // Login = telefoonnummer -> echte SMS-code via Firebase Phone Authentication.
@@ -104,6 +105,38 @@ export function AppAuthProvider({ children }: { children: ReactNode }) {
       if (u) {
         setUid(u.uid);
         setSession({ phone: u.phoneNumber ?? "" });
+        // Profiel terughalen uit Firestore (bron van waarheid), zodat een
+        // ingelogde creator ook op een ander toestel / na gewiste opslag zijn
+        // profiel terugziet en niet opnieuw hoeft te onboarden.
+        getDoc(doc(db, "creators", u.uid))
+          .then((snap) => {
+            if (!snap.exists()) return;
+            const d = snap.data() as Partial<CreatorProfile>;
+            if (!d.naam) return; // profiel nog niet af -> lokaal laten
+            const cp: CreatorProfile = {
+              naam: d.naam ?? "",
+              email: d.email ?? "",
+              instagram: d.instagram ?? "",
+              tiktok: d.tiktok ?? "",
+              volgers: d.volgers ?? 0,
+              igVolgers: d.igVolgers,
+              ttVolgers: d.ttVolgers,
+              foto: d.foto,
+              statsFoto: d.statsFoto,
+              categorie: d.categorie,
+              regio: d.regio ?? "Amsterdam",
+              geslacht: d.geslacht ?? "",
+            };
+            setProfile(cp);
+            try {
+              localStorage.setItem(P_KEY, JSON.stringify(cp));
+            } catch {
+              /* negeer */
+            }
+          })
+          .catch(() => {
+            /* offline of geen rechten: lokale cache blijft staan */
+          });
       } else {
         setUid(null);
         setSession(null);
