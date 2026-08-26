@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "vitest run && next build",
     "start": "next start",
-    "test": "vitest run"
+    "test": "vitest run",
+    "e2e": "firebase emulators:exec --only firestore,auth \"node e2e/seed.mjs && playwright test\"",
+    "e2e:seed": "node e2e/seed.mjs"
   },
   "dependencies": {
     "@types/leaflet": "^1.9.22",
@@ -17,6 +19,7 @@
     "react-dom": "19.2.4"
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.1",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

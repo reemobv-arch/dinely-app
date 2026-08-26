@@ -1,7 +1,11 @@
 import { initializeApp, getApps, getApp, type FirebaseApp } from "firebase/app";
-import { getAuth, type Auth } from "firebase/auth";
-import { getFirestore, type Firestore } from "firebase/firestore";
+import { getAuth, connectAuthEmulator, type Auth } from "firebase/auth";
+import { getFirestore, connectFirestoreEmulator, type Firestore } from "firebase/firestore";
 import { getStorage, type FirebaseStorage } from "firebase/storage";
+
+// Alleen aan tijdens e2e/lokaal testen: praat met de Firebase-emulator i.p.v.
+// productie. Nooit in productie zetten (env-flag standaard uit).
+const USE_EMULATOR = process.env.NEXT_PUBLIC_USE_EMULATOR === "1";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -32,3 +36,17 @@ export const db: Firestore = app
 export const storage: FirebaseStorage = app
   ? getStorage(app)
   : (null as unknown as FirebaseStorage);
+
+// Emulator-koppeling (idempotent via een module-guard).
+if (app && USE_EMULATOR && typeof window !== "undefined") {
+  const w = window as unknown as { __dinelyEmu?: boolean };
+  if (!w.__dinelyEmu) {
+    w.__dinelyEmu = true;
+    try {
+      connectAuthEmulator(auth, "http://127.0.0.1:9099", { disableWarnings: true });
+      connectFirestoreEmulator(db, "127.0.0.1", 8080);
+    } catch {
+      /* al gekoppeld */
+    }
+  }
+}

@@ -17,9 +17,9 @@ Alle code die we bouwen wordt getest voordat een taak "af" is.
    is pas klaar als beide groen zijn. Snel tijdens het werk: `npm test`.
 3. Deze app heeft geen eigen API-routes; die staan in `tably-dashboard`
    (daar worden ze met gemockte dependencies getest).
-4. **End-to-end** kritieke flows draaien via de Firebase-emulator + Playwright
-   (zie `tably-dashboard/e2e/`). Gebruik testnummers met vaste code; nooit
-   tegen productie-Firebase testen.
+4. **End-to-end** kritieke flows draaien via de Firebase-emulator + Playwright:
+   `npm run e2e` (zie `e2e/README.md`). Vereist Java (Firestore-emulator) en
+   eenmalig `npx playwright install chromium`. Nooit tegen productie testen.
 
 Kort: geen nieuwe logica zonder test, geen "af" zonder groene `npm run build`.
 <!-- END:nextjs-agent-rules -->
