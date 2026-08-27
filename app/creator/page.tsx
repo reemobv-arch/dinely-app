@@ -77,8 +77,6 @@ export default function CreatorPage() {
       ? leeftijdOk
       : step === 4
       ? !!foto
-      : step === 7
-      ? !!statsFoto && categorieen.length > 0
       : true;
   const progress = ((step + 1) / STEPS) * 100;
 
@@ -267,10 +265,11 @@ export default function CreatorPage() {
         {step === 7 && (
           <div className={styles.stepBox}>
             <span className="eyebrow">Stap 8 van {STEPS}</span>
-            <h1 className={styles.h1}>Bewijs je bereik</h1>
+            <h1 className={styles.h1}>Bewijs je bereik <span style={{ color: "var(--muted-2)" }}>(optioneel)</span></h1>
             <p className={styles.lead}>
-              Upload een screenshot van je statistieken van je meest recente story of post
-              (Instagram of TikTok). Zo zien restaurants je echte bereik en views.
+              Heb je een creator-/zakelijk account met statistieken? Upload dan een screenshot van je
+              meest recente story of post (Instagram of TikTok) — zo zien restaurants je echte bereik.
+              Geen statistieken? Sla deze stap gerust over.
             </p>
             <label
               className={styles.fotoTile}
