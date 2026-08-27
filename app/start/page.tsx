@@ -15,13 +15,17 @@ export default function StartPage() {
     if (!loading && !session) router.replace("/login");
   }, [session, loading, router]);
 
-  // Wacht een creator nog op goedkeuring? Dan naar het wachtscherm.
+  // Bestaande creators niet opnieuw laten onboarden:
+  // - goedgekeurd -> direct de app in (Ontdek)
+  // - in behandeling/afgewezen -> wachtscherm
+  // - nog geen profiel (nieuw) -> op /start blijven en het welkomstscherm tonen
   useEffect(() => {
     if (!uid) return;
     (async () => {
       const c = await getMyCreator(uid);
-      // Alleen goedgekeurde creators mogen door; anders (in behandeling/afgewezen) wachten.
-      if (c && c.status !== "approved") router.replace("/wachten");
+      if (!c) return; // nieuw: toon "Ik ben creator"
+      if (c.status === "approved") router.replace("/discover");
+      else router.replace("/wachten");
     })();
   }, [uid, router]);
 

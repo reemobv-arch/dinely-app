@@ -139,12 +139,13 @@ export function AppAuthProvider({ children }: { children: ReactNode }) {
           })
           .catch(() => {
             /* offline of geen rechten: lokale cache blijft staan */
-          });
+          })
+          .finally(() => setLoading(false)); // pas klaar als het profiel geladen is
       } else {
         setUid(null);
         setSession(null);
+        setLoading(false);
       }
-      setLoading(false);
     });
     return () => unsub();
   }, []);
