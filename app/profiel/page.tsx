@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useApp } from "@/lib/appauth";
-import { saveCreator, uploadCreatorPhoto } from "@/lib/appdata";
+import { saveCreator, uploadCreatorPhoto, validateStatsImage } from "@/lib/appdata";
 import Waiting from "../Waiting";
 import styles from "./profiel.module.css";
 
@@ -202,8 +202,17 @@ export default function ProfielPage() {
               e.currentTarget.value = "";
               if (!f) return;
               setStatsBusy(true);
+              setMsg(null);
               try {
-                setStatsFoto(await uploadCreatorPhoto(f));
+                const url = await uploadCreatorPhoto(f);
+                const check = await validateStatsImage(url);
+                if (!check.ok) {
+                  setMsg(
+                    `Dit lijkt geen statistieken-screenshot. ${check.detail || ""} Upload een screenshot waarop je bereik en de periode (bijv. 30 dagen) staan, of sla deze stap over.`.trim()
+                  );
+                } else {
+                  setStatsFoto(url);
+                }
               } catch {
                 setMsg("Screenshot uploaden mislukt.");
               } finally {

@@ -355,6 +355,36 @@ export async function saveCreator(p: {
   }
 }
 
+// Valideert (via Claude vision op het dashboard) of een geüploade screenshot
+// echt statistieken toont (periode + bereik). Blokkeert nooit hard: als de
+// dienst niet bereikbaar is of geen sleutel heeft, geven we { ok: true } terug.
+export async function validateStatsImage(
+  imageUrl: string
+): Promise<{ ok: boolean; reason?: string; detail?: string }> {
+  if (!firebaseReady || !imageUrl) return { ok: true };
+  try {
+    const base = process.env.NEXT_PUBLIC_DASHBOARD_URL;
+    const idToken = await auth.currentUser?.getIdToken();
+    if (!base || !idToken) return { ok: true };
+    const res = await fetch(`${base}/api/extract-stats`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ idToken, imageUrl }),
+    });
+    const data = (await res.json().catch(() => ({}))) as {
+      ok?: boolean;
+      reason?: string;
+      detail?: string;
+    };
+    // Alleen een expliciet "not-stats" telt als afkeuring; overige fouten
+    // (geen sleutel, netwerk) mogen de onboarding niet blokkeren.
+    if (data.reason === "not-stats") return { ok: false, reason: "not-stats", detail: data.detail };
+    return { ok: true };
+  } catch {
+    return { ok: true };
+  }
+}
+
 export async function getMyCreator(
   uid: string
 ): Promise<{ status?: string; regio?: string; iban?: string; ibanNaam?: string; punten?: number } | null> {

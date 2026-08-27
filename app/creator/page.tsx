@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useApp } from "@/lib/appauth";
-import { saveCreator, uploadCreatorPhoto } from "@/lib/appdata";
+import { saveCreator, uploadCreatorPhoto, validateStatsImage } from "@/lib/appdata";
 import Waiting from "../Waiting";
 import styles from "./creator.module.css";
 
@@ -286,7 +286,15 @@ export default function CreatorPage() {
                   setStatsBusy(true);
                   setStatsError("");
                   try {
-                    setStatsFoto(await uploadCreatorPhoto(f));
+                    const url = await uploadCreatorPhoto(f);
+                    const check = await validateStatsImage(url);
+                    if (!check.ok) {
+                      setStatsError(
+                        `Dit lijkt geen statistieken-screenshot. ${check.detail || ""} Zorg dat je bereik en de periode (bijv. 30 dagen) zichtbaar zijn, of sla deze stap over.`.trim()
+                      );
+                    } else {
+                      setStatsFoto(url);
+                    }
                   } catch {
                     setStatsError("Uploaden mislukt. Probeer het opnieuw.");
                   } finally {
