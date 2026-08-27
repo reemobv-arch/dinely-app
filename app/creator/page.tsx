@@ -71,7 +71,7 @@ export default function CreatorPage() {
       ? leeftijdOk
       : step === 4
       ? !!foto
-      : step === 5
+      : step === 7
       ? !!statsFoto && !!categorie
       : true;
   const progress = ((step + 1) / STEPS) * 100;
@@ -258,9 +258,9 @@ export default function CreatorPage() {
           </div>
         )}
 
-        {step === 5 && (
+        {step === 7 && (
           <div className={styles.stepBox}>
-            <span className="eyebrow">Stap 6 van {STEPS}</span>
+            <span className="eyebrow">Stap 8 van {STEPS}</span>
             <h1 className={styles.h1}>Bewijs je bereik</h1>
             <p className={styles.lead}>
               Upload een screenshot van je statistieken van je meest recente story of post
@@ -315,10 +315,10 @@ export default function CreatorPage() {
             </div>
           </div>
         )}
-        {step === 6 && (
+        {step === 5 && (
           <PlatformStep
             label="Instagram"
-            nr={`Stap 7 van ${STEPS}`}
+            nr={`Stap 6 van ${STEPS}`}
             color="#E1306C"
             handle={ig.handle}
             vol={ig.vol}
@@ -326,10 +326,10 @@ export default function CreatorPage() {
             onVol={(v) => setIg((s) => ({ ...s, vol: v }))}
           />
         )}
-        {step === 7 && (
+        {step === 6 && (
           <PlatformStep
             label="TikTok"
-            nr={`Stap 8 van ${STEPS}`}
+            nr={`Stap 7 van ${STEPS}`}
             color="#25F4EE"
             handle={tt.handle}
             vol={tt.vol}
