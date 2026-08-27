@@ -332,6 +332,25 @@ export async function saveCreator(p: {
     pub.createdAt = serverTimestamp();
   }
   await setDoc(doc(db, "creatorProfiles", uid), pub, { merge: true });
+
+  // Nieuwe of gewijzigde stats-screenshot? Laat de cijfers automatisch uitlezen
+  // (server-side via Claude vision). Best-effort — mag de flow nooit blokkeren.
+  const vorigeStatsFoto = snap.data()?.statsFoto as string | undefined;
+  if (p.statsFoto && (isNew || vorigeStatsFoto !== p.statsFoto)) {
+    try {
+      const base = process.env.NEXT_PUBLIC_DASHBOARD_URL;
+      const idToken = await auth.currentUser?.getIdToken();
+      if (base && idToken) {
+        void fetch(`${base}/api/extract-stats`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ idToken }),
+        }).catch(() => {});
+      }
+    } catch {
+      /* extractie is bijzaak */
+    }
+  }
 }
 
 export async function getMyCreator(
