@@ -20,6 +20,13 @@ import styles from "./discover.module.css";
 
 const MapView = dynamic(() => import("./MapView"), { ssr: false });
 
+// Steden voor de dropdown. We tonen alleen die ook echt in de adressen voorkomen.
+const STEDEN = [
+  "Amsterdam", "Rotterdam", "Den Haag", "Utrecht", "Eindhoven", "Groningen",
+  "Tilburg", "Almere", "Breda", "Nijmegen", "Haarlem", "Arnhem", "Amersfoort",
+  "Zaanstad", "Den Bosch", "Zwolle", "Maastricht", "Leiden", "Dordrecht", "Delft",
+];
+
 export default function DiscoverPage() {
   const router = useRouter();
   const [rows, setRows] = useState<PublicRestaurant[]>([]);
@@ -37,6 +44,14 @@ export default function DiscoverPage() {
     () => [...new Set(rows.map((r) => r.keuken).filter(Boolean))].sort(),
     [rows]
   );
+  // Steden voor de dropdown: bekende NL-steden die ook echt in de adressen
+  // voorkomen (anders de volledige lijst als er nog geen data is).
+  const steden = useMemo(() => {
+    const inData = STEDEN.filter((c) =>
+      rows.some((r) => (r.adres || "").toLowerCase().includes(c.toLowerCase()))
+    );
+    return inData.length ? inData : STEDEN;
+  }, [rows]);
   const filtersActief = !!(keuken || prijs || metDeals);
   function wisFilters() {
     setKeuken("");
@@ -119,7 +134,16 @@ export default function DiscoverPage() {
         <div className={styles.filters}>
           <label className={styles.filter}>
             <span>Stad</span>
-            <input value={stad} onChange={(e) => setStad(e.target.value)} />
+            <select
+              className={styles.stadSelect}
+              value={steden.includes(stad) ? stad : ""}
+              onChange={(e) => setStad(e.target.value)}
+            >
+              <option value="">Heel Nederland</option>
+              {steden.map((c) => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
           </label>
         </div>
         <div className={styles.filterBar}>

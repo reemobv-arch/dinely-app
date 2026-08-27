@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { AppAuthProvider } from "@/lib/appauth";
+import SplashGate from "./SplashGate";
 import RegisterSW from "./RegisterSW";
 import DeviceFrame from "./DeviceFrame";
 import InstallPrompt from "./InstallPrompt";
@@ -37,6 +38,7 @@ export default function RootLayout({
         <AppAuthProvider>
           <DeviceFrame>{children}</DeviceFrame>
           <NotificationPrompt />
+          <SplashGate />
         </AppAuthProvider>
         <InstallPrompt />
         <RegisterSW />
