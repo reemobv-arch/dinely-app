@@ -1,0 +1,97 @@
+.wrap { min-height: 100dvh; display: flex; flex-direction: column; }
+
+.head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px; padding-top: calc(env(safe-area-inset-top, 0px) + 16px);
+}
+.back { width: 42px; height: 42px; padding-right: 2px; display: grid; place-items: center; font-size: 30px; color: var(--text); }
+.brand { font-family: var(--ff-display); font-size: 20px; }
+
+.body { flex: 1; padding: 4px 22px 8px; }
+
+.groupLbl {
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold-dim, #8c7231);
+  margin: 22px 4px 10px;
+}
+
+.card {
+  background: linear-gradient(180deg, var(--surface-2), var(--surface));
+  border: 1px solid var(--line-2);
+  border-radius: 18px;
+  padding: 16px 16px 18px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+}
+.lbl {
+  display: block;
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  margin: 14px 2px 6px;
+}
+.card > .lbl:first-child { margin-top: 0; }
+
+.fotoTile {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  max-width: 220px;
+  aspect-ratio: 3 / 4;
+  margin: 0 auto;
+  border-radius: 20px;
+  border: 1px dashed var(--line-2);
+  background-color: var(--bg-2);
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.16s;
+}
+.fotoTile:hover { border-color: var(--gold-dim); }
+.fotoHint { font-family: var(--ff-mono); font-size: 12.5px; color: var(--muted); }
+.fotoChange {
+  background: rgba(11, 9, 6, 0.62);
+  color: #fff;
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  padding: 7px 13px;
+  border-radius: 100px;
+}
+
+.seg { display: flex; gap: 8px; }
+.segBtn {
+  flex: 1; border: 1px solid var(--line-2); background: var(--bg-2); border-radius: 11px;
+  padding: 13px; color: var(--muted); font-size: 14px; transition: 0.18s;
+}
+.segOn { border-color: var(--gold); background: linear-gradient(180deg, var(--surface-2), var(--surface)); color: var(--gold); }
+
+.cats { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 2px; }
+.catChip {
+  flex: 0 0 auto;
+  border: 1px solid var(--line-2);
+  background: var(--bg-2);
+  border-radius: 100px;
+  padding: 9px 15px;
+  color: var(--muted);
+  font-size: 13.5px;
+  transition: 0.16s;
+}
+.catChipOn {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: linear-gradient(180deg, var(--surface-2), var(--surface));
+}
+
+.msg { font-family: var(--ff-mono); font-size: 12px; color: var(--gold); line-height: 1.5; margin: 16px 6px 0; }
+
+.footer {
+  display: flex; gap: 10px;
+  padding: 14px 22px calc(20px + env(safe-area-inset-bottom));
+  position: sticky; bottom: 0;
+  background: linear-gradient(180deg, transparent, var(--bg) 34%);
+}

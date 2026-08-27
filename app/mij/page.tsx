@@ -118,7 +118,7 @@ export default function MijPage() {
                 : "Koppel je socials om deals aan te vragen")}
           </div>
         </div>
-        <Link href="/creator" className={styles.edit}>{profile.naam ? "Bewerk" : "Start"}</Link>
+        <Link href={profile.naam ? "/profiel" : "/creator"} className={styles.edit}>{profile.naam ? "Bewerk" : "Start"}</Link>
       </div>
 
       {(profile.instagram || profile.tiktok) && (
