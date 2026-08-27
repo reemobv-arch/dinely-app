@@ -1,8 +1,8 @@
 // Service worker voor de Dinely PWA. Doel: snelle start, ook op een trage verbinding.
 // - Statische app-bestanden (JS/CSS/fonts/afbeeldingen): cache-eerst (ze zijn gehasht/immutable).
-// - Navigaties/HTML: meteen uit cache tonen en op de achtergrond verversen (stale-while-revalidate).
+// - Navigaties/HTML: netwerk-eerst (HTML moet bij de gehashte chunks passen), offline uit cache.
 // - Alles van andere domeinen (Firebase, Mollie, Resend) laten we met rust.
-const VERSION = "dinely-v16";
+const VERSION = "dinely-v17";
 const CORE = ["/", "/login", "/start"];
 
 self.addEventListener("install", (e) => {
@@ -56,20 +56,20 @@ self.addEventListener("fetch", (e) => {
     return;
   }
 
-  // Navigaties/HTML: stale-while-revalidate (meteen uit cache, op de achtergrond verversen).
+  // Navigaties/HTML: NETWERK-EERST. De HTML verwijst naar gehashte JS-chunks;
+  // serveren we oude HTML uit cache, dan wijst die naar chunks die na een nieuwe
+  // deploy niet meer bestaan -> de app hangt. Vers ophalen houdt HTML en chunks
+  // in sync; alleen offline vallen we terug op de cache.
   const accept = req.headers.get("accept") || "";
   if (req.mode === "navigate" || accept.includes("text/html")) {
     e.respondWith(
-      caches.match(req).then((cached) => {
-        const fromNet = fetch(req)
-          .then((res) => {
-            const copy = res.clone();
-            caches.open(VERSION).then((c) => c.put(req, copy)).catch(() => {});
-            return res;
-          })
-          .catch(() => cached || caches.match("/"));
-        return cached || fromNet;
-      })
+      fetch(req)
+        .then((res) => {
+          const copy = res.clone();
+          caches.open(VERSION).then((c) => c.put(req, copy)).catch(() => {});
+          return res;
+        })
+        .catch(() => caches.match(req).then((cached) => cached || caches.match("/")))
     );
     return;
   }

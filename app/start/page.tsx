@@ -1,15 +1,17 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useApp } from "@/lib/appauth";
 import { getMyCreator } from "@/lib/appdata";
+import Splash from "../Splash";
 import styles from "./start.module.css";
 
 export default function StartPage() {
   const router = useRouter();
   const { session, uid, loading } = useApp();
+  const [checking, setChecking] = useState(true);
 
   useEffect(() => {
     if (!loading && !session) router.replace("/login");
@@ -21,15 +23,26 @@ export default function StartPage() {
   // - nog geen profiel (nieuw) -> op /start blijven en het welkomstscherm tonen
   useEffect(() => {
     if (!uid) return;
+    let actief = true;
     (async () => {
-      const c = await getMyCreator(uid);
-      if (!c) return; // nieuw: toon "Ik ben creator"
-      if (c.status === "approved") router.replace("/discover");
-      else router.replace("/wachten");
+      try {
+        const c = await getMyCreator(uid);
+        if (!actief) return;
+        if (c && c.status === "approved") return router.replace("/discover");
+        if (c) return router.replace("/wachten");
+      } catch {
+        /* offline: laat het welkomstscherm zien */
+      }
+      if (actief) setChecking(false); // nieuw: toon "Ik ben creator"
     })();
+    return () => {
+      actief = false;
+    };
   }, [uid, router]);
 
-  if (loading || !session) return null;
+  // Splash zolang we nog niet weten waar je heen moet (voorkomt zwart scherm
+  // en een korte flits van het welkomstscherm voor bestaande creators).
+  if (loading || !session || checking) return <Splash />;
 
   return (
     <div className={`screen ${styles.wrap}`}>

@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useApp } from "@/lib/appauth";
+import Splash from "./Splash";
 
 export default function Home() {
   const router = useRouter();
@@ -13,5 +14,6 @@ export default function Home() {
     router.replace(session ? "/start" : "/login");
   }, [session, loading, router]);
 
-  return null;
+  // Toon de splash i.p.v. een zwart scherm terwijl we doorsturen.
+  return <Splash />;
 }
