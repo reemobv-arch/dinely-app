@@ -4,6 +4,7 @@ import { AppAuthProvider } from "@/lib/appauth";
 import RegisterSW from "./RegisterSW";
 import DeviceFrame from "./DeviceFrame";
 import InstallPrompt from "./InstallPrompt";
+import NotificationPrompt from "./NotificationPrompt";
 
 export const metadata: Metadata = {
   title: "Dinely",
@@ -35,6 +36,7 @@ export default function RootLayout({
       <body>
         <AppAuthProvider>
           <DeviceFrame>{children}</DeviceFrame>
+          <NotificationPrompt />
         </AppAuthProvider>
         <InstallPrompt />
         <RegisterSW />
