@@ -123,7 +123,7 @@
 .pickLbl { display: block; font-family: var(--ff-mono); font-size: 11px; color: var(--muted); margin-bottom: 8px; }
 .pickInput {
   width: 100%; background: var(--bg-2); border: 1px solid var(--line-2); border-radius: 12px;
-  padding: 13px 15px; color: var(--text); font-size: 15px; color-scheme: dark;
+  padding: 13px 15px; color: var(--text); font-size: 15px; color-scheme: dark; text-align: center;
 }
 .statusBox {
   margin-top: 14px; font-family: var(--ff-mono); font-size: 12px; line-height: 1.5;

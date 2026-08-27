@@ -107,12 +107,11 @@
   flex-direction: column;
 }
 .share {
-  margin-top: -4px;
+  margin-top: 10px;
   margin-bottom: 4px;
   padding: 13px 15px;
   border: 1px solid var(--gold-dim);
-  border-top: none;
-  border-radius: 0 0 14px 14px;
+  border-radius: 14px;
   background: linear-gradient(180deg, rgba(201, 162, 75, 0.09), rgba(201, 162, 75, 0.03));
 }
 .shareLbl {
