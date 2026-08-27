@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useApp } from "@/lib/appauth";
-import { updateMyStad, getMyCreator, updateMyPayout } from "@/lib/appdata";
+import { updateMyStad, getMyCreator, updateMyPayout, uploadCreatorPhoto, saveCreator } from "@/lib/appdata";
 import { enablePush, savePushPrefs, DEFAULT_PREFS, type PushPrefs } from "@/lib/push";
 import styles from "./instellingen.module.css";
 
@@ -17,7 +17,25 @@ export default function InstellingenPage() {
   const [prefs, setPrefs] = useState<PushPrefs>(DEFAULT_PREFS);
   const [iban, setIban] = useState("");
   const [ibanNaam, setIbanNaam] = useState("");
+  const [fotoBusy, setFotoBusy] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
+
+  async function changeFoto(file: File) {
+    setFotoBusy(true);
+    setMsg("Foto uploaden…");
+    try {
+      const url = await uploadCreatorPhoto(file);
+      const next = { ...profile, foto: url };
+      saveProfile(next);
+      const tel = session?.phone ? { telefoon: session.phone } : {};
+      await saveCreator({ ...next, ...tel });
+      setMsg("Foto gewijzigd ✓");
+    } catch {
+      setMsg("Foto uploaden lukte niet. Probeer het opnieuw.");
+    } finally {
+      setFotoBusy(false);
+    }
+  }
 
   useEffect(() => {
     if (!loading && !session) router.replace("/login");
@@ -146,14 +164,27 @@ export default function InstellingenPage() {
 
       <div className={styles.body}>
         <div className={styles.hero}>
-          <div
+          <label
             className={styles.avatar}
             style={profile.foto ? { backgroundImage: `url(${profile.foto})` } : undefined}
+            title="Foto wijzigen"
           >
+            <input
+              type="file"
+              accept="image/*"
+              hidden
+              disabled={fotoBusy}
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                e.currentTarget.value = "";
+                if (f) changeFoto(f);
+              }}
+            />
             {!profile.foto && (
               <span>{(profile.naam || "?").replace(/[@.]/g, "").slice(0, 1).toUpperCase()}</span>
             )}
-          </div>
+            <span className={styles.avatarEdit}>{fotoBusy ? "…" : "Wijzig"}</span>
+          </label>
           <div className={styles.heroName}>{profile.naam || "Jouw profiel"}</div>
           <div className={styles.heroSub}>Creator{profile.regio ? ` · ${profile.regio}` : ""}</div>
         </div>
