@@ -16,6 +16,7 @@ import type { Deal, Review } from "@/lib/types";
 import BottomNav from "../BottomNav";
 import EmptyState from "../EmptyState";
 import { filterRestaurants } from "@/lib/discoverFilter";
+import { readSnapshot, writeSnapshot } from "@/lib/snapshotCache";
 import styles from "./discover.module.css";
 
 const MapView = dynamic(() => import("./MapView"), { ssr: false });
@@ -60,6 +61,14 @@ export default function DiscoverPage() {
   }
 
   useEffect(() => {
+    // Meteen de laatst bekende data tonen (stale-while-revalidate).
+    const cached = readSnapshot<{ r: PublicRestaurant[]; d: Deal[]; rv: Review[] }>("dinely:discover");
+    if (cached) {
+      setRows(cached.r);
+      setDeals(cached.d);
+      setReviews(cached.rv);
+      setBusy(false);
+    }
     (async () => {
       try {
         const [r, d, rv] = await Promise.all([
@@ -70,6 +79,7 @@ export default function DiscoverPage() {
         setRows(r);
         setDeals(d);
         setReviews(rv);
+        writeSnapshot("dinely:discover", { r, d, rv });
       } finally {
         setBusy(false);
       }
