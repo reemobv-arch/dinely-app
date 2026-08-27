@@ -28,7 +28,12 @@ export default function CreatorPage() {
   const [statsFoto, setStatsFoto] = useState("");
   const [statsBusy, setStatsBusy] = useState(false);
   const [statsError, setStatsError] = useState("");
-  const [categorie, setCategorie] = useState("");
+  const [categorieen, setCategorieen] = useState<string[]>([]);
+  function toggleCategorie(c: string) {
+    setCategorieen((prev) =>
+      prev.includes(c) ? prev.filter((x) => x !== c) : prev.length < 3 ? [...prev, c] : prev
+    );
+  }
   const [ig, setIg] = useState({ handle: "", vol: 0 });
   const [tt, setTt] = useState({ handle: "", vol: 0 });
   const [, setDealParam] = useState("");
@@ -45,7 +50,8 @@ export default function CreatorPage() {
     if (profile.instagram) setIg((s) => ({ ...s, handle: profile.instagram }));
     if (profile.tiktok) setTt((s) => ({ ...s, handle: profile.tiktok }));
     if (profile.statsFoto) setStatsFoto(profile.statsFoto);
-    if (profile.categorie) setCategorie(profile.categorie);
+    if (profile.categorie)
+      setCategorieen(profile.categorie.split(",").map((s) => s.trim()).filter(Boolean).slice(0, 3));
     try {
       const p = new URLSearchParams(window.location.search).get("deal");
       if (p) setDealParam(`?deal=${p}`);
@@ -72,7 +78,7 @@ export default function CreatorPage() {
       : step === 4
       ? !!foto
       : step === 7
-      ? !!statsFoto && !!categorie
+      ? !!statsFoto && categorieen.length > 0
       : true;
   const progress = ((step + 1) / STEPS) * 100;
 
@@ -89,7 +95,7 @@ export default function CreatorPage() {
       ttVolgers: tt.vol || 0,
       foto,
       statsFoto,
-      categorie,
+      categorie: categorieen.join(", "),
       regio,
       geslacht,
     };
@@ -300,18 +306,26 @@ export default function CreatorPage() {
             {statsError && (
               <p style={{ marginTop: 10, fontSize: 13, color: "var(--crit)" }}>{statsError}</p>
             )}
-            <label className="flabel" style={{ marginTop: 18, display: "block" }}>Wat voor content maak je?</label>
+            <label className="flabel" style={{ marginTop: 18, display: "block" }}>
+              Wat voor content maak je? <span style={{ color: "var(--muted-2)" }}>(max 3)</span>
+            </label>
             <div className={styles.cats}>
-              {CATEGORIEEN.map((c) => (
+              {CATEGORIEEN.map((c) => {
+                const on = categorieen.includes(c);
+                const vol = categorieen.length >= 3 && !on;
+                return (
                 <button
                   key={c}
                   type="button"
-                  className={`${styles.catChip} ${categorie === c ? styles.catChipOn : ""}`}
-                  onClick={() => setCategorie(c)}
+                  className={`${styles.catChip} ${on ? styles.catChipOn : ""}`}
+                  onClick={() => toggleCategorie(c)}
+                  disabled={vol}
+                  style={vol ? { opacity: 0.4 } : undefined}
                 >
                   {c}
                 </button>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}
@@ -391,7 +405,7 @@ export default function CreatorPage() {
           </button>
         ) : genoeg ? (
           <button className="btn btn-gold" style={{ flex: 1 }} onClick={finish}>
-            Bekijk deals →
+            Volgende →
           </button>
         ) : null}
       </div>
