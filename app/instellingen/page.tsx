@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useApp } from "@/lib/appauth";
 import { updateMyStad, getMyCreator, updateMyPayout, uploadCreatorPhoto, saveCreator } from "@/lib/appdata";
 import { enablePush, savePushPrefs, DEFAULT_PREFS, type PushPrefs } from "@/lib/push";
+import { profileGaps, GAP_LABEL } from "@/lib/profileGaps";
 import styles from "./instellingen.module.css";
 
 export default function InstellingenPage() {
@@ -154,6 +155,14 @@ export default function InstellingenPage() {
     if (pushOn) savePushPrefs(next, true);
   }
 
+  const gaps = profileGaps({
+    iban,
+    ibanNaam,
+    instagram: profile.instagram,
+    tiktok: profile.tiktok,
+  });
+  const mist = (g: (typeof gaps)[number]) => gaps.includes(g);
+
   return (
     <div className={styles.wrap}>
       <header className={styles.head}>
@@ -190,6 +199,28 @@ export default function InstellingenPage() {
           <div className={styles.heroSub}>Creator{profile.regio ? ` · ${profile.regio}` : ""}</div>
         </div>
 
+        {gaps.length > 0 && (
+          <div className={styles.todoCard}>
+            <div className={styles.todoTitle}>Maak je profiel af</div>
+            <p className={styles.todoLead}>
+              Dit ontbreekt nog. Vul het hieronder in, zodat restaurants je kunnen kiezen en we je kunnen uitbetalen.
+            </p>
+            <ul className={styles.todoList}>
+              {gaps.map((g) => (
+                <li key={g}>
+                  {g === "socials" ? (
+                    <Link href="/profiel" className={styles.todoLink}>
+                      {GAP_LABEL[g]} <span className={styles.todoGo}>Invullen ›</span>
+                    </Link>
+                  ) : (
+                    GAP_LABEL[g]
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
         <div className={styles.groupLbl}>Account</div>
         <div className={styles.card}>
           <div className={styles.rowStatic}>
@@ -215,8 +246,10 @@ export default function InstellingenPage() {
 
         <div className={styles.groupLbl}>Uitbetaling</div>
         <div className={styles.card}>
-          <div className={styles.rowEdit}>
-            <label className={styles.editLbl}>IBAN</label>
+          <div className={`${styles.rowEdit} ${mist("iban") ? styles.rowNeed : ""}`}>
+            <label className={styles.editLbl}>
+              IBAN {mist("iban") && <span className={styles.needTag}>Nog invullen</span>}
+            </label>
             <input
               className={styles.editInput}
               value={iban}
@@ -227,8 +260,10 @@ export default function InstellingenPage() {
               spellCheck={false}
             />
           </div>
-          <div className={styles.rowEdit}>
-            <label className={styles.editLbl}>Rekeninghouder</label>
+          <div className={`${styles.rowEdit} ${mist("ibanNaam") ? styles.rowNeed : ""}`}>
+            <label className={styles.editLbl}>
+              Rekeninghouder {mist("ibanNaam") && <span className={styles.needTag}>Nog invullen</span>}
+            </label>
             <input
               className={styles.editInput}
               value={ibanNaam}

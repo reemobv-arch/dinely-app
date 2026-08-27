@@ -2,7 +2,7 @@
 // - Statische app-bestanden (JS/CSS/fonts/afbeeldingen): cache-eerst (ze zijn gehasht/immutable).
 // - Navigaties/HTML: meteen uit cache tonen en op de achtergrond verversen (stale-while-revalidate).
 // - Alles van andere domeinen (Firebase, Mollie, Resend) laten we met rust.
-const VERSION = "dinely-v12";
+const VERSION = "dinely-v13";
 const CORE = ["/", "/login", "/start"];
 
 self.addEventListener("install", (e) => {

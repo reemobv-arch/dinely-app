@@ -13,6 +13,7 @@ import {
 } from "@/lib/appdata";
 import type { Application, Deal } from "@/lib/types";
 import { formatNL, todayISO } from "@/lib/format";
+import { isProfileComplete } from "@/lib/profileGaps";
 import { creatorShare } from "@/lib/money";
 import { perChannelVolgers } from "@/lib/volgers";
 import { creatorTier, nextTier, TIER_LABEL, TIER_COLOR } from "@/lib/tier";
@@ -71,7 +72,12 @@ export default function MijPage() {
         ]);
         setPunten(cre?.punten ?? 0);
         setIncompleet(
-          !cre?.iban || !cre?.ibanNaam || (!profile.instagram && !profile.tiktok)
+          !isProfileComplete({
+            iban: cre?.iban,
+            ibanNaam: cre?.ibanNaam,
+            instagram: profile.instagram,
+            tiktok: profile.tiktok,
+          })
         );
         const dmap: Record<string, Deal> = {};
         d.forEach((x) => { if (x.id) dmap[x.id] = x; });

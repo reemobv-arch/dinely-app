@@ -144,3 +144,31 @@
 .switchOn .knob { transform: translateX(18px); }
 
 .msg { font-family: var(--ff-mono); font-size: 12px; color: var(--gold); line-height: 1.5; margin: 14px 6px 0; }
+
+/* Profiel-afmaken checklist + markering van ontbrekende velden */
+.todoCard {
+  background: linear-gradient(180deg, rgba(201, 162, 75, 0.12), rgba(201, 162, 75, 0.05));
+  border: 1px solid var(--gold-dim, #8c7231);
+  border-radius: 18px;
+  padding: 16px 18px;
+  margin: 4px 0 8px;
+}
+.todoTitle { font-family: var(--ff-display); font-size: 18px; color: var(--gold, #e4c67e); }
+.todoLead { font-size: 13px; line-height: 1.5; color: var(--muted); margin: 6px 0 10px; }
+.todoList { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.todoList li {
+  position: relative; padding-left: 20px; font-size: 14px; color: var(--text);
+}
+.todoList li::before {
+  content: ""; position: absolute; left: 2px; top: 6px; width: 8px; height: 8px;
+  border-radius: 50%; background: #ce7460;
+}
+.todoLink { display: inline-flex; align-items: center; gap: 8px; color: var(--text); }
+.todoGo { font-family: var(--ff-mono); font-size: 11px; color: var(--gold, #e4c67e); }
+
+.rowNeed { background: rgba(206, 116, 96, 0.06); }
+.needTag {
+  font-family: var(--ff-mono); font-size: 9.5px; letter-spacing: 0.06em; text-transform: uppercase;
+  color: #ce7460; border: 1px solid rgba(206, 116, 96, 0.5); border-radius: 100px;
+  padding: 2px 7px; margin-left: 6px; vertical-align: middle;
+}
