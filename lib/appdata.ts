@@ -300,6 +300,8 @@ export async function saveCreator(p: {
   if (!firebaseReady) return;
   const uid = auth.currentUser?.uid;
   if (!uid) return;
+  // Foto is verplicht: zonder foto maken/updaten we geen creatorprofiel.
+  if (!p.foto) throw new Error("foto-verplicht");
   const r = doc(db, "creators", uid);
   const snap = await getDoc(r);
   const isNew = !snap.exists();
