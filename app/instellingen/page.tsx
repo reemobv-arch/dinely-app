@@ -180,10 +180,11 @@ export default function InstellingenPage() {
                 if (f) changeFoto(f);
               }}
             />
-            {!profile.foto && (
+            {!profile.foto ? (
               <span>{(profile.naam || "?").replace(/[@.]/g, "").slice(0, 1).toUpperCase()}</span>
+            ) : (
+              fotoBusy && <span className={styles.avatarBusy}>…</span>
             )}
-            <span className={styles.avatarEdit}>{fotoBusy ? "…" : "Wijzig"}</span>
           </label>
           <div className={styles.heroName}>{profile.naam || "Jouw profiel"}</div>
           <div className={styles.heroSub}>Creator{profile.regio ? ` · ${profile.regio}` : ""}</div>

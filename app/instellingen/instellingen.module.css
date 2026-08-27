@@ -28,19 +28,15 @@
   cursor: pointer;
   overflow: hidden;
 }
-.avatarEdit {
+/* Alleen tijdens uploaden: subtiele indicator op een donker schermpje. */
+.avatar span.avatarBusy {
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding: 5px 0 6px;
-  background: rgba(11, 9, 6, 0.66);
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(11, 9, 6, 0.5);
   color: #fff;
-  font-family: var(--ff-mono);
-  font-size: 10px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  text-align: center;
+  font-size: 22px;
 }
 .avatar span {
   font-family: var(--ff-display);
