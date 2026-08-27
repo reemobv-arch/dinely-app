@@ -5,7 +5,9 @@ import { useApp } from "@/lib/appauth";
 import { enablePush, DEFAULT_PREFS } from "@/lib/push";
 import styles from "./notificationPrompt.module.css";
 
-const DISMISS_KEY = "dinely-app:notifPromptDismissed";
+const COUNT_KEY = "dinely-app:notifLaterCount"; // hoe vaak "Later" is getikt
+const SNOOZE_KEY = "dinely-app:notifSnoozeUntil"; // ms-timestamp; 0 = volgende opening weer
+const DAY = 24 * 60 * 60 * 1000;
 
 // Vraagt meteen (na het openen vanaf het beginscherm) om meldingen aan te zetten.
 // Op iOS mag de systeempopup alleen na een tik komen — daarom tonen we eerst dit
@@ -25,10 +27,13 @@ export default function NotificationPrompt() {
       (window.navigator as unknown as { standalone?: boolean }).standalone === true;
     if (!standalone) return;
 
-    // Alleen als er nog geen keuze is gemaakt, en niet eerder weggeklikt.
+    // Alleen als er nog geen keuze is gemaakt (aan/uit).
     if (Notification.permission !== "default") return;
+
+    // Snooze: na "Later" niet meteen weer. 0 = volgende opening weer tonen.
     try {
-      if (localStorage.getItem(DISMISS_KEY) === "1") return;
+      const until = Number(localStorage.getItem(SNOOZE_KEY) || 0);
+      if (until && Date.now() < until) return;
     } catch {
       /* negeer */
     }
@@ -41,11 +46,22 @@ export default function NotificationPrompt() {
     setBusy(true);
     await enablePush(DEFAULT_PREFS); // opent de systeempopup (na deze tik)
     setBusy(false);
-    dismiss();
-  }
-  function dismiss() {
+    // Niet meer opnieuw vragen (permissie is nu granted/denied, of anders even rust).
     try {
-      localStorage.setItem(DISMISS_KEY, "1");
+      localStorage.setItem(SNOOZE_KEY, String(Date.now() + 7 * DAY));
+    } catch {
+      /* negeer */
+    }
+    setShow(false);
+  }
+
+  function later() {
+    let count = 0;
+    try {
+      count = Number(localStorage.getItem(COUNT_KEY) || 0) + 1;
+      localStorage.setItem(COUNT_KEY, String(count));
+      // 1e keer: volgende opening weer (snooze 0). Daarna: pas de dag erna.
+      localStorage.setItem(SNOOZE_KEY, String(count >= 2 ? Date.now() + DAY : 0));
     } catch {
       /* negeer */
     }
@@ -67,7 +83,7 @@ export default function NotificationPrompt() {
             <button className="btn btn-gold" onClick={enable} disabled={busy}>
               {busy ? "Bezig…" : "Zet aan"}
             </button>
-            <button className={styles.later} onClick={dismiss} disabled={busy}>
+            <button className={styles.later} onClick={later} disabled={busy}>
               Later
             </button>
           </div>
