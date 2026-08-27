@@ -286,7 +286,7 @@ export default function CreatorPage() {
                   setStatsBusy(true);
                   setStatsError("");
                   try {
-                    const url = await uploadCreatorPhoto(f);
+                    const url = await uploadCreatorPhoto(f, { maxDim: 2200, quality: 0.85 });
                     const check = await validateStatsImage(url);
                     if (!check.ok) {
                       setStatsError(

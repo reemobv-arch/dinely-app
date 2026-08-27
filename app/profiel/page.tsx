@@ -204,7 +204,7 @@ export default function ProfielPage() {
               setStatsBusy(true);
               setMsg(null);
               try {
-                const url = await uploadCreatorPhoto(f);
+                const url = await uploadCreatorPhoto(f, { maxDim: 2200, quality: 0.85 });
                 const check = await validateStatsImage(url);
                 if (!check.ok) {
                   setMsg(

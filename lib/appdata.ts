@@ -12,6 +12,7 @@ import {
 } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { auth, db, storage, firebaseReady } from "./firebase";
+import { resizeImageFile } from "./resizeImage";
 import type {
   Restaurant,
   Deal,
@@ -120,7 +121,9 @@ export async function uploadContentFile(file: File): Promise<ContentItem> {
   const type: "image" | "video" = file.type.startsWith("video") ? "video" : "image";
   const name = `${Date.now()}-${Math.floor(Math.random() * 1e6)}`;
   const r = ref(storage, `content/${uid}/${name}`);
-  await uploadBytes(r, file);
+  // Foto's verkleinen; video's ongemoeid laten.
+  const data = type === "image" ? await resizeImageFile(file, { maxDim: 1600, quality: 0.85 }) : file;
+  await uploadBytes(r, data, data instanceof Blob && data.type ? { contentType: data.type } : undefined);
   const url = await getDownloadURL(r);
   return { url, type };
 }
@@ -272,12 +275,17 @@ export async function listReviewsFor(id: string): Promise<Review[]> {
 }
 
 // Profielfoto van de creator uploaden (verplicht in de onboarding).
-export async function uploadCreatorPhoto(file: File): Promise<string> {
+export async function uploadCreatorPhoto(
+  file: File,
+  opts?: { maxDim?: number; quality?: number }
+): Promise<string> {
   if (!firebaseReady) throw new Error("firebase-not-ready");
   const uid = auth.currentUser?.uid;
   if (!uid) throw new Error("not-signed-in");
-  const r = ref(storage, `creators/${uid}/foto-${Date.now()}`);
-  await uploadBytes(r, file);
+  // Client-side verkleinen: scheelt megabytes en laadt overal sneller.
+  const blob = await resizeImageFile(file, opts);
+  const r = ref(storage, `creators/${uid}/foto-${Date.now()}.jpg`);
+  await uploadBytes(r, blob, { contentType: blob.type || "image/jpeg" });
   return getDownloadURL(r);
 }
 

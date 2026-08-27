@@ -1,6 +1,13 @@
 import { initializeApp, getApps, getApp, type FirebaseApp } from "firebase/app";
 import { getAuth, connectAuthEmulator, type Auth } from "firebase/auth";
-import { getFirestore, connectFirestoreEmulator, type Firestore } from "firebase/firestore";
+import {
+  getFirestore,
+  initializeFirestore,
+  persistentLocalCache,
+  persistentMultipleTabManager,
+  connectFirestoreEmulator,
+  type Firestore,
+} from "firebase/firestore";
 import { getStorage, type FirebaseStorage } from "firebase/storage";
 
 // Alleen aan tijdens e2e/lokaal testen: praat met de Firebase-emulator i.p.v.
@@ -35,9 +42,22 @@ const app: FirebaseApp | null = firebaseReady
   : null;
 
 export const auth: Auth = app ? getAuth(app) : (null as unknown as Auth);
-export const db: Firestore = app
-  ? getFirestore(app)
-  : (null as unknown as Firestore);
+
+// Firestore met een blijvende lokale cache (IndexedDB): herhaalde reads komen
+// direct uit de cache i.p.v. van het netwerk, en de app werkt deels offline.
+// Alleen in de browser; op de server (SSR/build) een gewone instantie.
+function initDb(a: FirebaseApp): Firestore {
+  if (typeof window === "undefined") return getFirestore(a);
+  try {
+    return initializeFirestore(a, {
+      localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }),
+    });
+  } catch {
+    // Al geïnitialiseerd (hot reload) of niet ondersteund: val terug.
+    return getFirestore(a);
+  }
+}
+export const db: Firestore = app ? initDb(app) : (null as unknown as Firestore);
 export const storage: FirebaseStorage = app
   ? getStorage(app)
   : (null as unknown as FirebaseStorage);
