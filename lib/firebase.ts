@@ -21,6 +21,11 @@ export const firebaseReady = Boolean(
   firebaseConfig.apiKey && firebaseConfig.projectId
 );
 
+// Demo-modus (vaste code, lokale opslag) mag ALLEEN in development draaien.
+// In productie nooit: dan is Firebase de enige bron. Zo kan er nooit per
+// ongeluk een test-login actief zijn als er een env-var mist.
+export const demoMode = !firebaseReady && process.env.NODE_ENV !== "production";
+
 // Alleen initialiseren als de config aanwezig is — anders zou Firebase
 // bij het laden (ook tijdens de build/prerender) crashen op een lege API-key.
 const app: FirebaseApp | null = firebaseReady

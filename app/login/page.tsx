@@ -7,7 +7,7 @@ import {
   signInWithPhoneNumber,
   type ConfirmationResult,
 } from "firebase/auth";
-import { auth, firebaseReady } from "@/lib/firebase";
+import { auth, firebaseReady, demoMode } from "@/lib/firebase";
 import { useApp, DEMO_CODE } from "@/lib/appauth";
 import { toE164NL } from "@/lib/phone";
 import Waiting from "../Waiting";
@@ -89,10 +89,14 @@ export default function LoginPage() {
     }
     setError(null);
 
-    // Demo-modus: geen Firebase -> meteen door naar de codestap.
     if (!firebaseReady) {
-      setE164(num);
-      setStep("code");
+      // Alleen in development: demo -> meteen naar de codestap.
+      if (demoMode) {
+        setE164(num);
+        setStep("code");
+      } else {
+        setError("Inloggen is tijdelijk niet beschikbaar. Probeer het later opnieuw.");
+      }
       return;
     }
 
@@ -115,8 +119,12 @@ export default function LoginPage() {
     if (busy) return;
     setError(null);
 
-    // Demo-modus: vaste code.
+    // Alleen in development: demo met vaste code.
     if (!firebaseReady) {
+      if (!demoMode) {
+        setError("Inloggen is tijdelijk niet beschikbaar. Probeer het later opnieuw.");
+        return;
+      }
       if (code.trim() !== DEMO_CODE) {
         setError(`Onjuiste code. (Demo: vul ${DEMO_CODE} in.)`);
         return;
@@ -196,7 +204,7 @@ export default function LoginPage() {
             onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
             autoFocus
           />
-          {!firebaseReady && (
+          {demoMode && (
             <div className={styles.hint}>Demo: de code is <b>{DEMO_CODE}</b></div>
           )}
           {error && <div className={styles.err}>{error}</div>}

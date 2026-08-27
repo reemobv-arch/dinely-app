@@ -9,7 +9,7 @@ import {
 } from "react";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
-import { auth, db, firebaseReady } from "./firebase";
+import { auth, db, firebaseReady, demoMode } from "./firebase";
 
 // Auth voor de Dinely-app.
 // Login = telefoonnummer -> echte SMS-code via Firebase Phone Authentication.
@@ -87,13 +87,16 @@ export function AppAuthProvider({ children }: { children: ReactNode }) {
       /* geen storage */
     }
 
-    // Demo-modus: geen Firebase-config -> sessie uit localStorage halen.
+    // Zonder Firebase-config: alleen in development een lokale demo-sessie.
+    // In productie doen we niets (geen test-login mogelijk).
     if (!firebaseReady) {
-      try {
-        const s = localStorage.getItem(S_KEY);
-        if (s) setSession(JSON.parse(s) as Session);
-      } catch {
-        /* negeer */
+      if (demoMode) {
+        try {
+          const s = localStorage.getItem(S_KEY);
+          if (s) setSession(JSON.parse(s) as Session);
+        } catch {
+          /* negeer */
+        }
       }
       setLoading(false);
       return;
