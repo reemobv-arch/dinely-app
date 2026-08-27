@@ -12,5 +12,21 @@ export function formatNL(iso: string): string {
 }
 
 export function todayISO(): string {
-  return new Date().toISOString().slice(0, 10);
+  // Lokale datum (niet UTC), anders klopt de datum 's avonds/'s nachts niet.
+  const d = new Date();
+  d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+  return d.toISOString().slice(0, 10);
+}
+
+/** Datum n dagen na een YYYY-MM-DD (bijv. voor een max-datum). */
+export function addDays(iso: string, n: number): string {
+  const d = new Date(iso + "T00:00:00");
+  d.setDate(d.getDate() + n);
+  d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+  return d.toISOString().slice(0, 10);
+}
+
+/** Ligt een YYYY-MM-DD-datum vóór vandaag? */
+export function isPastISO(iso: string): boolean {
+  return !!iso && iso < todayISO();
 }

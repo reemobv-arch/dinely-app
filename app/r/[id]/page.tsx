@@ -17,6 +17,7 @@ import {
 import type { Deal, Review, Content } from "@/lib/types";
 import { qualifiesForDeal } from "@/lib/qualify";
 import { isInviteLocked } from "@/lib/dealVisibility";
+import { todayISO, addDays, formatNL, isPastISO } from "@/lib/format";
 import Waiting from "../../Waiting";
 import styles from "./restaurant.module.css";
 
@@ -28,18 +29,6 @@ const STATUS: Record<string, { label: string; cls: string }> = {
 
 function avg(arr: number[]) {
   return arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : null;
-}
-function todayISO() {
-  return new Date().toISOString().slice(0, 10);
-}
-function addDays(iso: string, n: number) {
-  const d = new Date(iso);
-  d.setDate(d.getDate() + n);
-  return d.toISOString().slice(0, 10);
-}
-function formatNL(iso: string) {
-  if (!iso) return "";
-  return new Date(iso).toLocaleDateString("nl-NL", { weekday: "short", day: "numeric", month: "short" });
 }
 
 export default function RestaurantPage() {
@@ -124,6 +113,8 @@ export default function RestaurantPage() {
 
   async function apply(d: Deal) {
     if (!d.id || !pickDate || !r) return;
+    // Geen datum in het verleden: alleen vandaag of later.
+    if (isPastISO(pickDate)) return;
     setPending(d.id);
     const toel = motivatie.trim();
     try {
@@ -367,7 +358,7 @@ export default function RestaurantPage() {
                       />
                       <button
                         className={styles.applyBtn}
-                        disabled={!pickDate || (!ok && !motivatie.trim()) || pending === d.id}
+                        disabled={!pickDate || isPastISO(pickDate) || (!ok && !motivatie.trim()) || pending === d.id}
                         onClick={() => apply(d)}
                       >
                         {pending === d.id ? <Waiting label="Versturen" /> : "Verstuur aanvraag →"}
