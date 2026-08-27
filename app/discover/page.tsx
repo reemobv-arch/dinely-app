@@ -105,6 +105,16 @@ export default function DiscoverPage() {
             value={q}
             onChange={(e) => setQ(e.target.value)}
           />
+          {q && (
+            <button
+              type="button"
+              className={styles.sClear}
+              onClick={() => setQ("")}
+              aria-label="Zoekopdracht wissen"
+            >
+              ✕
+            </button>
+          )}
         </div>
         <div className={styles.filters}>
           <label className={styles.filter}>

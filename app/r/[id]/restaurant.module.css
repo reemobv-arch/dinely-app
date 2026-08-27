@@ -124,7 +124,7 @@
 .pickInput {
   display: block; width: 100%; max-width: 100%; min-width: 0;
   background: var(--bg-2); border: 1px solid var(--line-2); border-radius: 12px;
-  padding: 13px 15px; color: var(--text); font-size: 15px; color-scheme: dark; text-align: center;
+  padding: 13px 15px; color: var(--text); font-size: 16px; color-scheme: dark; text-align: center;
   -webkit-appearance: none; appearance: none;
 }
 .statusBox {
