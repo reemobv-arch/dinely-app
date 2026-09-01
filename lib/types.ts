@@ -82,6 +82,15 @@ export type ReachEntry = {
   statsGeldig?: boolean;
 };
 
+export type AmbassadeurInvite = {
+  id?: string;
+  restaurantId: string;
+  restaurantNaam?: string;
+  creatorUid: string;
+  status: "open" | "accepted" | "rejected";
+  createdAt?: Stamp;
+};
+
 export type ContentItem = { url: string; type: "image" | "video" };
 
 export type Content = {

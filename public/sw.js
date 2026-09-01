@@ -2,7 +2,7 @@
 // - Statische app-bestanden (JS/CSS/fonts/afbeeldingen): cache-eerst (ze zijn gehasht/immutable).
 // - Navigaties/HTML: netwerk-eerst (HTML moet bij de gehashte chunks passen), offline uit cache.
 // - Alles van andere domeinen (Firebase, Mollie, Resend) laten we met rust.
-const VERSION = "dinely-v21";
+const VERSION = "dinely-v22";
 const CORE = ["/", "/login", "/start"];
 
 self.addEventListener("install", (e) => {

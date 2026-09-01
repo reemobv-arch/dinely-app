@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useApp } from "@/lib/appauth";
 import {
   listMyApplications,
+  listMyAmbassadeurInvites,
   listAllDeals,
   listRestaurants,
   listMyContent,
@@ -36,6 +37,7 @@ export default function MijPage() {
   const [contentCount, setContentCount] = useState(0);
   const [punten, setPunten] = useState(0);
   const [incompleet, setIncompleet] = useState(false);
+  const [ambInvites, setAmbInvites] = useState(0);
   const [busy, setBusy] = useState(true);
   const [origin, setOrigin] = useState("https://app.dinely.nl");
   const [copied, setCopied] = useState<string | null>(null);
@@ -63,13 +65,15 @@ export default function MijPage() {
     (async () => {
       setBusy(true);
       try {
-        const [mine, d, r, myContent, cre] = await Promise.all([
+        const [mine, d, r, myContent, cre, invs] = await Promise.all([
           listMyApplications(uid),
           listAllDeals(),
           listRestaurants(),
           listMyContent(uid),
           getMyCreator(uid),
+          listMyAmbassadeurInvites(uid),
         ]);
+        setAmbInvites(invs.length);
         setPunten(cre?.punten ?? 0);
         setIncompleet(
           !isProfileComplete({
@@ -132,6 +136,16 @@ export default function MijPage() {
           {profile.instagram && <span className={styles.social}>Instagram · {profile.instagram}</span>}
           {profile.tiktok && <span className={styles.social}>TikTok · {profile.tiktok}</span>}
         </div>
+      )}
+
+      {ambInvites > 0 && (
+        <Link href="/ambassadeur" className={styles.ambBanner}>
+          <span className={styles.ambStar}>★</span>
+          <span>
+            Je hebt {ambInvites === 1 ? "een ambassadeur-uitnodiging" : `${ambInvites} ambassadeur-uitnodigingen`}
+          </span>
+          <span className={styles.ambArrow}>→</span>
+        </Link>
       )}
 
       <Link href="/instellingen" className={styles.settingsRow}>

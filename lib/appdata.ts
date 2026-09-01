@@ -434,6 +434,43 @@ export async function validateStatsImage(
   }
 }
 
+// Openstaande ambassadeur-uitnodigingen voor deze creator.
+export async function listMyAmbassadeurInvites(
+  uid: string
+): Promise<import("./types").AmbassadeurInvite[]> {
+  if (!firebaseReady || !uid) return [];
+  const snap = await getDocs(
+    query(
+      collection(db, "ambassadeurInvites"),
+      where("creatorUid", "==", uid),
+      where("status", "==", "open")
+    )
+  );
+  return snap.docs.map((d) => ({ id: d.id, ...(d.data() as import("./types").AmbassadeurInvite) }));
+}
+
+// Uitnodiging beantwoorden (accepteren of afwijzen) via het dashboard.
+export async function respondAmbassadeurInvite(
+  inviteId: string,
+  accept: boolean
+): Promise<{ ok: boolean; punten?: number }> {
+  if (!firebaseReady) return { ok: false };
+  try {
+    const base = process.env.NEXT_PUBLIC_DASHBOARD_URL;
+    const idToken = await auth.currentUser?.getIdToken();
+    if (!base || !idToken) return { ok: false };
+    const res = await fetch(`${base}/api/ambassador/respond`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ idToken, inviteId, accept }),
+    });
+    const data = (await res.json().catch(() => ({}))) as { ok?: boolean; punten?: number };
+    return { ok: !!data.ok, punten: data.punten };
+  } catch {
+    return { ok: false };
+  }
+}
+
 export async function getMyCreator(
   uid: string
 ): Promise<{ status?: string; regio?: string; iban?: string; ibanNaam?: string; punten?: number } | null> {

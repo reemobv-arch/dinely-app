@@ -218,3 +218,13 @@
   flex: none;
   box-shadow: 0 0 0 3px rgba(229, 72, 77, 0.18);
 }
+
+/* Ambassadeur-uitnodiging banner */
+.ambBanner {
+  display: flex; align-items: center; gap: 12px;
+  border: 1px solid rgba(119, 190, 155, 0.4); background: rgba(119, 190, 155, 0.08);
+  border-radius: 14px; padding: 13px 15px; margin-bottom: 12px; color: var(--text);
+}
+.ambStar { color: #77be9b; font-size: 18px; flex: none; }
+.ambBanner > span:nth-child(2) { flex: 1; font-size: 14px; }
+.ambArrow { color: #77be9b; flex: none; }
