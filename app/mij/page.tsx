@@ -197,7 +197,7 @@ export default function MijPage() {
                     const datum = a.bezoekDatum ?? "";
                     const bevestigd = a.bezoekBevestigd === true;
                     const past = !!datum && datum <= today;
-                    const done = !!a.reviewed && !!a.contentPosted;
+                    const done = !!a.reviewed && !!a.contentPosted && !!a.reachSubmitted;
                     const actionsOpen = bevestigd && past && !done;
                     const grey = !done && !actionsOpen;
                     const korting = deal?.kortingPct ?? 20;
@@ -232,6 +232,11 @@ export default function MijPage() {
                               <span className={`${styles.badge} ${styles.ok}`}>Content ✓</span>
                             ) : (
                               <Link href={`/content/${a.id}`} className={styles.actBtnGold}>Plaats content</Link>
+                            )}
+                            {a.reachSubmitted ? (
+                              <span className={`${styles.badge} ${styles.ok}`}>Bereik ✓</span>
+                            ) : (
+                              <Link href={`/bereik/${a.id}`} className={styles.actBtnGold}>Bereik doorgeven</Link>
                             )}
                           </div>
                         )}

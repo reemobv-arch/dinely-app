@@ -168,6 +168,39 @@ export async function createContent(c: {
   }
 }
 
+// Bereik-bewijs indienen: slaat de posts op bij de sollicitatie (de deal) en
+// werkt het totale bereik van de creator bij (voor restaurant + superadmin).
+export async function submitReach(
+  applicationId: string,
+  creatorUid: string,
+  entries: import("./reach").ReachEntry[]
+): Promise<void> {
+  if (!firebaseReady || !applicationId) return;
+  const totaal = entries.reduce(
+    (s, e) => s + (Number.isFinite(e.bereik) && e.bereik > 0 ? Math.floor(e.bereik) : 0),
+    0
+  );
+  await updateDoc(doc(db, "applications", applicationId), {
+    reachEntries: entries,
+    reachTotaal: totaal,
+    reachSubmitted: true,
+    reachSubmittedAt: serverTimestamp(),
+  });
+  // Denormaliseer het totale bereik op het publieke creatorprofiel.
+  if (creatorUid) {
+    try {
+      const apps = await listMyApplications(creatorUid);
+      const bereikTotaal = apps.reduce(
+        (s, a) => s + (a.id === applicationId ? totaal : a.reachTotaal || 0),
+        0
+      );
+      await setDoc(doc(db, "creatorProfiles", creatorUid), { bereikTotaal }, { merge: true });
+    } catch {
+      /* denormalisatie is bijzaak */
+    }
+  }
+}
+
 export async function markApplicationContentPosted(id: string): Promise<void> {
   if (!firebaseReady) return;
   await updateDoc(doc(db, "applications", id), { contentPosted: true });
@@ -368,7 +401,7 @@ export async function saveCreator(p: {
 // dienst niet bereikbaar is of geen sleutel heeft, geven we { ok: true } terug.
 export async function validateStatsImage(
   imageUrl: string
-): Promise<{ ok: boolean; reason?: string; detail?: string }> {
+): Promise<{ ok: boolean; reason?: string; detail?: string; bereik?: number; kanaal?: string }> {
   if (!firebaseReady || !imageUrl) return { ok: true };
   try {
     const base = process.env.NEXT_PUBLIC_DASHBOARD_URL;
@@ -383,11 +416,19 @@ export async function validateStatsImage(
       ok?: boolean;
       reason?: string;
       detail?: string;
+      stats?: { bereik?: number; weergaven?: number; platform?: string };
     };
     // Alleen een expliciet "not-stats" telt als afkeuring; overige fouten
     // (geen sleutel, netwerk) mogen de onboarding niet blokkeren.
     if (data.reason === "not-stats") return { ok: false, reason: "not-stats", detail: data.detail };
-    return { ok: true };
+    // Bij geldige stats geven we het bereik (of anders weergaven) + kanaal terug,
+    // zodat het bereik-veld automatisch gevuld kan worden.
+    const s = data.stats;
+    return {
+      ok: true,
+      bereik: typeof s?.bereik === "number" ? s.bereik : typeof s?.weergaven === "number" ? s.weergaven : undefined,
+      kanaal: s?.platform,
+    };
   } catch {
     return { ok: true };
   }

@@ -67,6 +67,19 @@ export type Application = {
   bedrag?: number;
   status: "wacht" | "geaccepteerd" | "afgewezen";
   createdAt?: Stamp;
+  // Bereik-bewijs dat de creator ~48u na het diner aanlevert.
+  reachRequestedAt?: Stamp;
+  reachEntries?: ReachEntry[];
+  reachTotaal?: number;
+  reachSubmitted?: boolean;
+};
+
+export type ReachEntry = {
+  datum?: string; // ISO datum van de post
+  kanaal?: string; // Instagram / TikTok / …
+  bereik: number; // aantal mensen bereikt
+  foto?: string; // optionele screenshot
+  statsGeldig?: boolean;
 };
 
 export type ContentItem = { url: string; type: "image" | "video" };
