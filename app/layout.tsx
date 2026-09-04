@@ -8,6 +8,7 @@ import InstallPrompt from "./InstallPrompt";
 import NotificationPrompt from "./NotificationPrompt";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://app.dinely.nl"),
   title: "Dinely",
   description: "Zie de vibe voordat je aankomt. Ontdek restaurants en deals.",
   manifest: "/manifest.webmanifest",
