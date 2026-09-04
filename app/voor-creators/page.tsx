@@ -11,6 +11,7 @@ export const metadata: Metadata = {
     siteName: "Dinely",
     locale: "nl_NL",
     type: "website",
+    images: [{ url: "/og-invite.jpg", width: 1200, height: 630, alt: "Dinely" }],
   },
 };
 
