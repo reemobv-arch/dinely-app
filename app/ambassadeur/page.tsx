@@ -43,6 +43,12 @@ export default function AmbassadeurPage() {
           ? `Je bent nu ambassadeur van ${inv.restaurantNaam || "dit restaurant"}${r.punten ? ` — +${r.punten} punten!` : "!"}`
           : "Uitnodiging afgewezen."
       );
+    } else if (r.reason === "max-reached") {
+      setDone(
+        `Je kunt voor maximaal ${r.max ?? 3} restaurants ambassadeur zijn. Zeg er eerst een op om deze te accepteren.`
+      );
+    } else {
+      setDone("Er ging iets mis. Probeer het zo nog eens.");
     }
   }
 

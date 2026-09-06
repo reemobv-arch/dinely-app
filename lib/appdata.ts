@@ -453,7 +453,7 @@ export async function listMyAmbassadeurInvites(
 export async function respondAmbassadeurInvite(
   inviteId: string,
   accept: boolean
-): Promise<{ ok: boolean; punten?: number }> {
+): Promise<{ ok: boolean; punten?: number; reason?: string; max?: number }> {
   if (!firebaseReady) return { ok: false };
   try {
     const base = process.env.NEXT_PUBLIC_DASHBOARD_URL;
@@ -464,8 +464,13 @@ export async function respondAmbassadeurInvite(
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ idToken, inviteId, accept }),
     });
-    const data = (await res.json().catch(() => ({}))) as { ok?: boolean; punten?: number };
-    return { ok: !!data.ok, punten: data.punten };
+    const data = (await res.json().catch(() => ({}))) as {
+      ok?: boolean;
+      punten?: number;
+      reason?: string;
+      max?: number;
+    };
+    return { ok: !!data.ok, punten: data.punten, reason: data.reason, max: data.max };
   } catch {
     return { ok: false };
   }
