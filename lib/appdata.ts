@@ -13,6 +13,7 @@ import {
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { auth, db, storage, firebaseReady } from "./firebase";
 import { resizeImageFile } from "./resizeImage";
+import { isProfielCompleet } from "./restaurantProfile";
 import type {
   Restaurant,
   Deal,
@@ -278,7 +279,11 @@ export type PublicRestaurant = Restaurant & { id: string };
 export async function listRestaurants(): Promise<PublicRestaurant[]> {
   if (!firebaseReady) return [];
   const snap = await getDocs(collection(db, "restaurants"));
-  return snap.docs.map((d) => ({ id: d.id, ...(d.data() as Restaurant) }));
+  // Alleen restaurants met een afgemaakt profiel verschijnen in de app en op de
+  // kaart. Zo staan half-ingevulde accounts er niet tussen.
+  return snap.docs
+    .map((d) => ({ id: d.id, ...(d.data() as Restaurant) }))
+    .filter((r) => isProfielCompleet(r));
 }
 
 export async function getRestaurantById(id: string): Promise<PublicRestaurant | null> {
