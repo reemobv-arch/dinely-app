@@ -68,7 +68,8 @@ export type Application = {
   bezoekBevestigd?: boolean; // restaurant heeft het bezoek bevestigd
   reviewed?: boolean;
   contentPosted?: boolean;
-  betaalStatus?: "open" | "betaald" | "uitbetaald";
+  betaalStatus?: "open" | "betaald" | "uitbetaald"; // "uitbetaald" = vrijgegeven uit escrow
+  payoutGedaan?: boolean; // admin heeft het geld echt naar de creator overgemaakt
   bedrag?: number;
   status: "wacht" | "geaccepteerd" | "afgewezen";
   createdAt?: Stamp;

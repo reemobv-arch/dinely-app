@@ -42,12 +42,14 @@ describe("dealVoortgang (6 stappen)", () => {
     expect(r.fase).toBe("klaar");
   });
 
-  it("betaalde deal: pas klaar als de uitbetaling is gedaan", () => {
+  it("betaalde deal: pas klaar als het geld echt is overgemaakt (payoutGedaan)", () => {
     const base = { status: "geaccepteerd" as const, bezoekBevestigd: true, contentPosted: true, reachSubmitted: true };
-    expect(dealVoortgang({ ...base, betaalStatus: "betaald" }, true).klaar).toBe(false); // nog niet uitbetaald
-    expect(dealVoortgang({ ...base, betaalStatus: "betaald" }, true).gedaan).toBe(5);
-    expect(dealVoortgang({ ...base, betaalStatus: "uitbetaald" }, true).klaar).toBe(true);
-    expect(dealVoortgang({ ...base, betaalStatus: "uitbetaald" }, true).gedaan).toBe(6);
+    // Vrijgegeven uit escrow, maar nog niet overgemaakt -> stap 5, nog niet klaar.
+    expect(dealVoortgang({ ...base, betaalStatus: "uitbetaald" }, true).klaar).toBe(false);
+    expect(dealVoortgang({ ...base, betaalStatus: "uitbetaald" }, true).gedaan).toBe(5);
+    // Echt overgemaakt -> stap 6, klaar.
+    expect(dealVoortgang({ ...base, payoutGedaan: true }, true).klaar).toBe(true);
+    expect(dealVoortgang({ ...base, payoutGedaan: true }, true).gedaan).toBe(6);
   });
 });
 

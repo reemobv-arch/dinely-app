@@ -9,6 +9,7 @@ type App = {
   contentPosted?: boolean;
   reachSubmitted?: boolean;
   betaalStatus?: "open" | "betaald" | "uitbetaald";
+  payoutGedaan?: boolean;
   datumGewijzigd?: boolean;
 };
 
@@ -29,15 +30,15 @@ export type DealFase =
   | "teDoen" // bezoek bevestigd -> content/statistieken doorgeven
   | "klaar";
 
-// isBetaald: bij een betaalde deal telt de laatste stap "Betaald" pas als de
-// uitbetaling is gedaan; bij een gratis diner is de deal klaar zodra de
-// statistieken zijn geleverd (er gaat geen cash naar de creator).
+// isBetaald: bij een betaalde deal telt de laatste stap "Betaald" pas als het geld
+// echt is overgemaakt (payoutGedaan); bij een gratis diner is de deal klaar zodra
+// de statistieken zijn geleverd (er gaat geen cash naar de creator).
 export function dealVoortgang(a: App, isBetaald = false): { gedaan: number; totaal: number; fase: DealFase; klaar: boolean } {
   const geaccepteerd = a.status === "geaccepteerd";
   const bezoek = !!a.bezoekBevestigd;
   const content = !!a.contentPosted;
   const stats = !!a.reachSubmitted;
-  const betaald = isBetaald ? a.betaalStatus === "uitbetaald" : stats;
+  const betaald = isBetaald ? !!a.payoutGedaan : stats;
 
   const flags = [true, geaccepteerd, bezoek, content, stats, betaald];
   let gedaan = 0;
