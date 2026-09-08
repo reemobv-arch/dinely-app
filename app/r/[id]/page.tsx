@@ -81,7 +81,8 @@ export default function RestaurantPage() {
           listContentFor(id),
         ]);
         setR(rr);
-        setDeals(d.filter((x) => x.status === "open"));
+        // Op het restaurantprofiel tonen we alle deals (open eerst, gesloten erna).
+        setDeals([...d].sort((a, b) => (a.status === "open" ? 0 : 1) - (b.status === "open" ? 0 : 1)));
         setReviews(rv);
         // Alleen content die het restaurant zelf op zijn profiel heeft gezet.
         setContent(c.filter((x) => x.uitgelicht));
@@ -283,9 +284,9 @@ export default function RestaurantPage() {
       )}
 
       <div className={styles.section} style={{ paddingBottom: 40 }}>
-        <h2 className={styles.h2}>Open deals</h2>
+        <h2 className={styles.h2}>Deals</h2>
         {deals.length === 0 ? (
-          <div className={styles.empty}>Dit restaurant heeft nu geen open deals.</div>
+          <div className={styles.empty}>Dit restaurant heeft nog geen deals.</div>
         ) : (
           <div className={styles.deals}>
             {deals.map((d) => {
@@ -294,12 +295,15 @@ export default function RestaurantPage() {
               const applied = !!stKey && stKey !== "err";
               const ok = qualifies(d);
               const inviteLocked = isInviteLocked(d, invited, applied);
+              const gesloten = d.status !== "open";
               return (
-                <div key={d.id} className={`${styles.deal} ${inviteLocked ? styles.dealLocked : ""}`}>
+                <div key={d.id} className={`${styles.deal} ${inviteLocked ? styles.dealLocked : ""} ${gesloten ? styles.dealLocked : ""}`}>
                   <div className={styles.dealTop}>
                     <h3>{d.titel}</h3>
                     <span className={styles.reward}>
-                      {inviteLocked
+                      {gesloten
+                        ? "Gesloten"
+                        : inviteLocked
                         ? "🔒 Invite only"
                         : d.beloningstype === "betaald"
                         ? `€${d.bedrag} + diner`
@@ -326,6 +330,8 @@ export default function RestaurantPage() {
                         ? "Deze keer niet gelukt, volgende kans komt snel."
                         : `Aangevraagd — je koos ${formatNL(dateByDeal[d.id ?? ""])}.`}
                     </div>
+                  ) : gesloten ? (
+                    <div className={styles.reqBox}>Deze deal is gesloten en niet meer beschikbaar.</div>
                   ) : approved === false ? (
                     <div className={styles.reqBox}>
                       Je profiel moet eerst worden goedgekeurd voordat je een deal kunt aanvragen.

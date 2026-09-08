@@ -12,10 +12,10 @@ export function heeftFoto(m?: Media | null): boolean {
 export function isProfielCompleet(r: Partial<Restaurant> | null | undefined): boolean {
   if (!r) return false;
   const gevuld = (v?: string) => !!(v && v.trim());
-  // Stad is aanbevolen (kaart/filter) maar niet verplicht om zichtbaar te zijn.
   return (
     gevuld(r.naam) &&
     gevuld(r.adres) &&
+    gevuld(r.stad) &&
     gevuld(r.keuken) &&
     gevuld(r.omschrijving) &&
     heeftFoto(r.media)
