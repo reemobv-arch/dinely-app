@@ -15,6 +15,7 @@ export function isProfielCompleet(r: Partial<Restaurant> | null | undefined): bo
   return (
     gevuld(r.naam) &&
     gevuld(r.adres) &&
+    gevuld(r.stad) &&
     gevuld(r.keuken) &&
     gevuld(r.omschrijving) &&
     heeftFoto(r.media)

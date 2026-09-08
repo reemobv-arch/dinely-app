@@ -36,7 +36,7 @@ export default function DiscoverPage() {
   const [busy, setBusy] = useState(true);
 
   const [q, setQ] = useState("");
-  const [stad, setStad] = useState("Amsterdam");
+  const [stad, setStad] = useState(""); // standaard heel Nederland
   const [keuken, setKeuken] = useState("");
   const [prijs, setPrijs] = useState("");
   const [metDeals, setMetDeals] = useState(false);
@@ -49,7 +49,7 @@ export default function DiscoverPage() {
   // voorkomen (anders de volledige lijst als er nog geen data is).
   const steden = useMemo(() => {
     const inData = STEDEN.filter((c) =>
-      rows.some((r) => (r.adres || "").toLowerCase().includes(c.toLowerCase()))
+      rows.some((r) => `${r.stad || ""} ${r.adres || ""}`.toLowerCase().includes(c.toLowerCase()))
     );
     return inData.length ? inData : STEDEN;
   }, [rows]);

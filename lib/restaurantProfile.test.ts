@@ -4,7 +4,8 @@ import type { Restaurant } from "./types";
 
 const compleet: Partial<Restaurant> = {
   naam: "Gyozabar",
-  adres: "Kerkstraat 1, Amsterdam",
+  adres: "Kerkstraat 1",
+  stad: "Amsterdam",
   keuken: "Aziatisch",
   omschrijving: "Lekkere gyoza in hartje Amsterdam.",
   media: { sfeer: ["https://foto/1.jpg"], eten: [], video: null },

@@ -45,4 +45,9 @@ describe("discoverFilter", () => {
     expect(matchtRestaurant({ id: "x", adres: "" }, { stad: "amsterdam" }, deals)).toBe(true);
     expect(matchtRestaurant({ id: "x", adres: "Rotterdam" }, { stad: "amsterdam" }, deals)).toBe(false);
   });
+
+  it("stad matcht op het aparte stad-veld", () => {
+    expect(matchtRestaurant({ id: "x", stad: "Amsterdam", adres: "Kerkstraat 1" }, { stad: "amsterdam" }, deals)).toBe(true);
+    expect(matchtRestaurant({ id: "x", stad: "Utrecht", adres: "Kerkstraat 1" }, { stad: "amsterdam" }, deals)).toBe(false);
+  });
 });

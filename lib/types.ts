@@ -16,7 +16,8 @@ export type Media = {
 export type Restaurant = {
   owner?: string;
   naam: string;
-  adres: string;
+  adres: string; // straatnaam + huisnummer
+  stad?: string; // aparte stad (kaart + stad-filter)
   keuken: string;
   prijs: string;
   sfeer: string;

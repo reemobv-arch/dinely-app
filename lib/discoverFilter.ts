@@ -14,6 +14,7 @@ type FilterRow = {
   keuken?: string;
   prijs?: string;
   adres?: string;
+  stad?: string;
 };
 type DealRef = { owner: string; status: string };
 
@@ -25,7 +26,9 @@ export function matchtRestaurant(r: FilterRow, f: RestaurantFilter, deals: DealR
   const qq = (f.q ?? "").trim().toLowerCase();
   const ss = (f.stad ?? "").trim().toLowerCase();
   const okQ = !qq || `${r.naam ?? ""} ${r.keuken ?? ""}`.toLowerCase().includes(qq);
-  const okStad = !ss || `${r.adres ?? ""}`.toLowerCase().includes(ss) || !r.adres;
+  // Match op het aparte stad-veld; val terug op het adres voor oudere data.
+  const stadHaystack = `${r.stad ?? ""} ${r.adres ?? ""}`.toLowerCase();
+  const okStad = !ss || stadHaystack.includes(ss) || (!r.stad && !r.adres);
   const okKeuken = !f.keuken || r.keuken === f.keuken;
   const okPrijs = !f.prijs || r.prijs === f.prijs;
   const okDeals = !f.metDeals || heeftOpenDeal(r.id, deals);
