@@ -18,6 +18,7 @@ export type Restaurant = {
   naam: string;
   adres: string; // straatnaam + huisnummer
   stad?: string; // aparte stad (kaart + stad-filter)
+  addons?: string[]; // op-maat add-ons (o.a. feed-boost) van het restaurant
   keuken: string;
   prijs: string;
   sfeer: string;
@@ -42,6 +43,7 @@ export type Deal = {
   geslacht: Gender;
   plekken: number;
   gevraagd: string;
+  inhoud?: string[]; // wat in de content moet voorkomen: eten, sfeer, drankjes, gezelschap, service, bar
   looptijdDagen: number;
   zichtbaarheid?: "open" | "invite"; // invite = exclusief, alleen genodigde creators
   status: "open" | "gesloten";

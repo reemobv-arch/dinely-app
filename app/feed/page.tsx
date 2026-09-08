@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useApp } from "@/lib/appauth";
 import { listAllContent, listRestaurants, listCreatorFotos } from "@/lib/appdata";
+import { feedBoost } from "@/lib/feedBoost";
 import type { PublicRestaurant } from "@/lib/appdata";
 import type { ContentItem } from "@/lib/types";
 import BottomNav from "../BottomNav";
@@ -85,7 +86,12 @@ export default function FeedPage() {
             }
           });
         });
-        setSlides(s);
+        // Gebooste restaurants (feed-add-on) naar voren, verder stabiel.
+        const geboost = s
+          .map((slide, i) => ({ slide, i, b: feedBoost(rmap[slide.restaurantId]) }))
+          .sort((a, b) => b.b - a.b || a.i - b.i)
+          .map((x) => x.slide);
+        setSlides(geboost);
       } finally {
         setBusy(false);
       }

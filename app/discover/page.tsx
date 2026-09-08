@@ -16,6 +16,7 @@ import type { Deal, Review } from "@/lib/types";
 import BottomNav from "../BottomNav";
 import EmptyState from "../EmptyState";
 import { filterRestaurants } from "@/lib/discoverFilter";
+import { sorteerOpBoost } from "@/lib/feedBoost";
 import { readSnapshot, writeSnapshot } from "@/lib/snapshotCache";
 import styles from "./discover.module.css";
 
@@ -87,7 +88,7 @@ export default function DiscoverPage() {
   }, []);
 
   const filtered = useMemo(
-    () => filterRestaurants(rows, { q, stad, keuken, prijs, metDeals }, deals),
+    () => sorteerOpBoost(filterRestaurants(rows, { q, stad, keuken, prijs, metDeals }, deals)),
     [rows, q, stad, keuken, prijs, metDeals, deals]
   );
 

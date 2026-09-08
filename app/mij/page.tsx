@@ -333,6 +333,12 @@ export default function MijPage() {
                               <b>{deal.gevraagd}</b>
                             </div>
                           )}
+                          {deal?.inhoud && deal.inhoud.length > 0 && (
+                            <div className={styles.instrRow}>
+                              <span className={styles.instrRowLbl}>Laat zien</span>
+                              <b>{deal.inhoud.join(", ")}</b>
+                            </div>
+                          )}
                           <div className={styles.instrRow}>
                             <span className={styles.instrRowLbl}>Tag</span>
                             <b>@dinely op Instagram</b>
