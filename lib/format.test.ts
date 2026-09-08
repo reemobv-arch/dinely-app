@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { formatNL, todayISO, addDays, isPastISO } from "./format";
+import { formatNL, todayISO, addDays, isPastISO, formatDatumTijd } from "./format";
 
 describe("format", () => {
   it("formatNL geeft een korte NL-datum", () => {
@@ -27,5 +27,15 @@ describe("format", () => {
     expect(isPastISO(todayISO())).toBe(false);
     expect(isPastISO(addDays(todayISO(), 1))).toBe(false);
     expect(isPastISO("")).toBe(false);
+  });
+});
+
+describe("formatDatumTijd", () => {
+  it("plakt de tijd achter de datum", () => {
+    expect(formatDatumTijd("2026-09-11", "20:30")).toMatch(/, 20:30$/);
+  });
+  it("zonder tijd alleen de datum", () => {
+    expect(formatDatumTijd("2026-09-11")).not.toMatch(/,/);
+    expect(formatDatumTijd("", "20:30")).toBe("20:30");
   });
 });

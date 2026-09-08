@@ -11,6 +11,13 @@ export function formatNL(iso: string): string {
   }
 }
 
+// "vr 11 sep, 20:30" — datum met optionele tijd erachter.
+export function formatDatumTijd(iso: string, tijd?: string): string {
+  const d = formatNL(iso);
+  if (!d) return tijd || "";
+  return tijd ? `${d}, ${tijd}` : d;
+}
+
 export function todayISO(): string {
   // Lokale datum (niet UTC), anders klopt de datum 's avonds/'s nachts niet.
   const d = new Date();

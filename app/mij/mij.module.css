@@ -228,3 +228,55 @@
 .ambStar { color: #77be9b; font-size: 18px; flex: none; }
 .ambBanner > span:nth-child(2) { flex: 1; font-size: 14px; }
 .ambArrow { color: #77be9b; flex: none; }
+
+/* ===== Mijn deals: tabs + kaarten (Dinely-stijl) ===== */
+.dealTabs { display: flex; gap: 6px; margin: 4px 0 14px; }
+.dealTab {
+  flex: 1; font-size: 13px; color: var(--muted); padding: 9px 8px; border-radius: 100px;
+  border: 1px solid var(--line); background: var(--surface-2); cursor: pointer; white-space: nowrap;
+}
+.dealTabOn { color: #20180a; background: linear-gradient(180deg, var(--gold-2, #e4c67e), var(--gold, #c9a24b)); border-color: transparent; font-weight: 600; }
+
+.dealCard2 {
+  background: linear-gradient(180deg, var(--surface-2), var(--surface));
+  border: 1px solid var(--line); border-radius: 18px; padding: 14px; margin-bottom: 12px;
+}
+.dc2Head { display: flex; align-items: flex-start; gap: 12px; }
+.dc2Cover {
+  width: 52px; height: 52px; flex: none; border-radius: 13px; overflow: hidden;
+  background-size: cover; background-position: center; background-color: var(--surface-3, #463a2e);
+  display: grid; place-items: center; font-family: var(--ff-display, serif); font-size: 13px; color: var(--muted-2);
+}
+.dc2Info { flex: 1; min-width: 0; }
+.dc2Title { font-family: var(--ff-display, serif); font-size: 17px; color: var(--text); line-height: 1.15; }
+.dc2Rest { font-size: 12.5px; color: var(--muted); margin-top: 2px; }
+.dc2Pill {
+  display: inline-block; margin-top: 7px; font-family: var(--ff-mono); font-size: 10px; letter-spacing: 0.05em;
+  padding: 4px 10px; border-radius: 100px; border: 1px solid var(--line-2); color: var(--muted);
+}
+.fase_gepland { color: #8fb6ff; background: rgba(59,130,246,0.12); border-color: rgba(59,130,246,0.4); }
+.fase_teDoen { color: #20180a; background: linear-gradient(180deg, var(--gold-2, #e4c67e), var(--gold)); border-color: transparent; }
+.fase_gewijzigd { color: #e6b980; background: rgba(200,140,60,0.12); border-color: rgba(200,140,60,0.4); }
+.fase_klaar { color: #7fd18b; background: rgba(70,165,90,0.12); border-color: rgba(70,165,90,0.4); }
+.fase_aangevraagd { color: var(--muted); }
+.dc2Reward { flex: none; font-family: var(--ff-display, serif); font-size: 16px; color: var(--gold, #e4c67e); }
+
+.stepper { display: flex; gap: 5px; margin: 14px 0 2px; }
+.step { flex: 1; height: 4px; border-radius: 100px; background: var(--line-2); }
+.stepOn { background: linear-gradient(90deg, var(--gold-2, #e4c67e), var(--gold, #c9a24b)); }
+
+.instr { margin-top: 12px; padding: 12px; border-radius: 14px; background: rgba(255,255,255,0.02); border: 1px solid var(--line); display: flex; flex-direction: column; gap: 10px; }
+.instrWhen { font-size: 13.5px; color: var(--text); }
+.instrNotice { font-size: 12.5px; line-height: 1.5; color: #e6b980; background: rgba(200,140,60,0.1); border: 1px solid rgba(200,140,60,0.35); border-radius: 10px; padding: 9px 11px; }
+.instrBlock { display: flex; flex-direction: column; gap: 7px; }
+.instrLbl { font-family: var(--ff-mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); }
+.instrHint { font-size: 11.5px; color: var(--muted); line-height: 1.45; margin: 0; }
+.instrRow { display: flex; align-items: baseline; gap: 10px; font-size: 13.5px; color: var(--text); }
+.instrRowLbl { flex: none; width: 46px; font-family: var(--ff-mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted-2); }
+
+.dateChangeBtn { align-self: flex-start; font-size: 12.5px; color: var(--gold); background: none; border: 1px solid var(--gold-dim, #8c7231); border-radius: 100px; padding: 7px 14px; cursor: pointer; }
+.dateEdit { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.dateInput { background: var(--surface-3, #463a2e); border: 1px solid var(--line-2); color: var(--text); border-radius: 10px; padding: 8px 10px; font-size: 13px; }
+.dateSave { font-size: 13px; color: #20180a; background: linear-gradient(180deg, var(--gold-2, #e4c67e), var(--gold)); border: none; border-radius: 100px; padding: 8px 16px; cursor: pointer; font-weight: 600; }
+.dateSave:disabled { opacity: 0.5; }
+.dateCancel { font-size: 13px; color: var(--muted); background: none; border: none; cursor: pointer; }

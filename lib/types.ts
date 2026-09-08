@@ -59,6 +59,8 @@ export type Application = {
   regio: string;
   geslacht: "vrouw" | "man" | "";
   bezoekDatum?: string; // ISO datum (YYYY-MM-DD) die de creator koos
+  bezoekTijd?: string; // tijdstip (HH:MM) van het bezoek
+  datumGewijzigd?: boolean; // creator wijzigde datum/tijd na acceptatie -> restaurant moet opnieuw bevestigen
   toelichting?: string; // motivatie als de creator onder de bereik-eis zit
   linkCode?: string; // unieke deel-link die de creator na acceptatie krijgt
   bezoekBevestigd?: boolean; // restaurant heeft het bezoek bevestigd

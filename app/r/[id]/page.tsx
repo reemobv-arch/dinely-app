@@ -51,6 +51,7 @@ export default function RestaurantPage() {
   const [dateByDeal, setDateByDeal] = useState<Record<string, string>>({});
   const [pickDeal, setPickDeal] = useState<string | null>(null);
   const [pickDate, setPickDate] = useState("");
+  const [pickTime, setPickTime] = useState("");
   const [motivatie, setMotivatie] = useState("");
   const [pending, setPending] = useState<string | null>(null);
   const [approved, setApproved] = useState<boolean | null>(null);
@@ -127,12 +128,14 @@ export default function RestaurantPage() {
         regio: profile.regio,
         geslacht: profile.geslacht,
         bezoekDatum: pickDate,
+        ...(pickTime ? { bezoekTijd: pickTime } : {}),
         ...(toel ? { toelichting: toel } : {}),
       });
       setStatusByDeal((p) => ({ ...p, [d.id!]: "wacht" }));
       setDateByDeal((p) => ({ ...p, [d.id!]: pickDate }));
       setPickDeal(null);
       setPickDate("");
+      setPickTime("");
       setMotivatie("");
     } catch {
       setStatusByDeal((p) => ({ ...p, [d.id!]: "err" }));
@@ -356,9 +359,16 @@ export default function RestaurantPage() {
                         value={pickDate}
                         onChange={(e) => setPickDate(e.target.value)}
                       />
+                      <label className={styles.pickLbl}>Hoe laat?</label>
+                      <input
+                        className={styles.pickInput}
+                        type="time"
+                        value={pickTime}
+                        onChange={(e) => setPickTime(e.target.value)}
+                      />
                       <button
                         className={styles.applyBtn}
-                        disabled={!pickDate || isPastISO(pickDate) || (!ok && !motivatie.trim()) || pending === d.id}
+                        disabled={!pickDate || !pickTime || isPastISO(pickDate) || (!ok && !motivatie.trim()) || pending === d.id}
                         onClick={() => apply(d)}
                       >
                         {pending === d.id ? <Waiting label="Versturen" /> : "Verstuur aanvraag →"}

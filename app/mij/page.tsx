@@ -13,7 +13,9 @@ import {
   getMyCreator,
 } from "@/lib/appdata";
 import type { Application, Deal } from "@/lib/types";
-import { formatNL, todayISO } from "@/lib/format";
+import { todayISO, formatDatumTijd } from "@/lib/format";
+import { wijzigBezoek } from "@/lib/appdata";
+import { dealVoortgang, dealTab, VOORTGANG_STAPPEN } from "@/lib/dealVoortgang";
 import { isProfileComplete } from "@/lib/profileGaps";
 import { creatorShare } from "@/lib/money";
 import { perChannelVolgers } from "@/lib/volgers";
@@ -22,18 +24,17 @@ import BottomNav from "../BottomNav";
 import EmptyState from "../EmptyState";
 import styles from "./mij.module.css";
 
-const STATUS: Record<string, { label: string; cls: string }> = {
-  wacht: { label: "Aangevraagd", cls: "wacht" },
-  geaccepteerd: { label: "Je bent gekozen ✓", cls: "ok" },
-  afgewezen: { label: "Deze keer niet", cls: "no" },
-};
-
 export default function MijPage() {
   const router = useRouter();
   const { session, uid, loading, profile, logout } = useApp();
   const [apps, setApps] = useState<Application[]>([]);
   const [deals, setDeals] = useState<Record<string, Deal>>({});
   const [rest, setRest] = useState<Record<string, string>>({});
+  const [restMeta, setRestMeta] = useState<Record<string, { stad?: string; foto?: string }>>({});
+  const [tab, setTab] = useState<"lopend" | "aangevraagd" | "klaar">("lopend");
+  const [editDatum, setEditDatum] = useState<string | null>(null); // application-id in datum-wijzig-modus
+  const [nieuweDatum, setNieuweDatum] = useState("");
+  const [nieuweTijd, setNieuweTijd] = useState("");
   const [contentCount, setContentCount] = useState(0);
   const [punten, setPunten] = useState(0);
   const [incompleet, setIncompleet] = useState(false);
@@ -45,6 +46,21 @@ export default function MijPage() {
   useEffect(() => {
     if (typeof window !== "undefined") setOrigin(window.location.origin);
   }, []);
+
+  async function saveDatum(a: Application) {
+    if (!a.id || !nieuweDatum || !nieuweTijd) return;
+    await wijzigBezoek(a.id, nieuweDatum, nieuweTijd);
+    setApps((p) =>
+      p.map((x) =>
+        x.id === a.id
+          ? { ...x, bezoekDatum: nieuweDatum, bezoekTijd: nieuweTijd, datumGewijzigd: true, bezoekBevestigd: false }
+          : x
+      )
+    );
+    setEditDatum(null);
+    setNieuweDatum("");
+    setNieuweTijd("");
+  }
 
   async function copyLink(code: string) {
     try {
@@ -86,9 +102,14 @@ export default function MijPage() {
         const dmap: Record<string, Deal> = {};
         d.forEach((x) => { if (x.id) dmap[x.id] = x; });
         const rmap: Record<string, string> = {};
-        r.forEach((x) => (rmap[x.id] = x.naam));
+        const rmeta: Record<string, { stad?: string; foto?: string }> = {};
+        r.forEach((x) => {
+          rmap[x.id] = x.naam;
+          rmeta[x.id] = { stad: x.stad, foto: x.media?.sfeer?.find(Boolean) ?? undefined };
+        });
         setDeals(dmap);
         setRest(rmap);
+        setRestMeta(rmeta);
         setContentCount(myContent.reduce((s, c) => s + (c.media?.length ?? 0), 0));
         setApps(
           mine.sort((a, b) => (b.createdAt?.seconds ?? 0) - (a.createdAt?.seconds ?? 0))
@@ -197,136 +218,177 @@ export default function MijPage() {
       </div>
 
       {(() => {
-        const accepted = apps.filter((a) => a.status === "geaccepteerd");
-        const others = apps.filter((a) => a.status !== "geaccepteerd");
-        const today = todayISO();
+        const lopend = apps.filter((a) => dealTab(a) === "lopend");
+        const aangevraagd = apps.filter((a) => dealTab(a) === "aangevraagd");
+        const klaar = apps.filter((a) => dealTab(a) === "klaar");
+        const lijst = tab === "lopend" ? lopend : tab === "aangevraagd" ? aangevraagd : klaar;
+
         return (
-          <>
-            {accepted.length > 0 && (
-              <div className={styles.section}>
-                <h2 className={styles.h2}>Mijn deals</h2>
-                <div className={styles.list}>
-                  {accepted.map((a) => {
-                    const deal = deals[a.dealId];
-                    const datum = a.bezoekDatum ?? "";
-                    const bevestigd = a.bezoekBevestigd === true;
-                    const past = !!datum && datum <= today;
-                    const done = !!a.reviewed && !!a.contentPosted && !!a.reachSubmitted;
-                    const actionsOpen = bevestigd && past && !done;
-                    const grey = !done && !actionsOpen;
-                    const korting = deal?.kortingPct ?? 20;
-                    return (
-                      <div key={a.id} className={styles.dealWrap}>
-                      <div className={`${styles.dealCard} ${grey ? styles.grey : ""}`}>
-                        <div className={styles.appInfo}>
-                          <div className={styles.appDeal}>{deal?.titel ?? "Deal"}</div>
-                          <div className={styles.appRest}>{rest[a.restaurantId] ?? "Restaurant"}</div>
-                          {datum && <div className={styles.dealDate}>Bezoek: {formatNL(datum)}</div>}
+          <div className={styles.section}>
+            <h2 className={styles.h2}>Mijn deals</h2>
+            <div className={styles.dealTabs}>
+              {([
+                ["lopend", "Lopend", lopend.length],
+                ["aangevraagd", "Aangevraagd", aangevraagd.length],
+                ["klaar", "Klaar", klaar.length],
+              ] as const).map(([key, label, n]) => (
+                <button
+                  key={key}
+                  type="button"
+                  className={`${styles.dealTab} ${tab === key ? styles.dealTabOn : ""}`}
+                  onClick={() => setTab(key)}
+                >
+                  {label} · {n}
+                </button>
+              ))}
+            </div>
+
+            {busy ? (
+              <div className={styles.subtle}>Laden…</div>
+            ) : lijst.length === 0 ? (
+              <EmptyState
+                icon={tab === "klaar" ? "◔" : "✦"}
+                title={tab === "lopend" ? "Geen lopende deals" : tab === "aangevraagd" ? "Geen openstaande aanvragen" : "Nog niets afgerond"}
+                text={tab === "aangevraagd" ? "Vind een deal die bij je past en vraag 'm aan in een tik." : "Zodra je een deal doet, verschijnt 'ie hier."}
+                actionLabel={tab === "aangevraagd" ? "Naar deals" : undefined}
+                actionHref={tab === "aangevraagd" ? "/deals" : undefined}
+              />
+            ) : (
+              <div className={styles.list}>
+                {lijst.map((a) => {
+                  const deal = deals[a.dealId];
+                  const meta = restMeta[a.restaurantId];
+                  const vp = dealVoortgang(a);
+                  const korting = deal?.kortingPct ?? 20;
+                  const beloning = deal?.beloningstype === "betaald" ? `€ ${deal?.bedrag}` : "Gratis diner";
+                  const editing = editDatum === a.id;
+                  return (
+                    <div key={a.id} className={styles.dealCard2}>
+                      {/* kop: cover + titel + status */}
+                      <div className={styles.dc2Head}>
+                        <span
+                          className={styles.dc2Cover}
+                          style={meta?.foto ? { backgroundImage: `url(${meta.foto})` } : undefined}
+                        >
+                          {!meta?.foto && "Dine"}
+                        </span>
+                        <div className={styles.dc2Info}>
+                          <div className={styles.dc2Title}>{deal?.titel ?? "Deal"}</div>
+                          <div className={styles.dc2Rest}>
+                            {rest[a.restaurantId] ?? "Restaurant"}
+                            {meta?.stad ? ` · ${meta.stad}` : ""}
+                          </div>
+                          <span className={`${styles.dc2Pill} ${styles[`fase_${vp.fase}`] ?? ""}`}>
+                            {vp.fase === "aangevraagd" ? "Wacht op restaurant"
+                              : vp.fase === "gewijzigd" ? "Wacht op herbevestiging"
+                              : vp.fase === "gepland" ? "Ingepland"
+                              : vp.fase === "teDoen" ? "Jij bent aan zet"
+                              : "Afgerond ✓"}
+                          </span>
                         </div>
-                        {done ? (
-                          <div className={styles.dealActions}>
-                            <span className={`${styles.badge} ${styles.ok}`}>Afgerond ✓</span>
-                          </div>
-                        ) : !bevestigd ? (
-                          <div className={styles.dealActions}>
-                            <span className={styles.badge}>Wacht op bevestiging</span>
-                          </div>
-                        ) : !past ? (
-                          <div className={styles.dealActions}>
-                            <span className={`${styles.badge} ${styles.ok}`}>Bezoek bevestigd ✓</span>
-                          </div>
-                        ) : (
-                          <div className={styles.dealActions}>
-                            {a.reviewed ? (
-                              <span className={`${styles.badge} ${styles.ok}`}>Beoordeeld ✓</span>
-                            ) : (
-                              <Link href={`/review/${a.id}`} className={styles.actBtn}>Review</Link>
-                            )}
-                            {a.contentPosted ? (
-                              <span className={`${styles.badge} ${styles.ok}`}>Content ✓</span>
-                            ) : (
-                              <Link href={`/content/${a.id}`} className={styles.actBtnGold}>Plaats content</Link>
-                            )}
-                            {a.reachSubmitted ? (
-                              <span className={`${styles.badge} ${styles.ok}`}>Bereik ✓</span>
-                            ) : (
-                              <Link href={`/bereik/${a.id}`} className={styles.actBtnGold}>Bereik doorgeven</Link>
-                            )}
-                          </div>
-                        )}
+                        <span className={styles.dc2Reward}>{beloning}</span>
                       </div>
 
-                      {a.linkCode && (
-                        <div className={styles.share}>
-                          <div className={styles.shareLbl}>
-                            Jouw deel-link · gasten krijgen {korting}% korting
+                      {/* stappenbalk */}
+                      <div className={styles.stepper}>
+                        {VOORTGANG_STAPPEN.map((s, i) => (
+                          <span key={s} className={`${styles.step} ${i < vp.gedaan ? styles.stepOn : ""}`} title={s} />
+                        ))}
+                      </div>
+
+                      {/* instructies wanneer de creator nog langs moet */}
+                      {(vp.fase === "gepland" || vp.fase === "gewijzigd") && (
+                        <div className={styles.instr}>
+                          {a.datumGewijzigd ? (
+                            <div className={styles.instrNotice}>
+                              Datum gewijzigd — het restaurant moet je nieuwe moment nog bevestigen.
+                            </div>
+                          ) : (
+                            <div className={styles.instrWhen}>
+                              Je wordt verwacht op <b>{formatDatumTijd(a.bezoekDatum ?? "", a.bezoekTijd)}</b>.
+                            </div>
+                          )}
+
+                          {a.linkCode && (
+                            <div className={styles.instrBlock}>
+                              <div className={styles.instrLbl}>Zet je reserveringslink in je story</div>
+                              <div className={styles.shareRow}>
+                                <input
+                                  readOnly
+                                  className={styles.shareInput}
+                                  value={`${origin.replace(/^https?:\/\//, "")}/b/${a.linkCode}`}
+                                  onFocus={(e) => e.currentTarget.select()}
+                                />
+                                <button type="button" className={styles.shareBtn} onClick={() => copyLink(a.linkCode!)}>
+                                  {copied === a.linkCode ? "Gekopieerd ✓" : "Kopieer"}
+                                </button>
+                              </div>
+                              <p className={styles.instrHint}>Zo kunnen je volgers met {korting}% korting reserveren bij {rest[a.restaurantId] ?? "het restaurant"}.</p>
+                            </div>
+                          )}
+
+                          {deal?.gevraagd && (
+                            <div className={styles.instrRow}>
+                              <span className={styles.instrRowLbl}>Plaats</span>
+                              <b>{deal.gevraagd}</b>
+                            </div>
+                          )}
+                          <div className={styles.instrRow}>
+                            <span className={styles.instrRowLbl}>Tag</span>
+                            <b>@dinely op Instagram</b>
                           </div>
-                          <div className={styles.shareRow}>
-                            <input
-                              readOnly
-                              className={styles.shareInput}
-                              value={`${origin.replace(/^https?:\/\//, "")}/b/${a.linkCode}`}
-                              onFocus={(e) => e.currentTarget.select()}
-                            />
+
+                          {editing ? (
+                            <div className={styles.dateEdit}>
+                              <input className={styles.dateInput} type="date" min={todayISO()} value={nieuweDatum} onChange={(e) => setNieuweDatum(e.target.value)} />
+                              <input className={styles.dateInput} type="time" value={nieuweTijd} onChange={(e) => setNieuweTijd(e.target.value)} />
+                              <button className={styles.dateSave} disabled={!nieuweDatum || !nieuweTijd} onClick={() => saveDatum(a)}>Opslaan</button>
+                              <button className={styles.dateCancel} onClick={() => setEditDatum(null)}>Annuleer</button>
+                            </div>
+                          ) : (
                             <button
                               type="button"
-                              className={styles.shareBtn}
-                              onClick={() => copyLink(a.linkCode!)}
+                              className={styles.dateChangeBtn}
+                              onClick={() => { setEditDatum(a.id ?? null); setNieuweDatum(a.bezoekDatum ?? ""); setNieuweTijd(a.bezoekTijd ?? ""); }}
                             >
-                              {copied === a.linkCode ? "Gekopieerd ✓" : "Kopieer"}
+                              Datum of tijd wijzigen
                             </button>
-                          </div>
-                          <p className={styles.shareHint}>
-                            Zet 'm in je story: “Kom ook eten, {korting}% korting via mijn link.”
-                          </p>
+                          )}
                         </div>
                       )}
-                      </div>
-                    );
-                  })}
-                </div>
+
+                      {/* acties wanneer het bezoek is bevestigd */}
+                      {vp.fase === "teDoen" && (
+                        <div className={styles.dealActions}>
+                          {a.reviewed ? (
+                            <span className={`${styles.badge} ${styles.ok}`}>Beoordeeld ✓</span>
+                          ) : (
+                            <Link href={`/review/${a.id}`} className={styles.actBtn}>Review</Link>
+                          )}
+                          {a.contentPosted ? (
+                            <span className={`${styles.badge} ${styles.ok}`}>Content ✓</span>
+                          ) : (
+                            <Link href={`/content/${a.id}`} className={styles.actBtnGold}>Plaats content</Link>
+                          )}
+                          {a.reachSubmitted ? (
+                            <span className={`${styles.badge} ${styles.ok}`}>Bereik ✓</span>
+                          ) : (
+                            <Link href={`/bereik/${a.id}`} className={styles.actBtnGold}>Bereik doorgeven</Link>
+                          )}
+                        </div>
+                      )}
+
+                      {vp.fase === "aangevraagd" && a.status === "afgewezen" && (
+                        <div className={styles.dealActions}>
+                          <span className={`${styles.badge} ${styles.no}`}>Deze keer niet</span>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             )}
-
-            <div className={styles.section}>
-              <h2 className={styles.h2}>Mijn aanvragen</h2>
-              {busy ? (
-                <div className={styles.subtle}>Laden…</div>
-              ) : others.length === 0 ? (
-                accepted.length > 0 ? (
-                  <EmptyState
-                    icon="◔"
-                    title="Alles afgehandeld"
-                    text="Je hebt geen openstaande aanvragen meer. Je gekozen deals staan hierboven."
-                  />
-                ) : (
-                  <EmptyState
-                    icon="✦"
-                    title="Nog geen deals aangevraagd"
-                    text="Vind een deal die bij je past en vraag 'm aan in een tik."
-                    actionLabel="Naar deals"
-                    actionHref="/deals"
-                  />
-                )
-              ) : (
-                <div className={styles.list}>
-                  {others.map((a) => {
-                    const deal = deals[a.dealId];
-                    const st = STATUS[a.status] ?? STATUS.wacht;
-                    return (
-                      <div key={a.id} className={styles.appRow}>
-                        <div className={styles.appInfo}>
-                          <div className={styles.appDeal}>{deal?.titel ?? "Deal"}</div>
-                          <div className={styles.appRest}>{rest[a.restaurantId] ?? "Restaurant"}</div>
-                        </div>
-                        <span className={`${styles.badge} ${styles[st.cls]}`}>{st.label}</span>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          </>
+          </div>
         );
       })()}
 

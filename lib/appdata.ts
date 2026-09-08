@@ -34,8 +34,21 @@ export type NewApplication = {
   regio: string;
   geslacht: "vrouw" | "man" | "";
   bezoekDatum: string;
+  bezoekTijd?: string; // tijdstip (HH:MM)
   toelichting?: string; // motivatie als de creator (nog) niet aan de bereik-eis voldoet
 };
+
+// Datum en/of tijd van het bezoek wijzigen (na acceptatie). Zet de vlag zodat het
+// restaurant weet dat het om een wijziging gaat en opnieuw moet bevestigen.
+export async function wijzigBezoek(applicationId: string, datum: string, tijd: string): Promise<void> {
+  if (!firebaseReady) return;
+  await updateDoc(doc(db, "applications", applicationId), {
+    bezoekDatum: datum,
+    bezoekTijd: tijd,
+    datumGewijzigd: true,
+    bezoekBevestigd: false, // oude bevestiging vervalt bij een nieuwe datum
+  });
+}
 
 /**
  * Sollicitatie wegschrijven. Vereist een (anonieme) Firebase-login.
