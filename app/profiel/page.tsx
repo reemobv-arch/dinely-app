@@ -8,7 +8,7 @@ import { saveCreator, uploadCreatorPhoto, validateStatsImage } from "@/lib/appda
 import Waiting from "../Waiting";
 import styles from "./profiel.module.css";
 
-const CATEGORIEEN = ["Food", "Lifestyle", "Fashion", "Travel", "Fitness", "Beauty", "Familie", "Overig"];
+const CATEGORIEEN = ["Food", "Lifestyle", "Fashion", "Travel", "Fitness", "Beauty", "Vegan", "Overig"];
 
 export default function ProfielPage() {
   const router = useRouter();

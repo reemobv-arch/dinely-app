@@ -10,7 +10,7 @@ import styles from "./creator.module.css";
 
 const MIN_VOLGERS = 2000;
 const STEPS = 9;
-const CATEGORIEEN = ["Food", "Lifestyle", "Fashion", "Travel", "Fitness", "Beauty", "Familie", "Overig"];
+const CATEGORIEEN = ["Food", "Lifestyle", "Fashion", "Travel", "Fitness", "Beauty", "Vegan", "Overig"];
 
 export default function CreatorPage() {
   const router = useRouter();
