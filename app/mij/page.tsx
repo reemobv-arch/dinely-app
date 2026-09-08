@@ -218,9 +218,10 @@ export default function MijPage() {
       </div>
 
       {(() => {
-        const lopend = apps.filter((a) => dealTab(a) === "lopend");
-        const aangevraagd = apps.filter((a) => dealTab(a) === "aangevraagd");
-        const klaar = apps.filter((a) => dealTab(a) === "klaar");
+        const isBetaald = (a: Application) => deals[a.dealId]?.beloningstype === "betaald";
+        const lopend = apps.filter((a) => dealTab(a, isBetaald(a)) === "lopend");
+        const aangevraagd = apps.filter((a) => dealTab(a, isBetaald(a)) === "aangevraagd");
+        const klaar = apps.filter((a) => dealTab(a, isBetaald(a)) === "klaar");
         const lijst = tab === "lopend" ? lopend : tab === "aangevraagd" ? aangevraagd : klaar;
 
         return (
@@ -258,7 +259,7 @@ export default function MijPage() {
                 {lijst.map((a) => {
                   const deal = deals[a.dealId];
                   const meta = restMeta[a.restaurantId];
-                  const vp = dealVoortgang(a);
+                  const vp = dealVoortgang(a, deal?.beloningstype === "betaald");
                   const korting = deal?.kortingPct ?? 20;
                   const beloning = deal?.beloningstype === "betaald" ? `€ ${deal?.bedrag}` : "Gratis diner";
                   const editing = editDatum === a.id;
@@ -289,11 +290,25 @@ export default function MijPage() {
                         <span className={styles.dc2Reward}>{beloning}</span>
                       </div>
 
-                      {/* stappenbalk */}
-                      <div className={styles.stepper}>
-                        {VOORTGANG_STAPPEN.map((s, i) => (
-                          <span key={s} className={`${styles.step} ${i < vp.gedaan ? styles.stepOn : ""}`} title={s} />
-                        ))}
+                      {/* tijdlijn met 5 stappen */}
+                      <div className={styles.timeline}>
+                        {VOORTGANG_STAPPEN.map((s, i) => {
+                          const done = i < vp.gedaan;
+                          const current = i === vp.gedaan && !vp.klaar;
+                          return (
+                            <div key={s} className={styles.tlStep}>
+                              {i > 0 && <span className={`${styles.tlLine} ${done ? styles.tlLineOn : ""}`} />}
+                              <span className={`${styles.tlDot} ${done ? styles.tlDotDone : ""} ${current ? styles.tlDotNow : ""}`}>
+                                {done ? "✓" : ""}
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                      <div className={styles.tlCaption}>
+                        {vp.klaar
+                          ? "Afgerond ✓"
+                          : `Stap ${vp.gedaan + 1} van 5 · ${VOORTGANG_STAPPEN[vp.gedaan]}`}
                       </div>
 
                       {/* instructies wanneer de creator nog langs moet */}
@@ -365,6 +380,11 @@ export default function MijPage() {
 
                       {/* acties wanneer het bezoek is bevestigd */}
                       {vp.fase === "teDoen" && (
+                        <>
+                        <div className={styles.tlHint}>
+                          Upload je content <b>binnen 48 uur</b> na je bezoek. Je statistieken lever je
+                          <b> daarna</b> aan, zodat het restaurant het bereik en resultaat ziet.
+                        </div>
                         <div className={styles.dealActions}>
                           {a.reviewed ? (
                             <span className={`${styles.badge} ${styles.ok}`}>Beoordeeld ✓</span>
@@ -382,6 +402,7 @@ export default function MijPage() {
                             <Link href={`/bereik/${a.id}`} className={styles.actBtnGold}>Bereik doorgeven</Link>
                           )}
                         </div>
+                        </>
                       )}
 
                       {vp.fase === "aangevraagd" && a.status === "afgewezen" && (

@@ -280,3 +280,20 @@
 .dateSave { font-size: 13px; color: #20180a; background: linear-gradient(180deg, var(--gold-2, #e4c67e), var(--gold)); border: none; border-radius: 100px; padding: 8px 16px; cursor: pointer; font-weight: 600; }
 .dateSave:disabled { opacity: 0.5; }
 .dateCancel { font-size: 13px; color: var(--muted); background: none; border: none; cursor: pointer; }
+
+/* Tijdlijn (6 stappen) in de dealkaart */
+.timeline { display: flex; align-items: center; margin: 16px 2px 8px; }
+.tlStep { flex: 1; display: flex; align-items: center; }
+.tlStep:first-child { flex: 0 0 auto; }
+.tlLine { flex: 1; height: 2px; background: var(--line-2); }
+.tlLineOn { background: linear-gradient(90deg, var(--gold-2, #e4c67e), var(--gold, #c9a24b)); }
+.tlDot {
+  flex: none; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center;
+  border: 2px solid var(--line-2); background: var(--surface); color: var(--muted-2);
+  font-size: 11px; line-height: 1;
+}
+.tlDotDone { background: linear-gradient(180deg, var(--gold-2, #e4c67e), var(--gold, #c9a24b)); color: #20180a; border-color: transparent; }
+.tlDotNow { border-color: var(--gold, #c9a24b); color: var(--gold, #e4c67e); box-shadow: 0 0 0 4px rgba(201, 162, 75, 0.18); }
+.tlCaption { font-family: var(--ff-mono); font-size: 12px; color: var(--gold, #e4c67e); letter-spacing: 0.02em; }
+.tlHint { font-size: 12.5px; line-height: 1.5; color: var(--muted); background: rgba(255,255,255,0.02); border: 1px solid var(--line); border-radius: 10px; padding: 9px 11px; margin-bottom: 10px; }
+.tlHint b { color: var(--text); }
