@@ -48,6 +48,20 @@ export async function wijzigBezoek(applicationId: string, datum: string, tijd: s
     datumGewijzigd: true,
     bezoekBevestigd: false, // oude bevestiging vervalt bij een nieuwe datum
   });
+  // Best-effort: het restaurant mailen dat het het nieuwe moment moet bevestigen.
+  try {
+    const base = process.env.NEXT_PUBLIC_DASHBOARD_URL;
+    const idToken = await auth.currentUser?.getIdToken();
+    if (base && idToken) {
+      void fetch(`${base}/api/notify-datewijziging`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ idToken, applicationId }),
+      }).catch(() => {});
+    }
+  } catch {
+    /* melding is bijzaak, nooit de wijziging blokkeren */
+  }
 }
 
 /**
