@@ -114,9 +114,12 @@ export default function RestaurantPage() {
   }
 
   async function apply(d: Deal) {
-    if (!d.id || !pickDate || !r) return;
-    // Geen datum in het verleden: alleen vandaag of later.
-    if (isPastISO(pickDate)) return;
+    if (!d.id || !r) return;
+    // Brand-deal: de datum is door het merk opgelegd; de creator accepteert die.
+    const isBrand = !!(d.brandId && d.bezoekDatum);
+    const datum = isBrand ? (d.bezoekDatum as string) : pickDate;
+    const tijd = isBrand ? d.bezoekTijd : pickTime || undefined;
+    if (!datum || isPastISO(datum)) return;
     setPending(d.id);
     const toel = motivatie.trim();
     try {
@@ -128,12 +131,12 @@ export default function RestaurantPage() {
         platform: platforms,
         regio: profile.regio,
         geslacht: profile.geslacht,
-        bezoekDatum: pickDate,
-        ...(pickTime ? { bezoekTijd: pickTime } : {}),
+        bezoekDatum: datum,
+        ...(tijd ? { bezoekTijd: tijd } : {}),
         ...(toel ? { toelichting: toel } : {}),
       });
       setStatusByDeal((p) => ({ ...p, [d.id!]: "wacht" }));
-      setDateByDeal((p) => ({ ...p, [d.id!]: pickDate }));
+      setDateByDeal((p) => ({ ...p, [d.id!]: datum }));
       setPickDeal(null);
       setPickDate("");
       setPickTime("");
@@ -356,28 +359,59 @@ export default function RestaurantPage() {
                           />
                         </>
                       )}
-                      <label className={styles.pickLbl}>Wanneer kom je langs?</label>
-                      <input
-                        className={styles.pickInput}
-                        type="date"
-                        min={todayISO()}
-                        max={addDays(todayISO(), d.looptijdDagen || 30)}
-                        value={pickDate}
-                        onChange={(e) => setPickDate(e.target.value)}
-                      />
-                      <label className={styles.pickLbl}>Hoe laat?</label>
-                      <input
-                        className={styles.pickInput}
-                        type="time"
-                        value={pickTime}
-                        onChange={(e) => setPickTime(e.target.value)}
-                      />
+                      {d.brandId && d.bezoekDatum ? (
+                        <div className={styles.reqBox} style={{ marginBottom: 10 }}>
+                          <b>{d.brandNaam || "Een merk"}</b> bij {r.naam} op{" "}
+                          <b>{formatNL(d.bezoekDatum)}{d.bezoekTijd ? ` om ${d.bezoekTijd}` : ""}</b>.
+                          {(d.aantalStories || d.aantalPosts) ? (
+                            <div style={{ marginTop: 6 }}>
+                              Content: {d.aantalStories || 0} stories en {d.aantalPosts || 0} post
+                              {(d.aantalPosts || 0) === 1 ? "" : "s"}.
+                            </div>
+                          ) : null}
+                          <div style={{ marginTop: 6 }}>
+                            Tag: @dinely{d.brandNaam ? `, @${d.brandNaam}` : ""} en @{r.naam}.
+                          </div>
+                          <div style={{ marginTop: 6, opacity: 0.8 }}>De datum staat vast — je accepteert of niet.</div>
+                        </div>
+                      ) : (
+                        <>
+                          <label className={styles.pickLbl}>Wanneer kom je langs?</label>
+                          <input
+                            className={styles.pickInput}
+                            type="date"
+                            min={todayISO()}
+                            max={addDays(todayISO(), d.looptijdDagen || 30)}
+                            value={pickDate}
+                            onChange={(e) => setPickDate(e.target.value)}
+                          />
+                          <label className={styles.pickLbl}>Hoe laat?</label>
+                          <input
+                            className={styles.pickInput}
+                            type="time"
+                            value={pickTime}
+                            onChange={(e) => setPickTime(e.target.value)}
+                          />
+                        </>
+                      )}
                       <button
                         className={styles.applyBtn}
-                        disabled={!pickDate || !pickTime || isPastISO(pickDate) || (!ok && !motivatie.trim()) || pending === d.id}
+                        disabled={
+                          (d.brandId && d.bezoekDatum
+                            ? false
+                            : !pickDate || !pickTime || isPastISO(pickDate)) ||
+                          (!ok && !motivatie.trim()) ||
+                          pending === d.id
+                        }
                         onClick={() => apply(d)}
                       >
-                        {pending === d.id ? <Waiting label="Versturen" /> : "Verstuur aanvraag →"}
+                        {pending === d.id ? (
+                          <Waiting label="Versturen" />
+                        ) : d.brandId && d.bezoekDatum ? (
+                          "Accepteren →"
+                        ) : (
+                          "Verstuur aanvraag →"
+                        )}
                       </button>
                     </div>
                   ) : (

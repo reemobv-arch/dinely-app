@@ -47,6 +47,14 @@ export type Deal = {
   looptijdDagen: number;
   zichtbaarheid?: "open" | "invite"; // invite = exclusief, alleen genodigde creators
   status: "open" | "gesloten";
+  // Brand-deal (van een merk): de datum + deliverables staan vast en de creator
+  // accepteert die (geen eigen datum). @tags: dinely + brand + restaurant.
+  brandId?: string;
+  brandNaam?: string;
+  bezoekDatum?: string; // opgelegde datum (ISO)
+  bezoekTijd?: string;
+  aantalStories?: number;
+  aantalPosts?: number;
   createdAt?: Stamp;
 };
 
