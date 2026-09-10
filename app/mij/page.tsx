@@ -354,12 +354,26 @@ export default function MijPage() {
                               <b>{deal.inhoud.join(", ")}</b>
                             </div>
                           )}
+                          {deal?.brandId && (Number(deal.aantalStories) > 0 || Number(deal.aantalPosts) > 0) && (
+                            <div className={styles.instrRow}>
+                              <span className={styles.instrRowLbl}>Content</span>
+                              <b>
+                                {Number(deal.aantalStories) || 0} stories en {Number(deal.aantalPosts) || 0} post
+                                {Number(deal.aantalPosts) === 1 ? "" : "s"}
+                              </b>
+                            </div>
+                          )}
                           <div className={styles.instrRow}>
                             <span className={styles.instrRowLbl}>Tag</span>
-                            <b>@dinely op Instagram</b>
+                            <b>
+                              {deal?.brandId
+                                ? `@dinely, ${deal.brandNaam ? `@${deal.brandNaam}, ` : ""}@${rest[a.restaurantId] ?? "het restaurant"}`
+                                : "@dinely op Instagram"}
+                            </b>
                           </div>
 
-                          {editing ? (
+                          {/* Bij een brand-deal staat de datum vast; niet wijzigbaar. */}
+                          {deal?.brandId ? null : editing ? (
                             <div className={styles.dateEdit}>
                               <input className={styles.dateInput} type="date" min={todayISO()} value={nieuweDatum} onChange={(e) => setNieuweDatum(e.target.value)} />
                               <input className={styles.dateInput} type="time" value={nieuweTijd} onChange={(e) => setNieuweTijd(e.target.value)} />
