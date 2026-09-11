@@ -246,7 +246,7 @@ export default function RestaurantPage() {
                       {m?.type === "video" ? (
                         <video src={m.url} className={styles.cMedia} controls playsInline />
                       ) : m ? (
-                        <img src={m.url} alt="" className={styles.cMedia} />
+                        <img src={m.url} alt="" className={styles.cMedia} loading="lazy" decoding="async" />
                       ) : null}
                       {c.media && c.media.length > 1 && (
                         <span className={styles.cCount}>+{c.media.length - 1}</span>
@@ -263,28 +263,28 @@ export default function RestaurantPage() {
         );
       })}
 
-      {reviews.some((rv) => rv.tekst && rv.tekst.trim()) && (
-        <div className={styles.section}>
-          <h2 className={styles.h2}>Wat gasten zeggen</h2>
+      <div className={styles.section}>
+        <h2 className={styles.h2}>Reviews</h2>
+        {reviews.length === 0 ? (
+          <div className={styles.empty}>Nog geen reviews voor dit restaurant.</div>
+        ) : (
           <div className={styles.reviews}>
-            {reviews
-              .filter((rv) => rv.tekst && rv.tekst.trim())
-              .map((rv) => (
-                <div key={rv.id} className={styles.reviewCard}>
-                  <div className={styles.rvTop}>
-                    <div className={styles.rvAv}>{(rv.naam || "?").slice(0, 1).toUpperCase()}</div>
-                    <div className={styles.rvName}>{rv.naam || "Gast"}</div>
-                    <div className={styles.rvStars}>
-                      {"★".repeat(Math.round(rv.sterren))}
-                      <span className={styles.rvEmpty}>{"★".repeat(5 - Math.round(rv.sterren))}</span>
-                    </div>
+            {reviews.map((rv) => (
+              <div key={rv.id} className={styles.reviewCard}>
+                <div className={styles.rvTop}>
+                  <div className={styles.rvAv}>{(rv.naam || "?").slice(0, 1).toUpperCase()}</div>
+                  <div className={styles.rvName}>{rv.naam || "Gast"}</div>
+                  <div className={styles.rvStars}>
+                    {"★".repeat(Math.round(rv.sterren))}
+                    <span className={styles.rvEmpty}>{"★".repeat(5 - Math.round(rv.sterren))}</span>
                   </div>
-                  <p className={styles.rvText}>{rv.tekst}</p>
                 </div>
-              ))}
+                {rv.tekst && rv.tekst.trim() && <p className={styles.rvText}>{rv.tekst}</p>}
+              </div>
+            ))}
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       <div className={styles.section} style={{ paddingBottom: 40 }}>
         <h2 className={styles.h2}>Deals</h2>
