@@ -99,9 +99,10 @@ export default function DiscoverPage() {
           typeof r.lat === "number" && typeof r.lng === "number"
             ? [r.lat, r.lng]
             : coordsFor(r.id);
-        return { id: r.id, name: r.naam || "Restaurant", lat, lng };
+        const hasDeal = deals.some((d) => d.owner === r.id && d.status === "open");
+        return { id: r.id, name: r.naam || "Restaurant", lat, lng, hasDeal };
       }),
-    [filtered]
+    [filtered, deals]
   );
 
   function dealCount(id: string) {

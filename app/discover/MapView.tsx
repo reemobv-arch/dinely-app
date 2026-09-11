@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import "leaflet/dist/leaflet.css";
 
-export type MapPoint = { id: string; name: string; lat: number; lng: number };
+export type MapPoint = { id: string; name: string; lat: number; lng: number; hasDeal?: boolean };
 
 export default function MapView({
   points,
@@ -63,15 +63,22 @@ export default function MapView({
   function draw(L: any) {
     if (!layerRef.current) return;
     layerRef.current.clearLayers();
-    const icon = L.divIcon({
-      className: "",
-      html: '<div style="width:16px;height:16px;border-radius:50%;background:#B9C0C9;border:2px solid #1A1D21;box-shadow:0 0 0 3px rgba(200,208,218,.30)"></div>',
-      iconSize: [16, 16],
-      iconAnchor: [8, 8],
-    });
+    // Zilveren pin voor gewone restaurants; gouden (met gloed) als er een
+    // actieve deal loopt, zodat creators meteen zien waar iets te halen valt.
+    const makeIcon = (gold: boolean) =>
+      L.divIcon({
+        className: "",
+        html: gold
+          ? '<div style="width:16px;height:16px;border-radius:50%;background:#C9A24B;border:2px solid #1A1D21;box-shadow:0 0 0 3px rgba(201,162,75,.30),0 0 14px -1px rgba(201,162,75,.85)"></div>'
+          : '<div style="width:16px;height:16px;border-radius:50%;background:#B9C0C9;border:2px solid #1A1D21;box-shadow:0 0 0 3px rgba(200,208,218,.30)"></div>',
+        iconSize: [16, 16],
+        iconAnchor: [8, 8],
+      });
+    const iconSilver = makeIcon(false);
+    const iconGold = makeIcon(true);
     const pts: [number, number][] = [];
     for (const p of points) {
-      const m = L.marker([p.lat, p.lng], { icon }).addTo(layerRef.current);
+      const m = L.marker([p.lat, p.lng], { icon: p.hasDeal ? iconGold : iconSilver }).addTo(layerRef.current);
       // Klik op de marker toont een klein klikbaar naampje -> naar het restaurant.
       const el = document.createElement("button");
       el.textContent = p.name;
