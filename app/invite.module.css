@@ -14,7 +14,7 @@
   padding: calc(env(safe-area-inset-top, 0px) + 20px) 22px;
   text-shadow: 0 2px 20px rgba(0,0,0,0.5);
 }
-.brand span { color: var(--gold); }
+.brand span { color: var(--au); }
 
 .body { flex: 1; padding: 4px 24px 28px; }
 .eyebrow {
@@ -33,7 +33,7 @@
 
 .cta {
   display: block; text-align: center; text-decoration: none;
-  background: linear-gradient(180deg, var(--gold-2, #e4c67e), var(--gold)); color: #20180a;
+  background: linear-gradient(180deg, var(--gold-2, #EDF1F5), var(--gold)); color: #20180a;
   font-family: var(--ff-mono); font-size: 12.5px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
   padding: 16px; border-radius: 100px;
 }

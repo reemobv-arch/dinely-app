@@ -16,8 +16,8 @@
   display: flex;
   gap: 12px;
   align-items: flex-start;
-  background: var(--surface-2, #1a1510);
-  border: 1px solid var(--gold-dim, #8c7231);
+  background: var(--surface-2, #141618);
+  border: 1px solid var(--gold-dim, #71767E);
   border-radius: 16px;
   padding: 14px 16px;
   box-shadow: 0 14px 40px rgba(0, 0, 0, 0.55);

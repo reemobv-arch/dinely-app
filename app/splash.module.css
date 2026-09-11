@@ -4,7 +4,7 @@
   z-index: 9999;
   display: grid;
   place-items: center;
-  background-color: #0b0906;
+  background-color: #0B0C0D;
   background-image:
     linear-gradient(180deg, rgba(11, 9, 6, 0.72), rgba(11, 9, 6, 0.9)),
     url("/splash-bg.jpg");
@@ -65,7 +65,7 @@
   letter-spacing: 0.5px;
   margin-top: 4px;
 }
-.brand span { color: var(--gold, #c9a24b); }
+.brand span { color: var(--au); }
 
 .line {
   font-family: var(--ff-mono);

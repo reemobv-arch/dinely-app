@@ -31,14 +31,13 @@ export default function MapView({
         // via CSS donker/subtiel gemaakt zodat 'ie niet opvalt op de donkere kaart.
         attributionControl: true,
       }).setView([52.3676, 4.9041], 13);
-      L.tileLayer(
-        "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
-        {
-          maxZoom: 19,
-          attribution:
-            '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
-        }
-      ).addTo(map);
+      // Keyless: gewone OpenStreetMap-tegels + een donker CSS-filter (zie
+      // .dinely-darktiles in globals.css). Geen API-sleutel nodig, altijd donker.
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        className: "dinely-darktiles",
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      }).addTo(map);
       // "Leaflet"-prefix weg (niet verplicht); OSM/CARTO-bronvermelding blijft.
       map.attributionControl.setPrefix(false);
       mapRef.current = map;
@@ -66,7 +65,7 @@ export default function MapView({
     layerRef.current.clearLayers();
     const icon = L.divIcon({
       className: "",
-      html: '<div style="width:16px;height:16px;border-radius:50%;background:#C9A24B;border:2px solid #201B15;box-shadow:0 0 0 3px rgba(201,162,75,.30)"></div>',
+      html: '<div style="width:16px;height:16px;border-radius:50%;background:#B9C0C9;border:2px solid #1A1D21;box-shadow:0 0 0 3px rgba(200,208,218,.30)"></div>',
       iconSize: [16, 16],
       iconAnchor: [8, 8],
     });

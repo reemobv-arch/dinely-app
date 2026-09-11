@@ -73,16 +73,16 @@ export default function InstallPrompt() {
     textTransform: "uppercase",
     fontWeight: 600,
     color: "#20180a",
-    background: "linear-gradient(180deg, var(--gold-2,#e4c67e), var(--gold,#c9a24b))",
-    boxShadow: "0 12px 30px -10px rgba(201,162,75,.55)",
+    background: "linear-gradient(180deg, var(--gold-2,#EDF1F5), var(--gold,#B9C0C9))",
+    boxShadow: "0 12px 30px -10px rgba(200,208,218,.55)",
   };
   const stepBox: React.CSSProperties = {
     textAlign: "left",
     fontSize: 14,
     color: "var(--text,#f5f0e7)",
     lineHeight: 1.7,
-    background: "var(--bg-2,#28221b)",
-    border: "1px solid var(--line-2,#564a3f)",
+    background: "var(--bg-2,#202327)",
+    border: "1px solid var(--line-2,#3A4046)",
     borderRadius: 14,
     padding: "14px 16px",
   };
@@ -110,8 +110,8 @@ export default function InstallPrompt() {
         style={{
           width: "100%",
           maxWidth: 380,
-          background: "linear-gradient(180deg, var(--surface-2,#3c3227), var(--surface,#332a22))",
-          border: "1px solid var(--gold-dim,#8c7231)",
+          background: "linear-gradient(180deg, var(--surface-2,#262A2F), var(--surface,#202327))",
+          border: "1px solid var(--gold-dim,#71767E)",
           borderRadius: 22,
           boxShadow: "0 40px 90px -24px rgba(0,0,0,.85)",
           padding: "26px 24px 24px",
@@ -130,7 +130,7 @@ export default function InstallPrompt() {
             height: 30,
             borderRadius: "50%",
             color: "var(--muted,#b4a797)",
-            border: "1px solid var(--line-2,#564a3f)",
+            border: "1px solid var(--line-2,#3A4046)",
             fontSize: 16,
           }}
         >
@@ -168,7 +168,7 @@ export default function InstallPrompt() {
             <div style={stepBox}>
               <div>
                 1. Tik onderin op het <b>Deel</b>-icoon{" "}
-                <span aria-hidden style={{ color: "var(--gold,#c9a24b)" }}>⬆︎</span>
+                <span aria-hidden style={{ color: "var(--gold,#B9C0C9)" }}>⬆︎</span>
               </div>
               <div>
                 2. Kies <b>Zet op beginscherm</b>
@@ -233,8 +233,8 @@ function DeviceTile({
         gap: 12,
         padding: "22px 12px",
         borderRadius: 16,
-        background: "var(--bg-2,#28221b)",
-        border: `1px solid ${hover ? "var(--gold,#c9a24b)" : "var(--line-2,#564a3f)"}`,
+        background: "var(--bg-2,#202327)",
+        border: `1px solid ${hover ? "var(--gold,#B9C0C9)" : "var(--line-2,#3A4046)"}`,
         transition: ".18s",
         transform: hover ? "translateY(-2px)" : "none",
       }}
@@ -246,7 +246,7 @@ function DeviceTile({
           fontSize: 12,
           letterSpacing: ".1em",
           textTransform: "uppercase",
-          color: hover ? "var(--gold,#c9a24b)" : "var(--text,#f5f0e7)",
+          color: hover ? "var(--gold,#B9C0C9)" : "var(--text,#f5f0e7)",
         }}
       >
         {label}

@@ -54,7 +54,7 @@
   border: 1px solid var(--line-2); border-radius: 16px;
   padding: 14px 12px; text-align: center; box-shadow: 0 8px 22px rgba(0,0,0,0.3);
 }
-.score b { display: block; font-family: var(--ff-display); font-size: 26px; color: var(--gold-2, #e4c67e); }
+.score b { display: block; font-family: var(--ff-display); font-size: 26px; color: var(--gold-2, #EDF1F5); }
 .score span {
   font-family: var(--ff-mono); font-size: 10px; letter-spacing: 0.16em;
   text-transform: uppercase; color: var(--muted-2);
@@ -131,7 +131,7 @@
   margin-top: 14px; font-family: var(--ff-mono); font-size: 12px; line-height: 1.5;
   border: 1px solid var(--line-2); border-radius: 12px; padding: 12px 14px;
 }
-.statusBox.wacht { color: var(--warn); border-color: var(--gold-dim); background: rgba(201,162,75,0.06); }
+.statusBox.wacht { color: var(--warn); border-color: var(--gold-dim); background: rgba(200,208,218,0.06); }
 .statusBox.ok { color: var(--good); border-color: rgba(119,190,155,0.35); background: rgba(119,190,155,0.08); }
 .statusBox.no { color: var(--crit); border-color: rgba(206,116,96,0.35); background: rgba(206,116,96,0.07); }
 .reqBox {
@@ -165,6 +165,6 @@
 .cDish {
   font-size: 13px;
   font-weight: 600;
-  color: var(--gold, #c9a24b);
+  color: var(--gold, #B9C0C9);
   margin-top: 7px;
 }

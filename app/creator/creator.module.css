@@ -113,7 +113,7 @@
   height: 20px;
   border-radius: 50%;
   border: 2px solid var(--line-2, rgba(255,255,255,0.18));
-  border-top-color: var(--gold, #c9a24b);
+  border-top-color: var(--gold, #B9C0C9);
   animation: dinely-spin 0.7s linear infinite;
   flex: none;
 }

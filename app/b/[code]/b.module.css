@@ -1,6 +1,6 @@
 .wrap {
   min-height: 100dvh;
-  background: #0b0906;
+  background: #0B0C0D;
 }
 
 .state {
@@ -40,7 +40,7 @@
 .heroGrad {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(11, 9, 6, 0.25) 0%, rgba(11, 9, 6, 0.35) 45%, #0b0906 100%);
+  background: linear-gradient(180deg, rgba(11, 9, 6, 0.25) 0%, rgba(11, 9, 6, 0.35) 45%, #0B0C0D 100%);
 }
 .heroText {
   position: absolute;
@@ -69,7 +69,7 @@
   text-align: center;
   padding: 16px;
   border-radius: 16px;
-  background: linear-gradient(180deg, rgba(201, 162, 75, 0.16), rgba(201, 162, 75, 0.05));
+  background: linear-gradient(180deg, rgba(200,208,218, 0.16), rgba(200,208,218, 0.05));
   border: 1px solid var(--gold-dim);
   margin-bottom: 18px;
 }
@@ -131,7 +131,7 @@
   font-size: 30px;
   color: #20180a;
   background: linear-gradient(180deg, var(--gold-2), var(--gold));
-  box-shadow: 0 10px 30px -8px rgba(201, 162, 75, 0.6);
+  box-shadow: 0 10px 30px -8px rgba(200,208,218, 0.6);
   margin-bottom: 8px;
 }
 .doneTitle {

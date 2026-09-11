@@ -19,7 +19,7 @@
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
 }
 .cardTop { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-.postNr { font-family: var(--ff-mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold-dim, #8c7231); }
+.postNr { font-family: var(--ff-mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold-dim, #71767E); }
 .remove { width: 26px; height: 26px; border-radius: 50%; background: var(--bg-2); color: var(--muted); font-size: 12px; }
 
 .shot {

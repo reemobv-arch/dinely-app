@@ -14,8 +14,8 @@
   place-items: center;
   font-size: 26px;
   color: var(--gold);
-  border: 1px solid var(--gold-dim, #8c7231);
-  background: radial-gradient(circle at 50% 40%, rgba(201, 162, 75, 0.1), transparent 70%);
+  border: 1px solid var(--gold-dim, #71767E);
+  background: radial-gradient(circle at 50% 40%, rgba(200,208,218, 0.1), transparent 70%);
   margin-bottom: 10px;
 }
 .title {
@@ -42,6 +42,6 @@
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: #20180a;
-  background: linear-gradient(180deg, var(--gold-2, #e4c67e), var(--gold));
+  background: linear-gradient(180deg, var(--gold-2, #EDF1F5), var(--gold));
   font-weight: 600;
 }

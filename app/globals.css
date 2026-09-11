@@ -1,20 +1,26 @@
-/* ============ Dinely dashboard — dark & luxe ============ */
+/* ============ Dinely app — dark glass & silver ============ */
 :root{
   color-scheme: dark;
-  --bg:#130F0A; --bg-2:#28221B; --surface:#332A22; --surface-2:#3C3227; --surface-3:#463A2E;
-  --line:#453A31; --line-2:#564A3F;
-  --text:#F5F0E7; --muted:#B4A797; --muted-2:#867B6C;
-  --gold:#C9A24B; --gold-2:#E4C67E; --gold-dim:#8C7231;
+  --bg:#0B0C0D; --bg-2:#141618; --surface:#1b1e21; --surface-2:#202327; --surface-3:#2a2e33;
+  --line:#2a2e33; --line-2:#363b41;
+  --text:#F5F0E7; --muted:#AEB4BC; --muted-2:#7E848C;
+  /* "--gold" = zilver/platina-accent (naam behouden voor bestaande refs). */
+  --gold:#B9C0C9; --gold-2:#EDF1F5; --gold-dim:#71767E;
+  /* --au = echt goud, alleen logo + een enkel accent. */
+  --au:#C9A24B; --au-2:#E4C67E; --au-dim:#8C7231;
   --good:#77BE9B; --warn:#E0AE55; --crit:#CE7460;
   --ff-display:"Didot","Bodoni 72","Bodoni MT","Hoefler Text",Garamond,"Times New Roman",serif;
   --ff-body:-apple-system,"Helvetica Neue","Segoe UI",Roboto,system-ui,Arial,sans-serif;
   --ff-mono:-apple-system,"Helvetica Neue","Segoe UI",Roboto,system-ui,Arial,sans-serif;
-  --sh-1:0 1px 0 rgba(255,255,255,.03) inset, 0 10px 30px -12px rgba(0,0,0,.7);
+  --sh-1:0 1px 0 rgba(255,255,255,.04) inset, 0 10px 30px -12px rgba(0,0,0,.7);
   --sh-2:0 30px 80px -30px rgba(0,0,0,.85);
+  --glass:rgba(32,35,39,.46); --glass-2:rgba(32,35,39,.62);
+  --glass-brd:rgba(200,208,218,.20); --glass-brd-hi:rgba(236,240,245,.5);
+  --glass-hi:rgba(255,255,255,.06);
 }
 *{box-sizing:border-box}
 html,body{margin:0;padding:0;overscroll-behavior:none}
-body{background:#0B0906;color:var(--text);font-family:var(--ff-body);-webkit-font-smoothing:antialiased;line-height:1.55;font-size:16px}
+body{background:#0B0C0D;color:var(--text);font-family:var(--ff-body);-webkit-font-smoothing:antialiased;line-height:1.55;font-size:16px}
 
 /* mobiel-first shell: telefoon-brede kolom. Op mobiel zijn frame + device een no-op. */
 .device-frame{display:contents}
@@ -24,13 +30,16 @@ body{background:#0B0906;color:var(--text);font-family:var(--ff-body);-webkit-fon
    fixed navbar op iOS relatief aan de shell en scrollt hij mee. Zo blijft de
    navbar aan de viewport hangen. */
 .app-shell{max-width:460px;margin:0 auto;min-height:100dvh;position:relative;
-  background:var(--bg);box-shadow:0 0 140px rgba(0,0,0,.7)}
+  background:var(--bg);box-shadow:0 0 140px rgba(0,0,0,.7);
+  background-image:
+    radial-gradient(60% 30% at 78% 2%, rgba(200,208,218,.09), transparent 60%),
+    radial-gradient(55% 30% at 8% 100%, rgba(150,158,168,.10), transparent 60%)}
 
 /* Desktop: de app in een iPhone-frame. Het hele toestel (390x844) schaalt via
    --device-scale mee zodat het altijd volledig past. Op smalle schermen blijft
    alles fullscreen dankzij display:contents hierboven. */
 @media (min-width:760px){
-  body{background:radial-gradient(120% 90% at 50% 0%, #1a1510 0%, #0a0908 60%)}
+  body{background:radial-gradient(120% 90% at 50% 0%, #16181b 0%, #08090a 60%)}
   .device-frame{
     display:flex;align-items:center;justify-content:center;
     height:100dvh;overflow:hidden;box-sizing:border-box;
@@ -73,7 +82,7 @@ button,input,textarea,select{font-family:inherit;color:inherit}
 input,textarea,select{font-size:16px}
 button{cursor:pointer;border:0;background:none}
 img{display:block;max-width:100%}
-::selection{background:rgba(201,162,75,.28);color:#fff}
+::selection{background:rgba(200,208,218,.28);color:#fff}
 
 .serif{font-family:var(--ff-display)}
 .mono{font-family:var(--ff-mono)}
@@ -82,32 +91,38 @@ img{display:block;max-width:100%}
 
 /* form primitives */
 .flabel{display:block;font-family:var(--ff-mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
-.inp{width:100%;background:var(--bg-2);border:1px solid var(--line-2);border-radius:11px;padding:13px 15px;color:var(--text);font-size:16px;transition:.18s}
-.inp:focus{outline:none;border-color:var(--gold-dim);box-shadow:0 0 0 3px rgba(201,162,75,.12)}
+.inp{width:100%;background:rgba(255,255,255,.05);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid rgba(200,208,218,.20);border-radius:11px;padding:13px 15px;color:var(--text);font-size:16px;box-shadow:0 1px 0 rgba(255,255,255,.05) inset;transition:.18s}
+.inp:focus{outline:none;border-color:var(--gold-dim);box-shadow:0 0 0 3px rgba(200,208,218,.14), 0 1px 0 rgba(255,255,255,.05) inset}
 .inp.ta{min-height:96px;resize:vertical}
 .field{margin-bottom:18px}
 
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:13px 22px;border-radius:100px;font-family:var(--ff-mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;transition:.2s}
-.btn-gold{background:linear-gradient(180deg,var(--gold-2),var(--gold));color:#20180A;font-weight:600;box-shadow:0 8px 22px -8px rgba(201,162,75,.55)}
-.btn-gold:hover{filter:brightness(1.06)}
+/* Primaire knop: zilver glas met gouden hairline (het accent). */
+.btn-gold{color:var(--au-2);background:linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,.03));-webkit-backdrop-filter:blur(14px) saturate(150%);backdrop-filter:blur(14px) saturate(150%);border:1px solid rgba(201,162,75,.5);box-shadow:0 1px 0 rgba(255,248,235,.18) inset, 0 8px 22px -10px rgba(0,0,0,.7)}
+.btn-gold:hover{color:#fff;border-color:var(--au-2);box-shadow:0 1px 0 rgba(255,248,235,.28) inset, 0 0 22px -6px rgba(201,162,75,.55)}
 .btn-gold:active{transform:scale(.985)}
-.btn-gold:disabled{opacity:.5;cursor:not-allowed;filter:none;box-shadow:none}
+.btn-gold:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
 .btn-ghost:active{transform:scale(.985)}
-.btn-ghost{border:1px solid var(--line-2);color:var(--text)}
-.btn-ghost:hover{border-color:var(--gold-dim);color:var(--gold)}
+.btn-ghost{background:rgba(255,255,255,.04);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border:1px solid rgba(200,208,218,.28);color:var(--text)}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold);background:rgba(255,255,255,.07)}
 
-.card{background:linear-gradient(180deg,var(--surface-2),var(--surface));border:1px solid var(--line-2);border-radius:16px;box-shadow:var(--sh-1)}
+.card{position:relative;background:var(--glass);-webkit-backdrop-filter:blur(18px) saturate(140%);backdrop-filter:blur(18px) saturate(140%);border:1px solid var(--glass-brd);border-radius:16px;box-shadow:0 1px 0 var(--glass-hi) inset, 0 18px 50px -22px rgba(0,0,0,.75)}
+.card.au-edge{border-color:rgba(201,162,75,.42);box-shadow:0 1px 0 rgba(255,248,235,.12) inset, 0 18px 50px -22px rgba(0,0,0,.75), 0 0 0 1px rgba(201,162,75,.12)}
 .eyebrow{font-family:var(--ff-mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
 
 .notice{border-radius:12px;padding:14px 16px;font-size:13.5px;font-family:var(--ff-mono);line-height:1.5}
 .notice.err{border:1px solid rgba(206,116,96,.4);background:rgba(206,116,96,.08);color:var(--crit)}
 .notice.ok{border:1px solid rgba(119,190,155,.35);background:rgba(119,190,155,.08);color:var(--good)}
-.notice.warn{border:1px solid var(--gold-dim);background:rgba(201,162,75,.06);color:var(--gold)}
+.notice.warn{border:1px solid rgba(201,162,75,.4);background:rgba(201,162,75,.08);color:var(--au-2)}
 
 /* skeletons (laad-states) */
 @keyframes sk-shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
 .sk{display:block;border-radius:8px;background:linear-gradient(90deg,var(--surface) 25%,var(--surface-3,#463a2e) 37%,var(--surface) 63%);background-size:200% 100%;animation:sk-shimmer 1.4s ease-in-out infinite}
 @media (prefers-reduced-motion:reduce){.sk{animation:none}}
+
+/* donkere kaart zonder API-sleutel: OSM-tegels omgekleurd naar charcoal.
+   Alleen de tegels (tile-pane) worden gefilterd; markers/popups blijven normaal. */
+.dinely-darktiles{filter:invert(1) hue-rotate(180deg) brightness(.92) contrast(.9) saturate(.65)}
 
 /* kaart-popup (klik op marker -> klikbare restaurantnaam) */
 .dinely-popwrap .leaflet-popup-content-wrapper{background:var(--surface-3,#463a2e);border:1px solid var(--line-2);border-radius:100px;box-shadow:0 6px 18px rgba(0,0,0,.45);padding:0}
@@ -119,7 +134,7 @@ img{display:block;max-width:100%}
 /* systeem-polish (luxe) */
 html{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
 *{-webkit-tap-highlight-color:transparent}
-::selection{background:rgba(201,162,75,.28);color:var(--text)}
+::selection{background:rgba(200,208,218,.28);color:var(--text)}
 * ::-webkit-scrollbar{width:8px;height:8px}
 * ::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:100px}
 * ::-webkit-scrollbar-track{background:transparent}

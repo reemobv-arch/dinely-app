@@ -2,12 +2,12 @@
   justify-content: center;
   padding: 0 26px 40px;
   background:
-    radial-gradient(120% 80% at 80% 0%, rgba(201, 162, 75, 0.10), transparent 55%),
+    radial-gradient(120% 80% at 80% 0%, rgba(200,208,218, 0.10), transparent 55%),
     var(--bg);
 }
 .top { text-align: center; margin-bottom: 44px; }
 .brand { font-family: var(--ff-display); font-size: 44px; letter-spacing: 0.01em; }
-.brand span { color: var(--gold); }
+.brand span { color: var(--au); }
 .tag {
   font-family: var(--ff-mono); font-size: 10.5px; letter-spacing: 0.2em;
   text-transform: uppercase; color: var(--muted); margin-top: 8px;

@@ -45,13 +45,13 @@ export default function Splash() {
 
           {/* telefoon */}
           <g className={styles.phone}>
-            <rect x="128" y="34" width="46" height="86" rx="12" fill="#0f0c08" stroke="#c9a24b" strokeWidth="2" />
+            <rect x="128" y="34" width="46" height="86" rx="12" fill="#0B0C0D" stroke="#c9a24b" strokeWidth="2" />
             <rect x="134" y="42" width="34" height="60" rx="5" fill="#241d15" />
             {/* zoeker: klein bordje op scherm */}
             <ellipse cx="151" cy="82" rx="13" ry="5" fill="#3b342a" />
             <ellipse cx="151" cy="80" rx="8" ry="3" fill="#7a4a24" />
             {/* cameralens */}
-            <circle cx="151" cy="112" r="4" fill="#0b0906" stroke="#c9a24b" strokeWidth="1.5" />
+            <circle cx="151" cy="112" r="4" fill="#0B0C0D" stroke="#c9a24b" strokeWidth="1.5" />
           </g>
 
           {/* flits */}

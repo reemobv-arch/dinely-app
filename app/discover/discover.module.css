@@ -10,7 +10,7 @@
   font-size: 30px; color: var(--text); line-height: 1;
 }
 .brand { font-family: var(--ff-display); font-size: 20px; }
-.brand span { color: var(--gold); }
+.brand span { color: var(--au); }
 
 .search { padding: 4px 16px 14px; }
 .searchRow {
@@ -125,7 +125,7 @@
 .cardTop h3 { font-family: var(--ff-display); font-size: 19px; }
 .score {
   font-family: var(--ff-mono); font-size: 12px; font-weight: 600; color: #20180a; flex: none;
-  background: linear-gradient(180deg, var(--gold-2, #e4c67e), var(--gold));
+  background: linear-gradient(180deg, var(--gold-2, #EDF1F5), var(--gold));
   border-radius: 100px; padding: 3px 10px;
 }
 .cardMeta {

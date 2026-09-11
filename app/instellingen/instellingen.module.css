@@ -23,8 +23,8 @@
   background-color: var(--surface-2);
   display: grid;
   place-items: center;
-  border: 1px solid var(--gold-dim, #8c7231);
-  box-shadow: 0 0 0 4px rgba(201, 162, 75, 0.1), 0 12px 32px rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--gold-dim, #71767E);
+  box-shadow: 0 0 0 4px rgba(200,208,218, 0.1), 0 12px 32px rgba(0, 0, 0, 0.5);
   cursor: pointer;
   overflow: hidden;
 }
@@ -62,7 +62,7 @@
   font-size: 10px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--gold-dim, #8c7231);
+  color: var(--gold-dim, #71767E);
   margin: 22px 4px 10px;
 }
 
@@ -125,13 +125,13 @@
   width: 46px;
   height: 28px;
   border-radius: 100px;
-  background: var(--bg-2, #28221b);
+  background: var(--bg-2, #202327);
   border: 1px solid var(--line-2);
   position: relative;
   transition: 0.22s;
 }
 .switchOn {
-  background: linear-gradient(180deg, var(--gold-2, #e4c67e), var(--gold));
+  background: linear-gradient(180deg, var(--gold-2, #EDF1F5), var(--gold));
   border-color: transparent;
 }
 .knob {
@@ -151,13 +151,13 @@
 
 /* Profiel-afmaken checklist + markering van ontbrekende velden */
 .todoCard {
-  background: linear-gradient(180deg, rgba(201, 162, 75, 0.12), rgba(201, 162, 75, 0.05));
-  border: 1px solid var(--gold-dim, #8c7231);
+  background: linear-gradient(180deg, rgba(200,208,218, 0.12), rgba(200,208,218, 0.05));
+  border: 1px solid var(--gold-dim, #71767E);
   border-radius: 18px;
   padding: 16px 18px;
   margin: 4px 0 8px;
 }
-.todoTitle { font-family: var(--ff-display); font-size: 18px; color: var(--gold, #e4c67e); }
+.todoTitle { font-family: var(--ff-display); font-size: 18px; color: var(--gold, #EDF1F5); }
 .todoLead { font-size: 13px; line-height: 1.5; color: var(--muted); margin: 6px 0 10px; }
 .todoList { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
 .todoList li {
@@ -168,7 +168,7 @@
   border-radius: 50%; background: #ce7460;
 }
 .todoLink { display: inline-flex; align-items: center; gap: 8px; color: var(--text); }
-.todoGo { font-family: var(--ff-mono); font-size: 11px; color: var(--gold, #e4c67e); }
+.todoGo { font-family: var(--ff-mono); font-size: 11px; color: var(--gold, #EDF1F5); }
 
 .rowNeed { background: rgba(206, 116, 96, 0.06); }
 .needTag {

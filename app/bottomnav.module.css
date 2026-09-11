@@ -29,7 +29,7 @@
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
-.on { color: var(--gold); }
+.on { color: var(--au-2); }
 
 /* Rood bolletje: profiel nog niet af (bijv. IBAN/socials ontbreken) */
 .icon {
@@ -43,6 +43,6 @@
   height: 9px;
   border-radius: 50%;
   background: #e0544a;
-  border: 1.5px solid var(--bg, #130f0a);
+  border: 1.5px solid var(--bg, #0B0C0D);
   box-shadow: 0 0 8px rgba(224, 84, 74, 0.7);
 }

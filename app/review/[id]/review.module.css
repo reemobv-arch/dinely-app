@@ -1,7 +1,7 @@
 .wrap {
   position: fixed; inset: 0; left: 50%; transform: translateX(-50%);
   width: 100%; max-width: 460px; z-index: 60;
-  background: radial-gradient(120% 70% at 80% 0%, rgba(201,162,75,0.10), transparent 55%), var(--bg);
+  background: radial-gradient(120% 70% at 80% 0%, rgba(200,208,218,0.10), transparent 55%), var(--bg);
   display: flex; flex-direction: column;
 }
 .head { padding: 16px 20px 8px; padding-top: calc(env(safe-area-inset-top, 0px) + 16px); }
@@ -71,4 +71,4 @@
   transition: color 0.12s, transform 0.1s;
 }
 .catStar:active { transform: scale(0.9); }
-.catStarOn { color: var(--gold, #c9a24b); }
+.catStarOn { color: var(--gold, #B9C0C9); }
