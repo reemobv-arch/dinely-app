@@ -41,6 +41,7 @@ export default function DiscoverPage() {
   const [keuken, setKeuken] = useState("");
   const [prijs, setPrijs] = useState("");
   const [metDeals, setMetDeals] = useState(false);
+  const [sheetOpen, setSheetOpen] = useState(false); // filters achter de ≡-knop
 
   const keukens = useMemo(
     () => [...new Set(rows.map((r) => r.keuken).filter(Boolean))].sort(),
@@ -55,6 +56,7 @@ export default function DiscoverPage() {
     return inData.length ? inData : STEDEN;
   }, [rows]);
   const filtersActief = !!(keuken || prijs || metDeals);
+  const aantalActief = [stad, keuken, prijs, metDeals ? "d" : ""].filter(Boolean).length;
   function wisFilters() {
     setKeuken("");
     setPrijs("");
@@ -120,82 +122,44 @@ export default function DiscoverPage() {
       <header className={styles.head}>
         <Link href="/start" className={styles.back}>‹</Link>
         <div className={styles.brand}>Dine<span>ly</span></div>
-        <div style={{ width: 30 }} />
+        <div style={{ width: 42 }} />
       </header>
 
-      <div className={styles.search}>
-        <div className={styles.searchRow}>
-          <span className={styles.si}>⌕</span>
-          <input
-            className={styles.sInput}
-            placeholder="Zoek een restaurant"
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-          />
-          {q && (
-            <button
-              type="button"
-              className={styles.sClear}
-              onClick={() => setQ("")}
-              aria-label="Zoekopdracht wissen"
-            >
-              ✕
-            </button>
-          )}
-        </div>
-        <div className={styles.filters}>
-          <label className={styles.filter}>
-            <span>Stad</span>
-            <select
-              className={styles.stadSelect}
-              value={steden.includes(stad) ? stad : ""}
-              onChange={(e) => setStad(e.target.value)}
-            >
-              <option value="">Heel Nederland</option>
-              {steden.map((c) => (
-                <option key={c} value={c}>{c}</option>
-              ))}
-            </select>
-          </label>
-        </div>
-        <div className={styles.filterBar}>
-          <select className={styles.fSelect} value={keuken} onChange={(e) => setKeuken(e.target.value)}>
-            <option value="">Alle keukens</option>
-            {keukens.map((k) => (
-              <option key={k} value={k}>{k}</option>
-            ))}
-          </select>
-          {["€", "€€", "€€€", "€€€€"].map((p) => (
-            <button
-              key={p}
-              type="button"
-              className={`${styles.fChip} ${prijs === p ? styles.fChipOn : ""}`}
-              onClick={() => setPrijs(prijs === p ? "" : p)}
-            >
-              {p}
-            </button>
-          ))}
-          <button
-            type="button"
-            className={`${styles.fChip} ${metDeals ? styles.fChipOn : ""}`}
-            onClick={() => setMetDeals((v) => !v)}
-          >
-            Met deals
-          </button>
-          {filtersActief && (
-            <button type="button" className={styles.fClear} onClick={wisFilters}>Wis ✕</button>
-          )}
-        </div>
-      </div>
-
-      <div className={styles.map}>
+      <div className={styles.mapBig}>
         {!busy && points.length > 0 && (
           <MapView points={points} onSelect={(id) => router.push(`/r/${id}`)} />
         )}
         {!busy && points.length === 0 && (
           <div className={styles.mapEmpty}>Nog geen restaurants om te tonen.</div>
         )}
+        <div className={styles.floatBar}>
+          <div className={styles.searchRow}>
+            <span className={styles.si}>⌕</span>
+            <input
+              className={styles.sInput}
+              placeholder="Zoek een restaurant"
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+            />
+            {q && (
+              <button type="button" className={styles.sClear} onClick={() => setQ("")} aria-label="Zoekopdracht wissen">✕</button>
+            )}
+          </div>
+          <button type="button" className={styles.filterBtn} onClick={() => setSheetOpen(true)} aria-label="Filters">
+            <span className={styles.burger}><i /><i /><i /></span>
+            {aantalActief > 0 && <span className={styles.filterDot}>{aantalActief}</span>}
+          </button>
+        </div>
       </div>
+
+      {aantalActief > 0 && (
+        <div className={styles.activeChips}>
+          {stad && <button type="button" className={styles.aChip} onClick={() => setStad("")}>{stad} <span>✕</span></button>}
+          {keuken && <button type="button" className={styles.aChip} onClick={() => setKeuken("")}>{keuken} <span>✕</span></button>}
+          {prijs && <button type="button" className={styles.aChip} onClick={() => setPrijs("")}>{prijs} <span>✕</span></button>}
+          {metDeals && <button type="button" className={styles.aChip} onClick={() => setMetDeals(false)}>Met deals <span>✕</span></button>}
+        </div>
+      )}
 
       <div className={styles.listHead}>
         <span>{filtered.length} restaurant{filtered.length === 1 ? "" : "s"}</span>
@@ -253,6 +217,68 @@ export default function DiscoverPage() {
       </div>
 
       <BottomNav />
+
+      {sheetOpen && (
+        <div className={styles.sheetOverlay} onClick={() => setSheetOpen(false)}>
+          <div className={styles.sheet} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.sheetGrip} />
+            <div className={styles.sheetHead}>
+              <b>Filters</b>
+              <button type="button" className={styles.sheetClose} onClick={() => setSheetOpen(false)} aria-label="Sluiten">✕</button>
+            </div>
+
+            <div className={styles.sLabel}>Stad</div>
+            <select className={styles.sSelect} value={steden.includes(stad) ? stad : ""} onChange={(e) => setStad(e.target.value)}>
+              <option value="">Heel Nederland</option>
+              {steden.map((c) => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
+
+            <div className={styles.sLabel}>Keuken</div>
+            <select className={styles.sSelect} value={keuken} onChange={(e) => setKeuken(e.target.value)}>
+              <option value="">Alle keukens</option>
+              {keukens.map((k) => (
+                <option key={k} value={k}>{k}</option>
+              ))}
+            </select>
+
+            <div className={styles.sLabel}>Prijs</div>
+            <div className={styles.priceRow}>
+              {["€", "€€", "€€€", "€€€€"].map((p) => (
+                <button
+                  key={p}
+                  type="button"
+                  className={`${styles.pBtn} ${prijs === p ? styles.pBtnOn : ""}`}
+                  onClick={() => setPrijs(prijs === p ? "" : p)}
+                >
+                  {p}
+                </button>
+              ))}
+            </div>
+
+            <div className={styles.sLabel}>Extra</div>
+            <div className={styles.priceRow}>
+              <button
+                type="button"
+                className={`${styles.pBtn} ${metDeals ? styles.pBtnOn : ""}`}
+                onClick={() => setMetDeals((v) => !v)}
+              >
+                Met deals
+              </button>
+            </div>
+
+            <div className={styles.sheetActions}>
+              {aantalActief > 0 && (
+                <button type="button" className={styles.sWis} onClick={() => { setStad(""); wisFilters(); }}>Wis alles</button>
+              )}
+              <button type="button" className={styles.applyBtn} onClick={() => setSheetOpen(false)}>
+                Toon {filtered.length} restaurant{filtered.length === 1 ? "" : "s"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
