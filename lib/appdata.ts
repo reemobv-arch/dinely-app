@@ -315,13 +315,17 @@ export async function listRestaurants(): Promise<PublicRestaurant[]> {
   // kaart. Zo staan half-ingevulde accounts er niet tussen.
   return snap.docs
     .map((d) => ({ id: d.id, ...(d.data() as Restaurant) }))
-    .filter((r) => isProfielCompleet(r));
+    // Verwijderde (geanonimiseerde) accounts niet tonen in de app of op de kaart.
+    .filter((r) => !(r as { verwijderd?: boolean }).verwijderd && isProfielCompleet(r));
 }
 
 export async function getRestaurantById(id: string): Promise<PublicRestaurant | null> {
   if (!firebaseReady) return null;
   const snap = await getDoc(doc(db, "restaurants", id));
-  return snap.exists() ? { id, ...(snap.data() as Restaurant) } : null;
+  if (!snap.exists()) return null;
+  const data = snap.data() as Restaurant & { verwijderd?: boolean };
+  if (data.verwijderd) return null; // verwijderd account -> niet meer bereikbaar
+  return { id, ...data };
 }
 
 export async function listAllDeals(): Promise<Deal[]> {
