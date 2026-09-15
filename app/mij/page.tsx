@@ -413,10 +413,10 @@ export default function MijPage() {
                           )}
                           {a.reachSubmitted ? (
                             <span className={`${styles.badge} ${styles.ok}`}>Bereik ✓</span>
-                          ) : reachBeschikbaar(a.bezoekDatum, a.bezoekTijd) ? (
+                          ) : reachBeschikbaar(a.contentPosted, a.contentPostedAt?.seconds) ? (
                             <Link href={`/bereik/${a.id}`} className={styles.actBtnGold}>Bereik doorgeven</Link>
                           ) : (
-                            <span className={styles.tlHint}>Bereik doorgeven kan vanaf 48 uur na je bezoek</span>
+                            <span className={styles.tlHint}>Bereik doorgeven kan vanaf 48 uur nadat je content hebt geplaatst</span>
                           )}
                         </div>
                         </>

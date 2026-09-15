@@ -231,7 +231,12 @@ export async function submitReach(
 
 export async function markApplicationContentPosted(id: string): Promise<void> {
   if (!firebaseReady) return;
-  await updateDoc(doc(db, "applications", id), { contentPosted: true });
+  // contentPostedAt is het ankerpunt: 48u later mag de creator zijn statistieken
+  // doorgeven en gaan daarna de reminders lopen.
+  await updateDoc(doc(db, "applications", id), {
+    contentPosted: true,
+    contentPostedAt: serverTimestamp(),
+  });
 }
 
 export async function listContentFor(restaurantId: string): Promise<Content[]> {
