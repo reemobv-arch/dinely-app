@@ -118,6 +118,7 @@ export default function DealsPage() {
             const cover = r?.media?.sfeer?.find(Boolean) ?? null;
             const st = STATUS[statusByDeal[d.id ?? ""] ?? ""];
             const locked = approved === false;
+            const chosen = !locked && statusByDeal[d.id ?? ""] === "geaccepteerd";
             const inner = (
               <>
                 <div className={styles.thumb} style={cover ? { backgroundImage: `url(${cover})` } : undefined}>
@@ -150,7 +151,7 @@ export default function DealsPage() {
                 {inner}
               </div>
             ) : (
-              <Link key={d.id} href={`/r/${d.owner}`} className={styles.deal}>
+              <Link key={d.id} href={`/r/${d.owner}`} className={`${styles.deal} ${chosen ? styles.chosen : ""}`}>
                 {inner}
               </Link>
             );

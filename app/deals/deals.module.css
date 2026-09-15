@@ -12,6 +12,9 @@
 }
 .deal:active { transform: scale(0.99); }
 
+/* Deal waarvoor de creator is gekozen: duidelijke groene rand + zachte gloed. */
+.chosen { border-color: #9EDCBB; box-shadow: 0 0 0 1px #9EDCBB, 0 8px 26px rgba(158, 220, 187, 0.16); }
+
 .thumb {
   position: relative; width: 100%; height: 170px; background-size: cover; background-position: center;
   background-color: var(--surface-2); display: grid; place-items: center;
