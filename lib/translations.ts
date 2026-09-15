@@ -466,4 +466,14 @@ export const EN: Record<string, string> = {
   "Verstuur aanvraag →": "Send application →",
   "Ik wil deze deal →": "I want this deal →",
   "Ik wil deze deal (kort toelichten) →": "I want this deal (brief note) →",
+
+  // Feed: creator-popup
+  creator: "creator",
+  "bekijk profiel": "view profile",
+  "Dinely-punten": "Dinely points",
+  Volgers: "Followers",
+  "Deals gedaan": "Deals done",
+  "Gegeten bij": "Eaten at",
+  "Nog geen kanalen bekend.": "No channels known yet.",
+  "Nog geen restaurants.": "No restaurants yet.",
 };

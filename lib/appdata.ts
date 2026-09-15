@@ -553,6 +553,28 @@ export async function listCreatorFotos(): Promise<Record<string, string>> {
   return m;
 }
 
+// Publiek creatorprofiel (uit creatorProfiles), voor de creator-popup in de feed.
+export type PublicCreator = {
+  uid: string;
+  naam?: string;
+  foto?: string;
+  categorie?: string;
+  regio?: string;
+  instagram?: string;
+  tiktok?: string;
+  volgers?: number;
+  igVolgers?: number;
+  ttVolgers?: number;
+  punten?: number;
+  bereikTotaal?: number;
+};
+
+export async function getCreatorProfile(uid: string): Promise<PublicCreator | null> {
+  if (!firebaseReady || !uid) return null;
+  const snap = await getDoc(doc(db, "creatorProfiles", uid));
+  return snap.exists() ? ({ uid, ...(snap.data() as Omit<PublicCreator, "uid">) }) : null;
+}
+
 export async function listAllContent(): Promise<Content[]> {
   if (!firebaseReady) return [];
   const snap = await getDocs(collection(db, "content"));
