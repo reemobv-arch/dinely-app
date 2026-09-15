@@ -1,0 +1,29 @@
+.wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--line, rgba(255, 255, 255, 0.1));
+}
+.flag {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-size: 15px;
+  line-height: 1;
+  padding: 4px 6px;
+  border-radius: 100px;
+  opacity: 0.42;
+  filter: grayscale(0.6);
+  transition: 0.15s;
+}
+.flag:hover {
+  opacity: 0.75;
+}
+.on {
+  opacity: 1;
+  filter: none;
+  background: rgba(255, 255, 255, 0.1);
+}

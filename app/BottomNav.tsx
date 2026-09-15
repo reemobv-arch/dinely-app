@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { useApp } from "@/lib/appauth";
 import { getMyCreator } from "@/lib/appdata";
+import { useT } from "@/lib/i18n";
 import styles from "./bottomnav.module.css";
 
 const TABS = [
@@ -17,6 +18,7 @@ const TABS = [
 export default function BottomNav() {
   const pathname = usePathname();
   const { profile, uid } = useApp();
+  const t = useT();
   const [incompleet, setIncompleet] = useState(false);
 
   useEffect(() => {
@@ -35,16 +37,16 @@ export default function BottomNav() {
   if (!profile?.naam) return null;
   return (
     <nav className={styles.bar}>
-      {TABS.map((t) => {
-        const active = pathname === t.href || pathname.startsWith(t.href + "/");
-        const dot = t.href === "/mij" && incompleet;
+      {TABS.map((tab) => {
+        const active = pathname === tab.href || pathname.startsWith(tab.href + "/");
+        const dot = tab.href === "/mij" && incompleet;
         return (
-          <Link key={t.href} href={t.href} className={`${styles.tab} ${active ? styles.on : ""}`}>
+          <Link key={tab.href} href={tab.href} className={`${styles.tab} ${active ? styles.on : ""}`}>
             <span className={styles.icon}>
-              {t.icon}
-              {dot && <span className={styles.dot} aria-label="Profiel afmaken" />}
+              {tab.icon}
+              {dot && <span className={styles.dot} aria-label={t("Profiel afmaken")} />}
             </span>
-            <span className={styles.lbl}>{t.label}</span>
+            <span className={styles.lbl}>{t(tab.label)}</span>
           </Link>
         );
       })}

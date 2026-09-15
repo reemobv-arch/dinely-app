@@ -15,6 +15,8 @@ import {
 import type { Deal, Review } from "@/lib/types";
 import BottomNav from "../BottomNav";
 import EmptyState from "../EmptyState";
+import LangToggle from "../LangToggle";
+import { useT } from "@/lib/i18n";
 import { filterRestaurants } from "@/lib/discoverFilter";
 import { sorteerOpBoost } from "@/lib/feedBoost";
 import { readSnapshot, writeSnapshot } from "@/lib/snapshotCache";
@@ -31,6 +33,7 @@ const STEDEN = [
 
 export default function DiscoverPage() {
   const router = useRouter();
+  const t = useT();
   const [rows, setRows] = useState<PublicRestaurant[]>([]);
   const [deals, setDeals] = useState<Deal[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -122,7 +125,7 @@ export default function DiscoverPage() {
       <header className={styles.head}>
         <Link href="/start" className={styles.back}>‹</Link>
         <div className={styles.brand}>Dine<span>ly</span></div>
-        <div style={{ width: 42 }} />
+        <LangToggle />
       </header>
 
       <div className={styles.mapBig}>
@@ -130,22 +133,22 @@ export default function DiscoverPage() {
           <MapView points={points} onSelect={(id) => router.push(`/r/${id}`)} />
         )}
         {!busy && points.length === 0 && (
-          <div className={styles.mapEmpty}>Nog geen restaurants om te tonen.</div>
+          <div className={styles.mapEmpty}>{t("Nog geen restaurants om te tonen.")}</div>
         )}
         <div className={styles.floatBar}>
           <div className={styles.searchRow}>
             <span className={styles.si}>⌕</span>
             <input
               className={styles.sInput}
-              placeholder="Zoek een restaurant"
+              placeholder={t("Zoek een restaurant")}
               value={q}
               onChange={(e) => setQ(e.target.value)}
             />
             {q && (
-              <button type="button" className={styles.sClear} onClick={() => setQ("")} aria-label="Zoekopdracht wissen">✕</button>
+              <button type="button" className={styles.sClear} onClick={() => setQ("")} aria-label={t("Zoekopdracht wissen")}>✕</button>
             )}
           </div>
-          <button type="button" className={styles.filterBtn} onClick={() => setSheetOpen(true)} aria-label="Filters">
+          <button type="button" className={styles.filterBtn} onClick={() => setSheetOpen(true)} aria-label={t("Filters")}>
             <span className={styles.burger}><i /><i /><i /></span>
             {aantalActief > 0 && <span className={styles.filterDot}>{aantalActief}</span>}
           </button>
@@ -157,13 +160,13 @@ export default function DiscoverPage() {
           {stad && <button type="button" className={styles.aChip} onClick={() => setStad("")}>{stad} <span>✕</span></button>}
           {keuken && <button type="button" className={styles.aChip} onClick={() => setKeuken("")}>{keuken} <span>✕</span></button>}
           {prijs && <button type="button" className={styles.aChip} onClick={() => setPrijs("")}>{prijs} <span>✕</span></button>}
-          {metDeals && <button type="button" className={styles.aChip} onClick={() => setMetDeals(false)}>Met deals <span>✕</span></button>}
+          {metDeals && <button type="button" className={styles.aChip} onClick={() => setMetDeals(false)}>{t("Met deals")} <span>✕</span></button>}
         </div>
       )}
 
       <div className={styles.listHead}>
-        <span>{filtered.length} restaurant{filtered.length === 1 ? "" : "s"}</span>
-        <span className={styles.mut}>in {stad || "heel Nederland"}</span>
+        <span>{filtered.length} {filtered.length === 1 ? t("restaurant") : t("restaurants")}</span>
+        <span className={styles.mut}>{stad ? `${t("in")} ${stad}` : t("in heel Nederland")}</span>
       </div>
 
       <div className={styles.list}>
@@ -182,9 +185,9 @@ export default function DiscoverPage() {
         ) : filtered.length === 0 ? (
           <EmptyState
             icon="⌕"
-            title="Niks gevonden"
-            text="Geen restaurants voor deze zoekopdracht of filters. Pas je selectie aan."
-            actionLabel={q || filtersActief ? "Wis filters" : undefined}
+            title={t("Niks gevonden")}
+            text={t("Geen restaurants voor deze zoekopdracht of filters. Pas je selectie aan.")}
+            actionLabel={q || filtersActief ? t("Wis filters") : undefined}
             onAction={() => {
               setQ("");
               wisFilters();
@@ -203,11 +206,11 @@ export default function DiscoverPage() {
                 </div>
                 <div className={styles.cardBody}>
                   <div className={styles.cardTop}>
-                    <h3>{r.naam || "Naamloos restaurant"}</h3>
+                    <h3>{r.naam || t("Naamloos restaurant")}</h3>
                     {v != null && <span className={styles.score}>{v.toFixed(1)}</span>}
                   </div>
                   <div className={styles.cardMeta}>
-                    {[r.keuken, r.prijs, r.adres].filter(Boolean).join(" · ") || "Nog geen gegevens"}
+                    {[r.keuken, r.prijs, r.adres].filter(Boolean).join(" · ") || t("Nog geen gegevens")}
                   </div>
                 </div>
               </Link>
@@ -223,27 +226,27 @@ export default function DiscoverPage() {
           <div className={styles.sheet} onClick={(e) => e.stopPropagation()}>
             <div className={styles.sheetGrip} />
             <div className={styles.sheetHead}>
-              <b>Filters</b>
-              <button type="button" className={styles.sheetClose} onClick={() => setSheetOpen(false)} aria-label="Sluiten">✕</button>
+              <b>{t("Filters")}</b>
+              <button type="button" className={styles.sheetClose} onClick={() => setSheetOpen(false)} aria-label={t("Sluiten")}>✕</button>
             </div>
 
-            <div className={styles.sLabel}>Stad</div>
+            <div className={styles.sLabel}>{t("Stad")}</div>
             <select className={styles.sSelect} value={steden.includes(stad) ? stad : ""} onChange={(e) => setStad(e.target.value)}>
-              <option value="">Heel Nederland</option>
+              <option value="">{t("Heel Nederland")}</option>
               {steden.map((c) => (
                 <option key={c} value={c}>{c}</option>
               ))}
             </select>
 
-            <div className={styles.sLabel}>Keuken</div>
+            <div className={styles.sLabel}>{t("Keuken")}</div>
             <select className={styles.sSelect} value={keuken} onChange={(e) => setKeuken(e.target.value)}>
-              <option value="">Alle keukens</option>
+              <option value="">{t("Alle keukens")}</option>
               {keukens.map((k) => (
                 <option key={k} value={k}>{k}</option>
               ))}
             </select>
 
-            <div className={styles.sLabel}>Prijs</div>
+            <div className={styles.sLabel}>{t("Prijs")}</div>
             <div className={styles.priceRow}>
               {["€", "€€", "€€€", "€€€€"].map((p) => (
                 <button
@@ -257,23 +260,23 @@ export default function DiscoverPage() {
               ))}
             </div>
 
-            <div className={styles.sLabel}>Extra</div>
+            <div className={styles.sLabel}>{t("Extra")}</div>
             <div className={styles.priceRow}>
               <button
                 type="button"
                 className={`${styles.pBtn} ${metDeals ? styles.pBtnOn : ""}`}
                 onClick={() => setMetDeals((v) => !v)}
               >
-                Met deals
+                {t("Met deals")}
               </button>
             </div>
 
             <div className={styles.sheetActions}>
               {aantalActief > 0 && (
-                <button type="button" className={styles.sWis} onClick={() => { setStad(""); wisFilters(); }}>Wis alles</button>
+                <button type="button" className={styles.sWis} onClick={() => { setStad(""); wisFilters(); }}>{t("Wis alles")}</button>
               )}
               <button type="button" className={styles.applyBtn} onClick={() => setSheetOpen(false)}>
-                Toon {filtered.length} restaurant{filtered.length === 1 ? "" : "s"}
+                {t("Toon")} {filtered.length} {filtered.length === 1 ? t("restaurant") : t("restaurants")}
               </button>
             </div>
           </div>

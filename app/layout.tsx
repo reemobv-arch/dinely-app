@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { AppAuthProvider } from "@/lib/appauth";
+import { LangProvider } from "@/lib/i18n";
 import SplashGate from "./SplashGate";
 import RegisterSW from "./RegisterSW";
 import DeviceFrame from "./DeviceFrame";
@@ -37,9 +38,11 @@ export default function RootLayout({
     <html lang="nl">
       <body>
         <AppAuthProvider>
-          <DeviceFrame>{children}</DeviceFrame>
-          <NotificationPrompt />
-          <SplashGate />
+          <LangProvider>
+            <DeviceFrame>{children}</DeviceFrame>
+            <NotificationPrompt />
+            <SplashGate />
+          </LangProvider>
         </AppAuthProvider>
         <InstallPrompt />
         <RegisterSW />
