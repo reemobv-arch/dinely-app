@@ -16,6 +16,7 @@ import type { Application, Deal } from "@/lib/types";
 import { todayISO, formatDatumTijd } from "@/lib/format";
 import { wijzigBezoek } from "@/lib/appdata";
 import { dealVoortgang, dealTab, VOORTGANG_STAPPEN } from "@/lib/dealVoortgang";
+import { reachBeschikbaar } from "@/lib/reachWindow";
 import { isProfileComplete } from "@/lib/profileGaps";
 import { creatorShare } from "@/lib/money";
 import { perChannelVolgers } from "@/lib/volgers";
@@ -412,8 +413,10 @@ export default function MijPage() {
                           )}
                           {a.reachSubmitted ? (
                             <span className={`${styles.badge} ${styles.ok}`}>Bereik ✓</span>
-                          ) : (
+                          ) : reachBeschikbaar(a.bezoekDatum, a.bezoekTijd) ? (
                             <Link href={`/bereik/${a.id}`} className={styles.actBtnGold}>Bereik doorgeven</Link>
+                          ) : (
+                            <span className={styles.tlHint}>Bereik doorgeven kan vanaf 48 uur na je bezoek</span>
                           )}
                         </div>
                         </>
