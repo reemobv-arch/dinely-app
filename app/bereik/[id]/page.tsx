@@ -12,6 +12,7 @@ import {
 } from "@/lib/appdata";
 import { canSubmitReach, isValidEntry, type ReachEntry } from "@/lib/reach";
 import type { Application } from "@/lib/types";
+import { useT } from "@/lib/i18n";
 import Waiting from "../../Waiting";
 import styles from "./bereik.module.css";
 
@@ -23,6 +24,7 @@ export default function BereikPage() {
   const router = useRouter();
   const params = useParams<{ id: string }>();
   const appId = params?.id;
+  const t = useT();
   const { session, uid, loading } = useApp();
 
   const [app, setApp] = useState<Application | null>(null);
@@ -69,7 +71,7 @@ export default function BereikPage() {
       const url = await uploadCreatorPhoto(f, { maxDim: 2200, quality: 0.85 });
       const check = await validateStatsImage(url);
       if (!check.ok) {
-        patch(i, { err: `Dit lijkt geen statistieken-screenshot. ${check.detail || ""}`.trim() });
+        patch(i, { err: `${t("Dit lijkt geen statistieken-screenshot.")} ${check.detail || ""}`.trim() });
       } else {
         patch(i, {
           foto: url,
@@ -79,7 +81,7 @@ export default function BereikPage() {
         });
       }
     } catch {
-      patch(i, { err: "Uploaden mislukt. Probeer het opnieuw." });
+      patch(i, { err: t("Uploaden mislukt. Probeer het opnieuw.") });
     } finally {
       patch(i, { busy: false });
     }
@@ -105,30 +107,29 @@ export default function BereikPage() {
     }
   }
 
-  if (loading || !session || busy) return <div className={styles.loading}>Laden…</div>;
-  if (!app) return <div className={styles.loading}>Deze deal is niet gevonden.</div>;
+  if (loading || !session || busy) return <div className={styles.loading}>{t("Laden…")}</div>;
+  if (!app) return <div className={styles.loading}>{t("Deze deal is niet gevonden.")}</div>;
 
   return (
     <div className={styles.wrap}>
       <header className={styles.head}>
-        <button className={styles.back} onClick={() => router.push("/mij")} aria-label="Terug">‹</button>
-        <div className={styles.brand}>Bereik doorgeven</div>
+        <button className={styles.back} onClick={() => router.push("/mij")} aria-label={t("Terug")}>‹</button>
+        <div className={styles.brand}>{t("Bereik doorgeven")}</div>
         <div style={{ width: 42 }} />
       </header>
 
       <div className={styles.body}>
-        <h1 className={styles.h1}>Hoeveel mensen heb je bereikt{restNaam ? ` voor ${restNaam}` : ""}?</h1>
+        <h1 className={styles.h1}>{t("Hoeveel mensen heb je bereikt")}{restNaam ? ` ${t("voor")} ${restNaam}` : ""}?</h1>
         <p className={styles.lead}>
-          Upload een screenshot van je statistieken (dan lezen we het bereik automatisch uit), of vul het zelf in.
-          Meerdere posts? Voeg ze los toe.
+          {t("Upload een screenshot van je statistieken (dan lezen we het bereik automatisch uit), of vul het zelf in. Meerdere posts? Voeg ze los toe.")}
         </p>
 
         {entries.map((e, i) => (
           <div key={i} className={styles.card}>
             <div className={styles.cardTop}>
-              <span className={styles.postNr}>Post {i + 1}</span>
+              <span className={styles.postNr}>{t("Post")} {i + 1}</span>
               {entries.length > 1 && (
-                <button className={styles.remove} onClick={() => removeEntry(i)} aria-label="Verwijderen">✕</button>
+                <button className={styles.remove} onClick={() => removeEntry(i)} aria-label={t("Verwijderen")}>✕</button>
               )}
             </div>
 
@@ -146,20 +147,20 @@ export default function BereikPage() {
                 }}
               />
               {e.busy ? (
-                <span className={styles.shotHint}><Waiting label="Uitlezen" /></span>
+                <span className={styles.shotHint}><Waiting label={t("Uitlezen")} /></span>
               ) : e.foto ? (
-                <span className={styles.shotChange}>Andere screenshot</span>
+                <span className={styles.shotChange}>{t("Andere screenshot")}</span>
               ) : (
-                <span className={styles.shotHint}>＋ Upload statistieken-screenshot</span>
+                <span className={styles.shotHint}>＋ {t("Upload statistieken-screenshot")}</span>
               )}
             </label>
             {e.err && <p className={styles.err}>{e.err}</p>}
 
-            <div className={styles.or}>of vul zelf in</div>
+            <div className={styles.or}>{t("of vul zelf in")}</div>
 
             <div className={styles.fields}>
               <div className={styles.field}>
-                <label className={styles.lbl}>Datum van de post</label>
+                <label className={styles.lbl}>{t("Datum van de post")}</label>
                 <input
                   className="inp"
                   type="date"
@@ -168,26 +169,26 @@ export default function BereikPage() {
                 />
               </div>
               <div className={styles.field}>
-                <label className={styles.lbl}>Kanaal</label>
+                <label className={styles.lbl}>{t("Kanaal")}</label>
                 <select
                   className="inp"
                   value={e.kanaal || ""}
                   onChange={(ev) => patch(i, { kanaal: ev.target.value })}
                 >
-                  <option value="">Kies…</option>
+                  <option value="">{t("Kies…")}</option>
                   {KANALEN.map((k) => (
-                    <option key={k} value={k}>{k}</option>
+                    <option key={k} value={k}>{t(k)}</option>
                   ))}
                 </select>
               </div>
               <div className={styles.field}>
-                <label className={styles.lbl}>Bereik (mensen bereikt)</label>
+                <label className={styles.lbl}>{t("Bereik (mensen bereikt)")}</label>
                 <input
                   className="inp"
                   type="number"
                   min={0}
                   inputMode="numeric"
-                  placeholder="bijv. 25.000"
+                  placeholder={t("bijv. 25.000")}
                   value={e.bereik || ""}
                   onChange={(ev) => patch(i, { bereik: Number(ev.target.value) })}
                 />
@@ -196,7 +197,7 @@ export default function BereikPage() {
           </div>
         ))}
 
-        <button className={styles.add} onClick={addEntry}>＋ Nog een post toevoegen</button>
+        <button className={styles.add} onClick={addEntry}>＋ {t("Nog een post toevoegen")}</button>
       </div>
 
       <div className={styles.footer}>
@@ -206,7 +207,7 @@ export default function BereikPage() {
           disabled={!canSubmitReach(entries) || saving}
           onClick={opslaan}
         >
-          {saving ? <Waiting label="Versturen" /> : "Bereik doorgeven"}
+          {saving ? <Waiting label={t("Versturen")} /> : t("Bereik doorgeven")}
         </button>
       </div>
     </div>

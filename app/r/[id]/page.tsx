@@ -18,6 +18,7 @@ import type { Deal, Review, Content } from "@/lib/types";
 import { qualifiesForDeal } from "@/lib/qualify";
 import { isInviteLocked } from "@/lib/dealVisibility";
 import { todayISO, addDays, formatNL, isPastISO } from "@/lib/format";
+import { useT } from "@/lib/i18n";
 import Waiting from "../../Waiting";
 import styles from "./restaurant.module.css";
 
@@ -35,6 +36,7 @@ export default function RestaurantPage() {
   const params = useParams();
   const router = useRouter();
   const id = String(params.id);
+  const t = useT();
   const { uid, profile } = useApp();
 
   const [r, setR] = useState<PublicRestaurant | null>(null);
@@ -148,8 +150,8 @@ export default function RestaurantPage() {
     }
   }
 
-  if (busy) return <div className={styles.loading}>Laden…</div>;
-  if (!r) return <div className={styles.loading}>Restaurant niet gevonden.</div>;
+  if (busy) return <div className={styles.loading}>{t("Laden…")}</div>;
+  if (!r) return <div className={styles.loading}>{t("Restaurant niet gevonden.")}</div>;
 
   const photos = (r.media?.sfeer ?? []).filter(Boolean) as string[];
   const eten = (r.media?.eten ?? []).filter(Boolean) as string[];
@@ -183,7 +185,7 @@ export default function RestaurantPage() {
           <div className={styles.heroSlide} style={cover ? { backgroundImage: `url(${cover})` } : undefined} />
         )}
         <div className={styles.heroGrad} />
-        <button className={styles.back} onClick={() => router.back()} aria-label="Terug">‹</button>
+        <button className={styles.back} onClick={() => router.back()} aria-label={t("Terug")}>‹</button>
         {photos.length > 1 && (
           <div className={styles.dots}>
             {photos.map((_, i) => (
@@ -193,7 +195,7 @@ export default function RestaurantPage() {
         )}
         <div className={styles.heroText}>
           {r.keuken && <span className="eyebrow">{r.keuken}</span>}
-          <h1 className={styles.name}>{r.naam || "Naamloos restaurant"}</h1>
+          <h1 className={styles.name}>{r.naam || t("Naamloos restaurant")}</h1>
           <div className={styles.sub}>{[r.prijs, r.adres].filter(Boolean).join(" · ")}</div>
         </div>
       </div>
@@ -215,7 +217,7 @@ export default function RestaurantPage() {
 
       {eten.length > 0 && (
         <div className={styles.section}>
-          <h2 className={styles.h2}>Eten &amp; drinken</h2>
+          <h2 className={styles.h2}>{t("Eten & drinken")}</h2>
           <div className={styles.gallery}>
             {eten.map((p, i) => (
               <div
@@ -236,7 +238,7 @@ export default function RestaurantPage() {
         if (items.length === 0) return null;
         return (
           <div key={soort} className={styles.section}>
-            <h2 className={styles.h2}>{soort === "food" ? "Food" : "Sfeer"}</h2>
+            <h2 className={styles.h2}>{soort === "food" ? "Food" : t("Sfeer")}</h2>
             <div className={styles.creators}>
               {items.map((c) => {
                 const m = c.media?.[0];
@@ -266,14 +268,14 @@ export default function RestaurantPage() {
       <div className={styles.section}>
         <h2 className={styles.h2}>Reviews</h2>
         {reviews.length === 0 ? (
-          <div className={styles.empty}>Nog geen reviews voor dit restaurant.</div>
+          <div className={styles.empty}>{t("Nog geen reviews voor dit restaurant.")}</div>
         ) : (
           <div className={styles.reviews}>
             {reviews.map((rv) => (
               <div key={rv.id} className={styles.reviewCard}>
                 <div className={styles.rvTop}>
                   <div className={styles.rvAv}>{(rv.naam || "?").slice(0, 1).toUpperCase()}</div>
-                  <div className={styles.rvName}>{rv.naam || "Gast"}</div>
+                  <div className={styles.rvName}>{rv.naam || t("Gast")}</div>
                   <div className={styles.rvStars}>
                     {"★".repeat(Math.round(rv.sterren))}
                     <span className={styles.rvEmpty}>{"★".repeat(5 - Math.round(rv.sterren))}</span>
@@ -287,9 +289,9 @@ export default function RestaurantPage() {
       </div>
 
       <div className={styles.section} style={{ paddingBottom: 40 }}>
-        <h2 className={styles.h2}>Deals</h2>
+        <h2 className={styles.h2}>{t("Deals")}</h2>
         {deals.length === 0 ? (
-          <div className={styles.empty}>Dit restaurant heeft nog geen deals.</div>
+          <div className={styles.empty}>{t("Dit restaurant heeft nog geen deals.")}</div>
         ) : (
           <div className={styles.deals}>
             {deals.map((d) => {
@@ -305,12 +307,12 @@ export default function RestaurantPage() {
                     <h3>{d.titel}</h3>
                     <span className={styles.reward}>
                       {gesloten
-                        ? "Gesloten"
+                        ? t("Gesloten")
                         : inviteLocked
                         ? "🔒 Invite only"
                         : d.beloningstype === "betaald"
-                        ? `€${d.bedrag} + diner`
-                        : "Gratis diner"}
+                        ? `€${d.bedrag} + ${t("diner")}`
+                        : t("Gratis diner")}
                     </span>
                   </div>
                   <div className={styles.dealChips}>
@@ -322,38 +324,35 @@ export default function RestaurantPage() {
 
                   {inviteLocked ? (
                     <div className={styles.reqBox}>
-                      Deze deal is <b>exclusief</b> en alleen op uitnodiging. Word je uitgenodigd door
-                      dit restaurant, dan kun je hier reageren.
+                      {t("Deze deal is")} <b>{t("exclusief")}</b> {t("en alleen op uitnodiging. Word je uitgenodigd door dit restaurant, dan kun je hier reageren.")}
                     </div>
                   ) : applied ? (
                     <div className={`${styles.statusBox} ${styles[st?.cls ?? "wacht"]}`}>
                       {stKey === "geaccepteerd"
-                        ? `✓ Je bent gekozen — je komt op ${formatNL(dateByDeal[d.id ?? ""])}.`
+                        ? `✓ ${t("Je bent gekozen — je komt op")} ${formatNL(dateByDeal[d.id ?? ""])}.`
                         : stKey === "afgewezen"
-                        ? "Deze keer niet gelukt, volgende kans komt snel."
-                        : `Aangevraagd — je koos ${formatNL(dateByDeal[d.id ?? ""])}.`}
+                        ? t("Deze keer niet gelukt, volgende kans komt snel.")
+                        : `${t("Aangevraagd — je koos")} ${formatNL(dateByDeal[d.id ?? ""])}.`}
                     </div>
                   ) : gesloten ? (
-                    <div className={styles.reqBox}>Deze deal is gesloten en niet meer beschikbaar.</div>
+                    <div className={styles.reqBox}>{t("Deze deal is gesloten en niet meer beschikbaar.")}</div>
                   ) : approved === false ? (
                     <div className={styles.reqBox}>
-                      Je profiel moet eerst worden goedgekeurd voordat je een deal kunt aanvragen.
-                      Rond je aanmelding af in <b>Mijn</b>.
+                      {t("Je profiel moet eerst worden goedgekeurd voordat je een deal kunt aanvragen. Rond je aanmelding af in")} <b>{t("Mijn")}</b>.
                     </div>
                   ) : stKey === "err" ? (
-                    <div className={styles.reqBox}>Versturen lukte net niet. Ververs en probeer opnieuw.</div>
+                    <div className={styles.reqBox}>{t("Versturen lukte net niet. Ververs en probeer opnieuw.")}</div>
                   ) : pickDeal === d.id ? (
                     <div className={styles.pick}>
                       {!ok && (
                         <>
                           <div className={styles.reqBox} style={{ marginBottom: 10 }}>
-                            Je zit nog onder de bereik-eis. Vertel kort waarom je tóch een goede
-                            match bent, dan kan het restaurant je alsnog kiezen.
+                            {t("Je zit nog onder de bereik-eis. Vertel kort waarom je tóch een goede match bent, dan kan het restaurant je alsnog kiezen.")}
                           </div>
                           <textarea
                             className={styles.pickInput}
                             rows={3}
-                            placeholder="Bijv. ik heb 1.000 volgers, maar het zijn allemaal echte food-fans uit de buurt."
+                            placeholder={t("Bijv. ik heb 1.000 volgers, maar het zijn allemaal echte food-fans uit de buurt.")}
                             value={motivatie}
                             onChange={(e) => setMotivatie(e.target.value)}
                           />
@@ -361,22 +360,21 @@ export default function RestaurantPage() {
                       )}
                       {d.brandId && d.bezoekDatum ? (
                         <div className={styles.reqBox} style={{ marginBottom: 10 }}>
-                          <b>{d.brandNaam || "Een merk"}</b> bij {r.naam} op{" "}
-                          <b>{formatNL(d.bezoekDatum)}{d.bezoekTijd ? ` om ${d.bezoekTijd}` : ""}</b>.
+                          <b>{d.brandNaam || t("Een merk")}</b> {t("bij")} {r.naam} {t("op")}{" "}
+                          <b>{formatNL(d.bezoekDatum)}{d.bezoekTijd ? ` ${t("om")} ${d.bezoekTijd}` : ""}</b>.
                           {(d.aantalStories || d.aantalPosts) ? (
                             <div style={{ marginTop: 6 }}>
-                              Content: {d.aantalStories || 0} stories en {d.aantalPosts || 0} post
-                              {(d.aantalPosts || 0) === 1 ? "" : "s"}.
+                              Content: {d.aantalStories || 0} {t("stories en")} {d.aantalPosts || 0} {(d.aantalPosts || 0) === 1 ? t("post") : t("posts")}.
                             </div>
                           ) : null}
                           <div style={{ marginTop: 6 }}>
-                            Tag: @dinely{d.brandNaam ? `, @${d.brandNaam}` : ""} en @{r.naam}.
+                            Tag: @dinely{d.brandNaam ? `, @${d.brandNaam}` : ""} {t("en")} @{r.naam}.
                           </div>
-                          <div style={{ marginTop: 6, opacity: 0.8 }}>De datum staat vast — je accepteert of niet.</div>
+                          <div style={{ marginTop: 6, opacity: 0.8 }}>{t("De datum staat vast — je accepteert of niet.")}</div>
                         </div>
                       ) : (
                         <>
-                          <label className={styles.pickLbl}>Wanneer kom je langs?</label>
+                          <label className={styles.pickLbl}>{t("Wanneer kom je langs?")}</label>
                           <input
                             className={styles.pickInput}
                             type="date"
@@ -385,7 +383,7 @@ export default function RestaurantPage() {
                             value={pickDate}
                             onChange={(e) => setPickDate(e.target.value)}
                           />
-                          <label className={styles.pickLbl}>Hoe laat?</label>
+                          <label className={styles.pickLbl}>{t("Hoe laat?")}</label>
                           <input
                             className={styles.pickInput}
                             type="time"
@@ -406,17 +404,17 @@ export default function RestaurantPage() {
                         onClick={() => apply(d)}
                       >
                         {pending === d.id ? (
-                          <Waiting label="Versturen" />
+                          <Waiting label={t("Versturen")} />
                         ) : d.brandId && d.bezoekDatum ? (
-                          "Accepteren →"
+                          t("Accepteren →")
                         ) : (
-                          "Verstuur aanvraag →"
+                          t("Verstuur aanvraag →")
                         )}
                       </button>
                     </div>
                   ) : (
                     <button className={styles.applyBtn} onClick={() => { setPickDeal(d.id ?? null); setPickDate(""); setMotivatie(""); }}>
-                      {ok ? "Ik wil deze deal →" : "Ik wil deze deal (kort toelichten) →"}
+                      {ok ? t("Ik wil deze deal →") : t("Ik wil deze deal (kort toelichten) →")}
                     </button>
                   )}
                 </div>
@@ -432,6 +430,7 @@ export default function RestaurantPage() {
 }
 
 function Lightbox({ photos, start, onClose }: { photos: string[]; start: number; onClose: () => void }) {
+  const t = useT();
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = ref.current;
@@ -439,7 +438,7 @@ function Lightbox({ photos, start, onClose }: { photos: string[]; start: number;
   }, [start]);
   return (
     <div className={styles.lb} onClick={onClose}>
-      <button className={styles.lbClose} onClick={onClose} aria-label="Sluiten">✕</button>
+      <button className={styles.lbClose} onClick={onClose} aria-label={t("Sluiten")}>✕</button>
       <div className={styles.lbTrack} ref={ref} onClick={(e) => e.stopPropagation()}>
         {photos.map((p, i) => (
           <div key={i} className={styles.lbSlide}>

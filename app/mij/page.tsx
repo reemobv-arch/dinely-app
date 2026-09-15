@@ -21,12 +21,14 @@ import { isProfileComplete } from "@/lib/profileGaps";
 import { creatorShare } from "@/lib/money";
 import { perChannelVolgers } from "@/lib/volgers";
 import { creatorTier, nextTier, TIER_LABEL, TIER_COLOR } from "@/lib/tier";
+import { useT } from "@/lib/i18n";
 import BottomNav from "../BottomNav";
 import EmptyState from "../EmptyState";
 import styles from "./mij.module.css";
 
 export default function MijPage() {
   const router = useRouter();
+  const t = useT();
   const { session, uid, loading, profile, logout } = useApp();
   const [apps, setApps] = useState<Application[]>([]);
   const [deals, setDeals] = useState<Record<string, Deal>>({});
@@ -131,7 +133,7 @@ export default function MijPage() {
   return (
     <div className={styles.wrap}>
       <header className={styles.head}>
-        <h1 className={styles.title}>Mijn</h1>
+        <h1 className={styles.title}>{t("Mijn")}</h1>
       </header>
 
       <div className={styles.card}>
@@ -142,15 +144,15 @@ export default function MijPage() {
           {!profile.foto && initial}
         </div>
         <div className={styles.pInfo}>
-          <div className={styles.pName}>{profile.naam || "Nog geen profiel"}</div>
+          <div className={styles.pName}>{profile.naam || t("Nog geen profiel")}</div>
           <div className={styles.pMeta}>
             {perChannelVolgers(profile.igVolgers, profile.ttVolgers) ||
               (profile.volgers > 0
                 ? `${profile.regio || "—"}`
-                : "Koppel je socials om deals aan te vragen")}
+                : t("Koppel je socials om deals aan te vragen"))}
           </div>
         </div>
-        <Link href={profile.naam ? "/profiel" : "/creator"} className={styles.edit}>{profile.naam ? "Bewerk" : "Start"}</Link>
+        <Link href={profile.naam ? "/profiel" : "/creator"} className={styles.edit}>{profile.naam ? t("Bewerk") : t("Start")}</Link>
       </div>
 
       {(profile.instagram || profile.tiktok) && (
@@ -164,7 +166,7 @@ export default function MijPage() {
         <Link href="/ambassadeur" className={styles.ambBanner}>
           <span className={styles.ambStar}>★</span>
           <span>
-            Je hebt {ambInvites === 1 ? "een ambassadeur-uitnodiging" : `${ambInvites} ambassadeur-uitnodigingen`}
+            {ambInvites === 1 ? t("Je hebt een ambassadeur-uitnodiging") : `${t("Je hebt")} ${ambInvites} ${t("ambassadeur-uitnodigingen")}`}
           </span>
           <span className={styles.ambArrow}>→</span>
         </Link>
@@ -172,8 +174,8 @@ export default function MijPage() {
 
       <Link href="/instellingen" className={styles.settingsRow}>
         <span className={styles.settingsLbl}>
-          Instellingen &amp; notificaties
-          {incompleet && <span className={styles.dot} aria-label="Profiel afmaken" />}
+          {t("Instellingen & notificaties")}
+          {incompleet && <span className={styles.dot} aria-label={t("Profiel afmaken")} />}
         </span>
         <span className={styles.chev}>›</span>
       </Link>
@@ -191,7 +193,7 @@ export default function MijPage() {
             </div>
             <div className={styles.pointsInfo}>
               <div className={styles.pointsVal}>
-                {punten.toLocaleString("nl-NL")} punten
+                {punten.toLocaleString("nl-NL")} {t("punten")}
                 {tier && (
                   <span
                     className={styles.tierChip}
@@ -203,8 +205,8 @@ export default function MijPage() {
               </div>
               <div className={styles.pointsSub}>
                 {next
-                  ? `Nog ${next.over} punten tot ${TIER_LABEL[next.tier]}. Restaurants waarderen je na elke deal.`
-                  : "Je hebt het hoogste niveau bereikt. Blijf top content leveren!"}
+                  ? `${t("Nog")} ${next.over} ${t("punten tot")} ${TIER_LABEL[next.tier]}. ${t("Restaurants waarderen je na elke deal.")}`
+                  : t("Je hebt het hoogste niveau bereikt. Blijf top content leveren!")}
               </div>
             </div>
           </div>
@@ -212,10 +214,10 @@ export default function MijPage() {
       })()}
 
       <div className={styles.stats}>
-        <div className={styles.stat}><b>{apps.length}</b><span>Aanvragen</span></div>
-        <div className={styles.stat}><b>{acceptedApps.length}</b><span>Gekozen</span></div>
-        <div className={styles.stat}><b>{contentCount}</b><span>Content</span></div>
-        <div className={styles.stat}><b>€{Math.round(verdiend)}</b><span>Verdiend</span></div>
+        <div className={styles.stat}><b>{apps.length}</b><span>{t("Aanvragen")}</span></div>
+        <div className={styles.stat}><b>{acceptedApps.length}</b><span>{t("Gekozen")}</span></div>
+        <div className={styles.stat}><b>{contentCount}</b><span>{t("Content")}</span></div>
+        <div className={styles.stat}><b>€{Math.round(verdiend)}</b><span>{t("Verdiend")}</span></div>
       </div>
 
       {(() => {
@@ -227,7 +229,7 @@ export default function MijPage() {
 
         return (
           <div className={styles.section}>
-            <h2 className={styles.h2}>Mijn deals</h2>
+            <h2 className={styles.h2}>{t("Mijn deals")}</h2>
             <div className={styles.dealTabs}>
               {([
                 ["lopend", "Lopend", lopend.length],
@@ -240,19 +242,19 @@ export default function MijPage() {
                   className={`${styles.dealTab} ${tab === key ? styles.dealTabOn : ""}`}
                   onClick={() => setTab(key)}
                 >
-                  {label} · {n}
+                  {t(label)} · {n}
                 </button>
               ))}
             </div>
 
             {busy ? (
-              <div className={styles.subtle}>Laden…</div>
+              <div className={styles.subtle}>{t("Laden…")}</div>
             ) : lijst.length === 0 ? (
               <EmptyState
                 icon={tab === "klaar" ? "◔" : "✦"}
-                title={tab === "lopend" ? "Geen lopende deals" : tab === "aangevraagd" ? "Geen openstaande aanvragen" : "Nog niets afgerond"}
-                text={tab === "aangevraagd" ? "Vind een deal die bij je past en vraag 'm aan in een tik." : "Zodra je een deal doet, verschijnt 'ie hier."}
-                actionLabel={tab === "aangevraagd" ? "Naar deals" : undefined}
+                title={tab === "lopend" ? t("Geen lopende deals") : tab === "aangevraagd" ? t("Geen openstaande aanvragen") : t("Nog niets afgerond")}
+                text={tab === "aangevraagd" ? t("Vind een deal die bij je past en vraag 'm aan in een tik.") : t("Zodra je een deal doet, verschijnt 'ie hier.")}
+                actionLabel={tab === "aangevraagd" ? t("Naar deals") : undefined}
                 actionHref={tab === "aangevraagd" ? "/deals" : undefined}
               />
             ) : (
@@ -262,7 +264,7 @@ export default function MijPage() {
                   const meta = restMeta[a.restaurantId];
                   const vp = dealVoortgang(a, deal?.beloningstype === "betaald");
                   const korting = deal?.kortingPct ?? 20;
-                  const beloning = deal?.beloningstype === "betaald" ? `€ ${deal?.bedrag}` : "Gratis diner";
+                  const beloning = deal?.beloningstype === "betaald" ? `€ ${deal?.bedrag}` : t("Gratis diner");
                   const editing = editDatum === a.id;
                   return (
                     <div key={a.id} className={styles.dealCard2}>
@@ -281,11 +283,11 @@ export default function MijPage() {
                             {meta?.stad ? ` · ${meta.stad}` : ""}
                           </div>
                           <span className={`${styles.dc2Pill} ${styles[`fase_${vp.fase}`] ?? ""}`}>
-                            {vp.fase === "aangevraagd" ? "Wacht op restaurant"
-                              : vp.fase === "gewijzigd" ? "Wacht op herbevestiging"
-                              : vp.fase === "gepland" ? "Ingepland"
-                              : vp.fase === "teDoen" ? "Jij bent aan zet"
-                              : "Afgerond ✓"}
+                            {vp.fase === "aangevraagd" ? t("Wacht op restaurant")
+                              : vp.fase === "gewijzigd" ? t("Wacht op herbevestiging")
+                              : vp.fase === "gepland" ? t("Ingepland")
+                              : vp.fase === "teDoen" ? t("Jij bent aan zet")
+                              : t("Afgerond ✓")}
                           </span>
                         </div>
                         <span className={styles.dc2Reward}>{beloning}</span>
@@ -308,8 +310,8 @@ export default function MijPage() {
                       </div>
                       <div className={styles.tlCaption}>
                         {vp.klaar
-                          ? "Afgerond ✓"
-                          : `Stap ${vp.gedaan + 1} van 5 · ${VOORTGANG_STAPPEN[vp.gedaan]}`}
+                          ? t("Afgerond ✓")
+                          : `${t("Stap")} ${vp.gedaan + 1} ${t("van")} 5 · ${t(VOORTGANG_STAPPEN[vp.gedaan])}`}
                       </div>
 
                       {/* instructies wanneer de creator nog langs moet */}
@@ -317,17 +319,17 @@ export default function MijPage() {
                         <div className={styles.instr}>
                           {a.datumGewijzigd ? (
                             <div className={styles.instrNotice}>
-                              Datum gewijzigd — het restaurant moet je nieuwe moment nog bevestigen.
+                              {t("Datum gewijzigd — het restaurant moet je nieuwe moment nog bevestigen.")}
                             </div>
                           ) : (
                             <div className={styles.instrWhen}>
-                              Je wordt verwacht op <b>{formatDatumTijd(a.bezoekDatum ?? "", a.bezoekTijd)}</b>.
+                              {t("Je wordt verwacht op")} <b>{formatDatumTijd(a.bezoekDatum ?? "", a.bezoekTijd)}</b>.
                             </div>
                           )}
 
                           {a.linkCode && (
                             <div className={styles.instrBlock}>
-                              <div className={styles.instrLbl}>Zet je reserveringslink in je story</div>
+                              <div className={styles.instrLbl}>{t("Zet je reserveringslink in je story")}</div>
                               <div className={styles.shareRow}>
                                 <input
                                   readOnly
@@ -336,31 +338,30 @@ export default function MijPage() {
                                   onFocus={(e) => e.currentTarget.select()}
                                 />
                                 <button type="button" className={styles.shareBtn} onClick={() => copyLink(a.linkCode!)}>
-                                  {copied === a.linkCode ? "Gekopieerd ✓" : "Kopieer"}
+                                  {copied === a.linkCode ? t("Gekopieerd ✓") : t("Kopieer")}
                                 </button>
                               </div>
-                              <p className={styles.instrHint}>Zo kunnen je volgers met {korting}% korting reserveren bij {rest[a.restaurantId] ?? "het restaurant"}.</p>
+                              <p className={styles.instrHint}>{t("Zo kunnen je volgers met")} {korting}% {t("korting reserveren bij")} {rest[a.restaurantId] ?? t("het restaurant")}.</p>
                             </div>
                           )}
 
                           {deal?.gevraagd && (
                             <div className={styles.instrRow}>
-                              <span className={styles.instrRowLbl}>Plaats</span>
+                              <span className={styles.instrRowLbl}>{t("Plaats")}</span>
                               <b>{deal.gevraagd}</b>
                             </div>
                           )}
                           {deal?.inhoud && deal.inhoud.length > 0 && (
                             <div className={styles.instrRow}>
-                              <span className={styles.instrRowLbl}>Laat zien</span>
+                              <span className={styles.instrRowLbl}>{t("Laat zien")}</span>
                               <b>{deal.inhoud.join(", ")}</b>
                             </div>
                           )}
                           {deal?.brandId && (Number(deal.aantalStories) > 0 || Number(deal.aantalPosts) > 0) && (
                             <div className={styles.instrRow}>
-                              <span className={styles.instrRowLbl}>Content</span>
+                              <span className={styles.instrRowLbl}>{t("Content")}</span>
                               <b>
-                                {Number(deal.aantalStories) || 0} stories en {Number(deal.aantalPosts) || 0} post
-                                {Number(deal.aantalPosts) === 1 ? "" : "s"}
+                                {Number(deal.aantalStories) || 0} {t("stories en")} {Number(deal.aantalPosts) || 0} {Number(deal.aantalPosts) === 1 ? t("post") : t("posts")}
                               </b>
                             </div>
                           )}
@@ -368,8 +369,8 @@ export default function MijPage() {
                             <span className={styles.instrRowLbl}>Tag</span>
                             <b>
                               {deal?.brandId
-                                ? `@dinely, ${deal.brandNaam ? `@${deal.brandNaam}, ` : ""}@${rest[a.restaurantId] ?? "het restaurant"}`
-                                : "@dinely op Instagram"}
+                                ? `@dinely, ${deal.brandNaam ? `@${deal.brandNaam}, ` : ""}@${rest[a.restaurantId] ?? t("het restaurant")}`
+                                : t("@dinely op Instagram")}
                             </b>
                           </div>
 
@@ -378,8 +379,8 @@ export default function MijPage() {
                             <div className={styles.dateEdit}>
                               <input className={styles.dateInput} type="date" min={todayISO()} value={nieuweDatum} onChange={(e) => setNieuweDatum(e.target.value)} />
                               <input className={styles.dateInput} type="time" value={nieuweTijd} onChange={(e) => setNieuweTijd(e.target.value)} />
-                              <button className={styles.dateSave} disabled={!nieuweDatum || !nieuweTijd} onClick={() => saveDatum(a)}>Opslaan</button>
-                              <button className={styles.dateCancel} onClick={() => setEditDatum(null)}>Annuleer</button>
+                              <button className={styles.dateSave} disabled={!nieuweDatum || !nieuweTijd} onClick={() => saveDatum(a)}>{t("Opslaan")}</button>
+                              <button className={styles.dateCancel} onClick={() => setEditDatum(null)}>{t("Annuleer")}</button>
                             </div>
                           ) : (
                             <button
@@ -387,7 +388,7 @@ export default function MijPage() {
                               className={styles.dateChangeBtn}
                               onClick={() => { setEditDatum(a.id ?? null); setNieuweDatum(a.bezoekDatum ?? ""); setNieuweTijd(a.bezoekTijd ?? ""); }}
                             >
-                              Datum of tijd wijzigen
+                              {t("Datum of tijd wijzigen")}
                             </button>
                           )}
                         </div>
@@ -397,26 +398,26 @@ export default function MijPage() {
                       {vp.fase === "teDoen" && (
                         <>
                         <div className={styles.tlHint}>
-                          Upload je content <b>binnen 48 uur</b> na je bezoek. Je statistieken lever je
-                          <b> daarna</b> aan, zodat het restaurant het bereik en resultaat ziet.
+                          {t("Upload je content")} <b>{t("binnen 48 uur")}</b> {t("na je bezoek. Je statistieken lever je")}
+                          <b> {t("daarna")}</b> {t("aan, zodat het restaurant het bereik en resultaat ziet.")}
                         </div>
                         <div className={styles.dealActions}>
                           {a.reviewed ? (
-                            <span className={`${styles.badge} ${styles.ok}`}>Beoordeeld ✓</span>
+                            <span className={`${styles.badge} ${styles.ok}`}>{t("Beoordeeld ✓")}</span>
                           ) : (
                             <Link href={`/review/${a.id}`} className={styles.actBtn}>Review</Link>
                           )}
                           {a.contentPosted ? (
-                            <span className={`${styles.badge} ${styles.ok}`}>Content ✓</span>
+                            <span className={`${styles.badge} ${styles.ok}`}>{t("Content ✓")}</span>
                           ) : (
-                            <Link href={`/content/${a.id}`} className={styles.actBtnGold}>Plaats content</Link>
+                            <Link href={`/content/${a.id}`} className={styles.actBtnGold}>{t("Plaats content")}</Link>
                           )}
                           {a.reachSubmitted ? (
-                            <span className={`${styles.badge} ${styles.ok}`}>Bereik ✓</span>
+                            <span className={`${styles.badge} ${styles.ok}`}>{t("Bereik ✓")}</span>
                           ) : reachBeschikbaar(a.contentPosted, a.contentPostedAt?.seconds) ? (
-                            <Link href={`/bereik/${a.id}`} className={styles.actBtnGold}>Bereik doorgeven</Link>
+                            <Link href={`/bereik/${a.id}`} className={styles.actBtnGold}>{t("Bereik doorgeven")}</Link>
                           ) : (
-                            <span className={styles.tlHint}>Bereik doorgeven kan vanaf 48 uur nadat je content hebt geplaatst</span>
+                            <span className={styles.tlHint}>{t("Bereik doorgeven kan vanaf 48 uur nadat je content hebt geplaatst")}</span>
                           )}
                         </div>
                         </>
@@ -424,7 +425,7 @@ export default function MijPage() {
 
                       {vp.fase === "aangevraagd" && a.status === "afgewezen" && (
                         <div className={styles.dealActions}>
-                          <span className={`${styles.badge} ${styles.no}`}>Deze keer niet</span>
+                          <span className={`${styles.badge} ${styles.no}`}>{t("Deze keer niet")}</span>
                         </div>
                       )}
                     </div>
@@ -437,7 +438,7 @@ export default function MijPage() {
       })()}
 
       <button className={styles.logout} onClick={async () => { logout(); router.replace("/login"); }}>
-        Uitloggen
+        {t("Uitloggen")}
       </button>
 
       <BottomNav />

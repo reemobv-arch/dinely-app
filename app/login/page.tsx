@@ -10,6 +10,7 @@ import {
 import { auth, firebaseReady, demoMode } from "@/lib/firebase";
 import { useApp, DEMO_CODE } from "@/lib/appauth";
 import { toE164NL } from "@/lib/phone";
+import { useT } from "@/lib/i18n";
 import Waiting from "../Waiting";
 import styles from "./login.module.css";
 
@@ -35,6 +36,7 @@ function meldingVoor(code: string): string {
 
 export default function LoginPage() {
   const router = useRouter();
+  const t = useT();
   const { session, loading, loginDemo } = useApp();
   const [step, setStep] = useState<"phone" | "code">("phone");
   const [phone, setPhone] = useState("");
@@ -164,14 +166,14 @@ export default function LoginPage() {
     <div className={`screen ${styles.wrap}`}>
       <div className={styles.top}>
         <div className={styles.brand}>Dine<span>ly</span></div>
-        <div className={styles.tag}>Verdien met deals bij restaurants</div>
+        <div className={styles.tag}>{t("Verdien met deals bij restaurants")}</div>
       </div>
 
       {step === "phone" ? (
         <form className={styles.form} onSubmit={sendCode}>
-          <h1 className={styles.h1}>Inloggen</h1>
-          <p className={styles.lead}>Vul je telefoonnummer in, dan sturen we je een sms met een code.</p>
-          <label className="flabel">Telefoonnummer</label>
+          <h1 className={styles.h1}>{t("Inloggen")}</h1>
+          <p className={styles.lead}>{t("Vul je telefoonnummer in, dan sturen we je een sms met een code.")}</p>
+          <label className="flabel">{t("Telefoonnummer")}</label>
           <input
             className="inp"
             type="tel"
@@ -182,18 +184,18 @@ export default function LoginPage() {
             onChange={(e) => setPhone(e.target.value)}
             autoFocus
           />
-          {error && <div className={styles.err}>{error}</div>}
+          {error && <div className={styles.err}>{t(error)}</div>}
           <button className="btn btn-gold" style={{ width: "100%", marginTop: 18 }} disabled={busy}>
-            {busy ? <Waiting label="Versturen" /> : "Stuur code →"}
+            {busy ? <Waiting label={t("Versturen")} /> : t("Stuur code →")}
           </button>
         </form>
       ) : (
         <form className={styles.form} onSubmit={verify}>
-          <h1 className={styles.h1}>Vul de code in</h1>
+          <h1 className={styles.h1}>{t("Vul de code in")}</h1>
           <p className={styles.lead}>
-            We stuurden een sms naar <b>{e164 || phone}</b>.
+            {t("We stuurden een sms naar")} <b>{e164 || phone}</b>.
           </p>
-          <label className="flabel">6-cijferige code</label>
+          <label className="flabel">{t("6-cijferige code")}</label>
           <input
             className={`inp ${styles.code}`}
             inputMode="numeric"
@@ -205,14 +207,14 @@ export default function LoginPage() {
             autoFocus
           />
           {demoMode && (
-            <div className={styles.hint}>Demo: de code is <b>{DEMO_CODE}</b></div>
+            <div className={styles.hint}>{t("Demo: de code is")} <b>{DEMO_CODE}</b></div>
           )}
-          {error && <div className={styles.err}>{error}</div>}
+          {error && <div className={styles.err}>{t(error)}</div>}
           <button className="btn btn-gold" style={{ width: "100%", marginTop: 18 }} disabled={busy}>
-            {busy ? <Waiting label="Controleren" /> : "Inloggen →"}
+            {busy ? <Waiting label={t("Controleren")} /> : t("Inloggen →")}
           </button>
           <button type="button" className={styles.link} onClick={opnieuw} disabled={busy}>
-            Ander nummer gebruiken
+            {t("Ander nummer gebruiken")}
           </button>
         </form>
       )}

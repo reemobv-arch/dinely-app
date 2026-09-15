@@ -14,6 +14,7 @@ import {
 } from "@/lib/appdata";
 import type { Deal } from "@/lib/types";
 import { showsInFeed } from "@/lib/dealVisibility";
+import { useT } from "@/lib/i18n";
 import BottomNav from "../BottomNav";
 import EmptyState from "../EmptyState";
 import styles from "./deals.module.css";
@@ -26,6 +27,7 @@ const STATUS: Record<string, { label: string; cls: string }> = {
 
 export default function DealsPage() {
   const router = useRouter();
+  const t = useT();
   const { session, uid, loading } = useApp();
   const [deals, setDeals] = useState<Deal[]>([]);
   const [rest, setRest] = useState<Record<string, PublicRestaurant>>({});
@@ -77,14 +79,13 @@ export default function DealsPage() {
     <div className={styles.wrap}>
       <header className={styles.head}>
         <Link href="/start" className={styles.back}>‹</Link>
-        <div className={styles.brand}>Deals</div>
+        <div className={styles.brand}>{t("Deals")}</div>
         <div style={{ width: 30 }} />
       </header>
 
       {approved === false && (
         <div className={styles.lockNote}>
-          Je account wacht op goedkeuring. Je kunt deals alvast bekijken, maar pas reageren zodra je
-          bent goedgekeurd.
+          {t("Je account wacht op goedkeuring. Je kunt deals alvast bekijken, maar pas reageren zodra je bent goedgekeurd.")}
         </div>
       )}
 
@@ -105,9 +106,9 @@ export default function DealsPage() {
         ) : deals.filter((d) => rest[d.owner] && zichtbaar(d)).length === 0 ? (
           <EmptyState
             icon="✦"
-            title="Nog geen open deals"
-            text="Zodra restaurants nieuwe deals plaatsen, verschijnen ze hier. Ontdek intussen restaurants bij jou in de buurt."
-            actionLabel="Ontdek restaurants"
+            title={t("Nog geen open deals")}
+            text={t("Zodra restaurants nieuwe deals plaatsen, verschijnen ze hier. Ontdek intussen restaurants bij jou in de buurt.")}
+            actionLabel={t("Ontdek restaurants")}
             actionHref="/discover"
           />
         ) : (
@@ -124,10 +125,10 @@ export default function DealsPage() {
                 <div className={styles.thumb} style={cover ? { backgroundImage: `url(${cover})` } : undefined}>
                   {!cover && <span className={styles.thumbFallback}>Dinely</span>}
                   <span className={styles.reward}>
-                    {d.beloningstype === "betaald" ? `€${d.bedrag} + diner` : "Gratis diner"}
+                    {d.beloningstype === "betaald" ? `€${d.bedrag} + ${t("diner")}` : t("Gratis diner")}
                   </span>
-                  {locked && <span className={styles.lockBadge}>🔒 In afwachting</span>}
-                  {!locked && st && <span className={`${styles.status} ${styles[st.cls]}`}>{st.label}</span>}
+                  {locked && <span className={styles.lockBadge}>🔒 {t("In afwachting")}</span>}
+                  {!locked && st && <span className={`${styles.status} ${styles[st.cls]}`}>{t(st.label)}</span>}
                 </div>
                 <div className={styles.body}>
                   <div className={styles.rest}>{r?.naam ?? "Restaurant"}</div>

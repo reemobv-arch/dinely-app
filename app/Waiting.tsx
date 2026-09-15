@@ -1,11 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useT } from "@/lib/i18n";
 import styles from "./waiting.module.css";
 
 // Wacht-indicator: een draaiende spinner met een oplopende secondenteller.
 // De teller loopt zolang het component gemonteerd is (dus zolang je wacht).
-export default function Waiting({ label = "Bezig" }: { label?: string }) {
+export default function Waiting({ label }: { label?: string }) {
+  const t = useT();
+  const text = label ?? t("Bezig");
   const [sec, setSec] = useState(0);
   useEffect(() => {
     const t = setInterval(() => setSec((s) => s + 1), 1000);
@@ -14,7 +17,7 @@ export default function Waiting({ label = "Bezig" }: { label?: string }) {
   return (
     <span className={styles.wrap}>
       <span className={styles.spinner} aria-hidden />
-      {label}… {sec}s
+      {text}… {sec}s
     </span>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useT } from "@/lib/i18n";
 
 type BIPEvent = Event & {
   prompt: () => void;
@@ -13,6 +14,7 @@ const DISMISS_KEY = "dinely:install-dismissed";
 // met een donkere waas over het hele scherm, alleen als de app nog niet is geïnstalleerd.
 // De gebruiker kiest z'n toestel (iPhone / Android); daarachter staat de uitleg per systeem.
 export default function InstallPrompt() {
+  const t = useT();
   const [deferred, setDeferred] = useState<BIPEvent | null>(null);
   const [show, setShow] = useState(false);
   const [choice, setChoice] = useState<"ios" | "android" | null>(null);
@@ -106,7 +108,7 @@ export default function InstallPrompt() {
       <div
         onClick={(e) => e.stopPropagation()}
         role="dialog"
-        aria-label="Zet Dinely op je beginscherm"
+        aria-label={t("Zet Dinely op je beginscherm")}
         style={{
           width: "100%",
           maxWidth: 380,
@@ -121,7 +123,7 @@ export default function InstallPrompt() {
       >
         <button
           onClick={dismiss}
-          aria-label="Sluiten"
+          aria-label={t("Sluiten")}
           style={{
             position: "absolute",
             top: 14,
@@ -145,13 +147,13 @@ export default function InstallPrompt() {
             marginBottom: 6,
           }}
         >
-          Zet Dinely op je beginscherm
+          {t("Zet Dinely op je beginscherm")}
         </div>
 
         {choice === null && (
           <>
             <p style={{ fontSize: 14, lineHeight: 1.5, color: "var(--muted,#b4a797)", margin: "0 0 20px" }}>
-              Open Dinely voortaan als een echte app. Welk toestel heb je?
+              {t("Open Dinely voortaan als een echte app. Welk toestel heb je?")}
             </p>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
               <DeviceTile label="iPhone" onClick={() => setChoice("ios")} icon={<AppleIcon />} />
@@ -167,14 +169,14 @@ export default function InstallPrompt() {
             </div>
             <div style={stepBox}>
               <div>
-                1. Tik onderin op het <b>Deel</b>-icoon{" "}
+                {t("1. Tik onderin op het")} <b>{t("Deel")}</b>{t("-icoon")}{" "}
                 <span aria-hidden style={{ color: "var(--gold,#B9C0C9)" }}>⬆︎</span>
               </div>
               <div>
-                2. Kies <b>Zet op beginscherm</b>
+                {t("2. Kies")} <b>{t("Zet op beginscherm")}</b>
               </div>
               <div>
-                3. Tik op <b>Voeg toe</b>
+                {t("3. Tik op")} <b>{t("Voeg toe")}</b>
               </div>
             </div>
             <BackLink onClick={() => setChoice(null)} />
@@ -188,18 +190,18 @@ export default function InstallPrompt() {
             </div>
             {deferred ? (
               <button onClick={androidInstall} style={goldBtn}>
-                Installeer de app
+                {t("Installeer de app")}
               </button>
             ) : (
               <div style={stepBox}>
                 <div>
-                  1. Tik rechtsboven op het <b>menu</b> (⋮)
+                  {t("1. Tik rechtsboven op het")} <b>{t("menu")}</b> {t("(⋮)")}
                 </div>
                 <div>
-                  2. Kies <b>App installeren</b> of <b>Toevoegen aan startscherm</b>
+                  {t("2. Kies")} <b>{t("App installeren")}</b> {t("of")} <b>{t("Toevoegen aan startscherm")}</b>
                 </div>
                 <div>
-                  3. Tik op <b>Installeren</b>
+                  {t("3. Tik op")} <b>{t("Installeren")}</b>
                 </div>
               </div>
             )}
@@ -256,9 +258,10 @@ function DeviceTile({
 }
 
 function BackLink({ onClick }: { onClick: () => void }) {
+  const t = useT();
   return (
     <button onClick={onClick} style={{ marginTop: 16, fontSize: 13, color: "var(--muted-2,#867b6c)" }}>
-      ‹ Ander toestel
+      ‹ {t("Ander toestel")}
     </button>
   );
 }

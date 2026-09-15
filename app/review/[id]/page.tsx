@@ -10,6 +10,7 @@ import {
   markApplicationReviewed,
 } from "@/lib/appdata";
 import type { Application } from "@/lib/types";
+import { useT } from "@/lib/i18n";
 import Waiting from "../../Waiting";
 import styles from "./review.module.css";
 
@@ -26,6 +27,7 @@ export default function ReviewPage() {
   const params = useParams();
   const id = String(params.id);
   const router = useRouter();
+  const t = useT();
   const { uid, session, loading, profile } = useApp();
 
   const [app, setApp] = useState<Application | null>(null);
@@ -80,7 +82,7 @@ export default function ReviewPage() {
       if (app.id) await markApplicationReviewed(app.id);
       router.replace("/mij");
     } catch {
-      setError("Opslaan mislukt. Probeer het opnieuw.");
+      setError(t("Opslaan mislukt. Probeer het opnieuw."));
       setSaving(false);
     }
   }
@@ -89,8 +91,8 @@ export default function ReviewPage() {
     return (
       <div className={styles.wrap}>
         <div className={styles.center}>
-          <p className={styles.msg}>Deze deal is niet gevonden.</p>
-          <button className="btn btn-ghost" onClick={() => router.replace("/mij")}>Terug</button>
+          <p className={styles.msg}>{t("Deze deal is niet gevonden.")}</p>
+          <button className="btn btn-ghost" onClick={() => router.replace("/mij")}>{t("Terug")}</button>
         </div>
       </div>
     );
@@ -106,14 +108,14 @@ export default function ReviewPage() {
 
       <div className={styles.body}>
         <div className={styles.stepBox}>
-          <h1 className={styles.h1}>Hoe was het bij {restNaam}?</h1>
-          <p className={styles.lead}>Geef sterren op vier onderdelen. Zo help je andere creators.</p>
+          <h1 className={styles.h1}>{t("Hoe was het bij")} {restNaam}?</h1>
+          <p className={styles.lead}>{t("Geef sterren op vier onderdelen. Zo help je andere creators.")}</p>
 
           {CATS.map((c) => (
             <div key={c.key} className={styles.catRow}>
               <div className={styles.catInfo}>
-                <span className={styles.catLbl}>{c.label}</span>
-                <span className={styles.catHint}>{c.hint}</span>
+                <span className={styles.catLbl}>{t(c.label)}</span>
+                <span className={styles.catHint}>{t(c.hint)}</span>
               </div>
               <div className={styles.catStars}>
                 {[1, 2, 3, 4, 5].map((n) => (
@@ -122,7 +124,7 @@ export default function ReviewPage() {
                     type="button"
                     className={`${styles.catStar} ${n <= scores[c.key] ? styles.catStarOn : ""}`}
                     onClick={() => setScores((s) => ({ ...s, [c.key]: n }))}
-                    aria-label={`${c.label}: ${n} sterren`}
+                    aria-label={`${t(c.label)}: ${n} ${t("sterren")}`}
                   >
                     ★
                   </button>
@@ -131,12 +133,12 @@ export default function ReviewPage() {
             </div>
           ))}
 
-          <label className={styles.qLbl} style={{ marginTop: 20 }}>Iets om toe te lichten? (optioneel)</label>
+          <label className={styles.qLbl} style={{ marginTop: 20 }}>{t("Iets om toe te lichten? (optioneel)")}</label>
           <textarea
             className={styles.ta}
             value={toelichting}
             onChange={(e) => setToelichting(e.target.value)}
-            placeholder="Bijv. het team was super behulpzaam en de sfeer klopte helemaal…"
+            placeholder={t("Bijv. het team was super behulpzaam en de sfeer klopte helemaal…")}
           />
           {error && <div className={styles.err}>{error}</div>}
         </div>
@@ -149,7 +151,7 @@ export default function ReviewPage() {
           disabled={saving || !alleGescoord}
           onClick={submit}
         >
-          {saving ? <Waiting label="Opslaan" /> : "Plaats review"}
+          {saving ? <Waiting label={t("Opslaan")} /> : t("Plaats review")}
         </button>
       </div>
     </div>

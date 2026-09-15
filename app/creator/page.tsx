@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useApp } from "@/lib/appauth";
 import { saveCreator, uploadCreatorPhoto, validateStatsImage } from "@/lib/appdata";
+import { useT } from "@/lib/i18n";
 import Waiting from "../Waiting";
 import styles from "./creator.module.css";
 
@@ -14,6 +15,7 @@ const CATEGORIEEN = ["Food", "Lifestyle", "Fashion", "Travel", "Fitness", "Beaut
 
 export default function CreatorPage() {
   const router = useRouter();
+  const t = useT();
   const { session, loading, profile, saveProfile } = useApp();
 
   const [step, setStep] = useState(0);
@@ -120,7 +122,7 @@ export default function CreatorPage() {
           type="button"
           className={styles.back}
           onClick={() => (step === 0 ? router.push("/start") : setStep((s) => s - 1))}
-          aria-label="Terug"
+          aria-label={t("Terug")}
         >
           ‹
         </button>
@@ -133,9 +135,9 @@ export default function CreatorPage() {
       <div className={styles.body}>
         {step === 0 && (
           <div className={styles.stepBox}>
-            <span className="eyebrow">Stap 1 van {STEPS}</span>
-            <h1 className={styles.h1}>Hoe heet je?</h1>
-            <p className={styles.lead}>Je naam of artiestennaam, zoals restaurants je zien.</p>
+            <span className="eyebrow">{t("Stap")} 1 {t("van")} {STEPS}</span>
+            <h1 className={styles.h1}>{t("Hoe heet je?")}</h1>
+            <p className={styles.lead}>{t("Je naam of artiestennaam, zoals restaurants je zien.")}</p>
             <input
               className="inp"
               autoFocus
@@ -143,7 +145,7 @@ export default function CreatorPage() {
               onChange={(e) => setNaam(e.target.value)}
               placeholder="Juul Bakker"
             />
-            <label className="flabel" style={{ marginTop: 16 }}>E-mailadres</label>
+            <label className="flabel" style={{ marginTop: 16 }}>{t("E-mailadres")}</label>
             <input
               className="inp"
               type="email"
@@ -154,11 +156,11 @@ export default function CreatorPage() {
               placeholder="jij@email.nl"
             />
             <p className={styles.lead} style={{ marginTop: 8, fontSize: 13 }}>
-              Hier laten we je weten zodra je bent goedgekeurd.
+              {t("Hier laten we je weten zodra je bent goedgekeurd.")}
             </p>
             {email.trim() !== "" && !emailOk && (
               <p style={{ marginTop: 4, fontSize: 13, color: "var(--muted-2)" }}>
-                Vul een geldig e-mailadres in.
+                {t("Vul een geldig e-mailadres in.")}
               </p>
             )}
           </div>
@@ -166,9 +168,9 @@ export default function CreatorPage() {
 
         {step === 1 && (
           <div className={styles.stepBox}>
-            <span className="eyebrow">Stap 2 van {STEPS}</span>
-            <h1 className={styles.h1}>In welke stad zit je?</h1>
-            <p className={styles.lead}>Zo tonen we je deals bij jou in de buurt.</p>
+            <span className="eyebrow">{t("Stap")} 2 {t("van")} {STEPS}</span>
+            <h1 className={styles.h1}>{t("In welke stad zit je?")}</h1>
+            <p className={styles.lead}>{t("Zo tonen we je deals bij jou in de buurt.")}</p>
             <input
               className="inp"
               autoFocus
@@ -181,9 +183,9 @@ export default function CreatorPage() {
 
         {step === 2 && (
           <div className={styles.stepBox}>
-            <span className="eyebrow">Stap 3 van {STEPS}</span>
-            <h1 className={styles.h1}>Ik ben…</h1>
-            <p className={styles.lead}>Restaurants filteren soms op wie ze zoeken.</p>
+            <span className="eyebrow">{t("Stap")} 3 {t("van")} {STEPS}</span>
+            <h1 className={styles.h1}>{t("Ik ben…")}</h1>
+            <p className={styles.lead}>{t("Restaurants filteren soms op wie ze zoeken.")}</p>
             <div className={styles.seg}>
               {(["vrouw", "man"] as const).map((g) => (
                 <button
@@ -192,7 +194,7 @@ export default function CreatorPage() {
                   className={`${styles.segBtn} ${geslacht === g ? styles.segOn : ""}`}
                   onClick={() => setGeslacht(g)}
                 >
-                  {g === "vrouw" ? "Vrouw" : "Man"}
+                  {g === "vrouw" ? t("Vrouw") : t("Man")}
                 </button>
               ))}
             </div>
@@ -201,9 +203,9 @@ export default function CreatorPage() {
 
         {step === 3 && (
           <div className={styles.stepBox}>
-            <span className="eyebrow">Stap 4 van {STEPS}</span>
-            <h1 className={styles.h1}>Hoe oud ben je?</h1>
-            <p className={styles.lead}>We werken met creators van 16 jaar en ouder.</p>
+            <span className="eyebrow">{t("Stap")} 4 {t("van")} {STEPS}</span>
+            <h1 className={styles.h1}>{t("Hoe oud ben je?")}</h1>
+            <p className={styles.lead}>{t("We werken met creators van 16 jaar en ouder.")}</p>
             <input
               className="inp"
               type="number"
@@ -217,7 +219,7 @@ export default function CreatorPage() {
             />
             {leeftijd !== "" && !leeftijdOk && (
               <p style={{ marginTop: 8, fontSize: 13, color: "var(--muted-2)" }}>
-                Vul een leeftijd tussen 16 en 100 in.
+                {t("Vul een leeftijd tussen 16 en 100 in.")}
               </p>
             )}
           </div>
@@ -225,9 +227,9 @@ export default function CreatorPage() {
 
         {step === 4 && (
           <div className={styles.stepBox}>
-            <span className="eyebrow">Stap 5 van {STEPS}</span>
-            <h1 className={styles.h1}>Zet je beste foto neer</h1>
-            <p className={styles.lead}>Deze foto zien restaurants als ze je uitkiezen. Kies er een die opvalt.</p>
+            <span className="eyebrow">{t("Stap")} 5 {t("van")} {STEPS}</span>
+            <h1 className={styles.h1}>{t("Zet je beste foto neer")}</h1>
+            <p className={styles.lead}>{t("Deze foto zien restaurants als ze je uitkiezen. Kies er een die opvalt.")}</p>
             <label className={styles.fotoTile} style={foto ? { backgroundImage: `url(${foto})` } : undefined}>
               <input
                 type="file"
@@ -242,18 +244,18 @@ export default function CreatorPage() {
                   try {
                     setFoto(await uploadCreatorPhoto(f));
                   } catch {
-                    setFotoError("Uploaden mislukt. Probeer het opnieuw of kies een andere foto.");
+                    setFotoError(t("Uploaden mislukt. Probeer het opnieuw of kies een andere foto."));
                   } finally {
                     setFotoBusy(false);
                   }
                 }}
               />
               {fotoBusy ? (
-                <span className={styles.uploading}><Waiting label="Uploaden" /></span>
+                <span className={styles.uploading}><Waiting label={t("Uploaden")} /></span>
               ) : foto ? (
-                <span className={styles.fotoChange}>Andere foto</span>
+                <span className={styles.fotoChange}>{t("Andere foto")}</span>
               ) : (
-                <span className={styles.fotoHint}>＋ Kies een foto</span>
+                <span className={styles.fotoHint}>＋ {t("Kies een foto")}</span>
               )}
             </label>
             {fotoError && (
@@ -264,12 +266,10 @@ export default function CreatorPage() {
 
         {step === 7 && (
           <div className={styles.stepBox}>
-            <span className="eyebrow">Stap 8 van {STEPS}</span>
-            <h1 className={styles.h1}>Bewijs je bereik <span style={{ color: "var(--muted-2)" }}>(optioneel)</span></h1>
+            <span className="eyebrow">{t("Stap")} 8 {t("van")} {STEPS}</span>
+            <h1 className={styles.h1}>{t("Bewijs je bereik")} <span style={{ color: "var(--muted-2)" }}>{t("(optioneel)")}</span></h1>
             <p className={styles.lead}>
-              Heb je een creator-/zakelijk account met statistieken? Upload dan een screenshot van je
-              meest recente story of post (Instagram of TikTok) — zo zien restaurants je echte bereik.
-              Geen statistieken? Sla deze stap gerust over.
+              {t("Heb je een creator-/zakelijk account met statistieken? Upload dan een screenshot van je meest recente story of post (Instagram of TikTok) — zo zien restaurants je echte bereik. Geen statistieken? Sla deze stap gerust over.")}
             </p>
             <label
               className={styles.fotoTile}
@@ -290,31 +290,31 @@ export default function CreatorPage() {
                     const check = await validateStatsImage(url);
                     if (!check.ok) {
                       setStatsError(
-                        `Dit lijkt geen statistieken-screenshot. ${check.detail || ""} Zorg dat je bereik en de periode (bijv. 30 dagen) zichtbaar zijn, of sla deze stap over.`.trim()
+                        `${t("Dit lijkt geen statistieken-screenshot.")} ${check.detail || ""} ${t("Zorg dat je bereik en de periode (bijv. 30 dagen) zichtbaar zijn, of sla deze stap over.")}`.trim()
                       );
                     } else {
                       setStatsFoto(url);
                     }
                   } catch {
-                    setStatsError("Uploaden mislukt. Probeer het opnieuw.");
+                    setStatsError(t("Uploaden mislukt. Probeer het opnieuw."));
                   } finally {
                     setStatsBusy(false);
                   }
                 }}
               />
               {statsBusy ? (
-                <span className={styles.uploading}><Waiting label="Uploaden" /></span>
+                <span className={styles.uploading}><Waiting label={t("Uploaden")} /></span>
               ) : statsFoto ? (
-                <span className={styles.fotoChange}>Andere screenshot</span>
+                <span className={styles.fotoChange}>{t("Andere screenshot")}</span>
               ) : (
-                <span className={styles.fotoHint}>＋ Upload screenshot</span>
+                <span className={styles.fotoHint}>＋ {t("Upload screenshot")}</span>
               )}
             </label>
             {statsError && (
               <p style={{ marginTop: 10, fontSize: 13, color: "var(--crit)" }}>{statsError}</p>
             )}
             <label className="flabel" style={{ marginTop: 18, display: "block" }}>
-              Wat voor content maak je? <span style={{ color: "var(--muted-2)" }}>(max 3)</span>
+              {t("Wat voor content maak je?")} <span style={{ color: "var(--muted-2)" }}>{t("(max 3)")}</span>
             </label>
             <div className={styles.cats}>
               {CATEGORIEEN.map((c) => {
@@ -329,7 +329,7 @@ export default function CreatorPage() {
                   disabled={vol}
                   style={vol ? { opacity: 0.4 } : undefined}
                 >
-                  {c}
+                  {t(c)}
                 </button>
                 );
               })}
@@ -339,7 +339,7 @@ export default function CreatorPage() {
         {step === 5 && (
           <PlatformStep
             label="Instagram"
-            nr={`Stap 6 van ${STEPS}`}
+            nr={`${t("Stap")} 6 ${t("van")} ${STEPS}`}
             color="#E1306C"
             handle={ig.handle}
             vol={ig.vol}
@@ -350,7 +350,7 @@ export default function CreatorPage() {
         {step === 6 && (
           <PlatformStep
             label="TikTok"
-            nr={`Stap 7 van ${STEPS}`}
+            nr={`${t("Stap")} 7 ${t("van")} ${STEPS}`}
             color="#25F4EE"
             handle={tt.handle}
             vol={tt.vol}
@@ -363,13 +363,13 @@ export default function CreatorPage() {
           <div className={styles.stepBox}>
             {genoeg ? (
               <>
-                <span className="eyebrow">Klaar</span>
-                <h1 className={styles.h1}>Je profiel staat</h1>
-                <p className={styles.lead}>We tellen je bereik op. Later verifiëren we dit via de socials zelf.</p>
+                <span className="eyebrow">{t("Klaar")}</span>
+                <h1 className={styles.h1}>{t("Je profiel staat")}</h1>
+                <p className={styles.lead}>{t("We tellen je bereik op. Later verifiëren we dit via de socials zelf.")}</p>
                 <div className={styles.summary}>
                   <div className={styles.sumTotal}>
                     <b>{totaal.toLocaleString("nl-NL")}</b>
-                    <span>totaal bereik</span>
+                    <span>{t("totaal bereik")}</span>
                   </div>
                   <div className={styles.sumRows}>
                     {ig.handle && <div><span>Instagram</span><b>{ig.vol.toLocaleString("nl-NL")}</b></div>}
@@ -377,23 +377,21 @@ export default function CreatorPage() {
                   </div>
                 </div>
                 <div className={styles.note}>
-                  Je profiel wordt eerst door Dinely beoordeeld. Bereik is nu zelf ingevuld;
-                  straks koppelen we de echte Instagram- en TikTok-API voor een geverifieerd-badge.
+                  {t("Je profiel wordt eerst door Dinely beoordeeld. Bereik is nu zelf ingevuld; straks koppelen we de echte Instagram- en TikTok-API voor een geverifieerd-badge.")}
                 </div>
               </>
             ) : (
               <>
-                <span className="eyebrow">Bijna</span>
-                <h1 className={styles.h1}>Bedankt voor je interesse</h1>
+                <span className="eyebrow">{t("Bijna")}</span>
+                <h1 className={styles.h1}>{t("Bedankt voor je interesse")}</h1>
                 <p className={styles.lead}>
-                  Op dit moment werken we met creators vanaf <b>{MIN_VOLGERS.toLocaleString("nl-NL")} volgers</b>.
-                  Jouw totaal is nu <b>{totaal.toLocaleString("nl-NL")}</b>.
+                  {t("Op dit moment werken we met creators vanaf")} <b>{MIN_VOLGERS.toLocaleString("nl-NL")} {t("volgers")}</b>.
+                  {" "}{t("Jouw totaal is nu")} <b>{totaal.toLocaleString("nl-NL")}</b>.
                 </p>
                 <div className={styles.note}>
-                  Groei je nog even door? Kom dan terug, dan zetten we je meteen op weg.
-                  Je kunt intussen wel gewoon restaurants ontdekken.
+                  {t("Groei je nog even door? Kom dan terug, dan zetten we je meteen op weg. Je kunt intussen wel gewoon restaurants ontdekken.")}
                 </div>
-                <Link href="/discover" className={styles.altLink}>Ontdek restaurants →</Link>
+                <Link href="/discover" className={styles.altLink}>{t("Ontdek restaurants")} →</Link>
               </>
             )}
           </div>
@@ -408,11 +406,11 @@ export default function CreatorPage() {
             disabled={!canNext}
             onClick={() => setStep((s) => s + 1)}
           >
-            Volgende →
+            {t("Volgende")} →
           </button>
         ) : genoeg ? (
           <button className="btn btn-gold" style={{ flex: 1 }} onClick={finish}>
-            Volgende →
+            {t("Volgende")} →
           </button>
         ) : null}
       </div>
@@ -426,20 +424,21 @@ function PlatformStep({
   label: string; nr: string; color: string; handle: string; vol: number;
   onHandle: (v: string) => void; onVol: (v: number) => void;
 }) {
+  const t = useT();
   return (
     <div className={styles.stepBox}>
       <span className="eyebrow">{nr}</span>
       <h1 className={styles.h1}>
-        Koppel <span style={{ color }}>{label}</span>
+        {t("Koppel")} <span style={{ color }}>{label}</span>
       </h1>
-      <p className={styles.lead}>Geen {label}? Laat dan leeg.</p>
-      <label className="flabel">Gebruikersnaam</label>
+      <p className={styles.lead}>{t("Geen")} {label}? {t("Laat dan leeg.")}</p>
+      <label className="flabel">{t("Gebruikersnaam")}</label>
       <input className="inp" value={handle} placeholder="@jouwnaam" onChange={(e) => onHandle(e.target.value)} />
-      <label className="flabel" style={{ marginTop: 16 }}>Aantal volgers</label>
+      <label className="flabel" style={{ marginTop: 16 }}>{t("Aantal volgers")}</label>
       <input className="inp" type="number" min={0} value={vol || ""} placeholder="0"
         onChange={(e) => onVol(Number(e.target.value))} />
       <p className={styles.volgersHint}>
-        We controleren je aantal volgers, dus vul een eerlijk aantal in. Afronden mag.
+        {t("We controleren je aantal volgers, dus vul een eerlijk aantal in. Afronden mag.")}
       </p>
     </div>
   );

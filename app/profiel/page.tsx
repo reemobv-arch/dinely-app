@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useApp } from "@/lib/appauth";
 import { saveCreator, uploadCreatorPhoto, validateStatsImage } from "@/lib/appdata";
+import { useT } from "@/lib/i18n";
 import Waiting from "../Waiting";
 import styles from "./profiel.module.css";
 
@@ -12,6 +13,7 @@ const CATEGORIEEN = ["Food", "Lifestyle", "Fashion", "Travel", "Fitness", "Beaut
 
 export default function ProfielPage() {
   const router = useRouter();
+  const t = useT();
   const { session, loading, profile, saveProfile } = useApp();
 
   const [naam, setNaam] = useState("");
@@ -56,7 +58,7 @@ export default function ProfielPage() {
 
   async function opslaan() {
     if (!kanOpslaan) {
-      setMsg(!foto ? "Een profielfoto is verplicht." : "Vul je naam en een geldig e-mailadres in.");
+      setMsg(!foto ? t("Een profielfoto is verplicht.") : t("Vul je naam en een geldig e-mailadres in."));
       return;
     }
     setSaving(true);
@@ -82,7 +84,7 @@ export default function ProfielPage() {
       await saveCreator({ ...prof, ...tel });
       router.push("/mij");
     } catch {
-      setMsg("Opslaan lukte niet. Probeer het opnieuw.");
+      setMsg(t("Opslaan lukte niet. Probeer het opnieuw."));
       setSaving(false);
     }
   }
@@ -93,13 +95,13 @@ export default function ProfielPage() {
     <div className={styles.wrap}>
       <header className={styles.head}>
         <Link href="/mij" className={styles.back}>‹</Link>
-        <div className={styles.brand}>Profiel bewerken</div>
+        <div className={styles.brand}>{t("Profiel bewerken")}</div>
         <div style={{ width: 42 }} />
       </header>
 
       <div className={styles.body}>
         {/* Foto */}
-        <div className={styles.groupLbl}>Profielfoto</div>
+        <div className={styles.groupLbl}>{t("Profielfoto")}</div>
         <label
           className={styles.fotoTile}
           style={foto ? { backgroundImage: `url(${foto})` } : undefined}
@@ -116,31 +118,31 @@ export default function ProfielPage() {
               try {
                 setFoto(await uploadCreatorPhoto(f));
               } catch {
-                setMsg("Foto uploaden mislukt.");
+                setMsg(t("Foto uploaden mislukt."));
               } finally {
                 setFotoBusy(false);
               }
             }}
           />
           {fotoBusy ? (
-            <span className={styles.fotoHint}><Waiting label="Uploaden" /></span>
+            <span className={styles.fotoHint}><Waiting label={t("Uploaden")} /></span>
           ) : foto ? (
-            <span className={styles.fotoChange}>Wijzig foto</span>
+            <span className={styles.fotoChange}>{t("Wijzig foto")}</span>
           ) : (
-            <span className={styles.fotoHint}>＋ Kies een foto</span>
+            <span className={styles.fotoHint}>＋ {t("Kies een foto")}</span>
           )}
         </label>
 
         {/* Gegevens */}
-        <div className={styles.groupLbl}>Gegevens</div>
+        <div className={styles.groupLbl}>{t("Gegevens")}</div>
         <div className={styles.card}>
-          <label className={styles.lbl}>Naam</label>
+          <label className={styles.lbl}>{t("Naam")}</label>
           <input className="inp" value={naam} onChange={(e) => setNaam(e.target.value)} placeholder="Juul Bakker" />
-          <label className={styles.lbl}>E-mailadres</label>
+          <label className={styles.lbl}>{t("E-mailadres")}</label>
           <input className="inp" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="jij@email.nl" />
-          <label className={styles.lbl}>Stad</label>
+          <label className={styles.lbl}>{t("Stad")}</label>
           <input className="inp" value={stad} onChange={(e) => setStad(e.target.value)} placeholder="Amsterdam" />
-          <label className={styles.lbl}>Ik ben</label>
+          <label className={styles.lbl}>{t("Ik ben")}</label>
           <div className={styles.seg}>
             {(["vrouw", "man"] as const).map((g) => (
               <button
@@ -149,25 +151,25 @@ export default function ProfielPage() {
                 className={`${styles.segBtn} ${geslacht === g ? styles.segOn : ""}`}
                 onClick={() => setGeslacht(g)}
               >
-                {g === "vrouw" ? "Vrouw" : "Man"}
+                {g === "vrouw" ? t("Vrouw") : t("Man")}
               </button>
             ))}
           </div>
         </div>
 
         {/* Socials */}
-        <div className={styles.groupLbl}>Socials</div>
+        <div className={styles.groupLbl}>{t("Socials")}</div>
         <div className={styles.card}>
           <label className={styles.lbl}>Instagram</label>
           <input className="inp" value={ig.handle} onChange={(e) => setIg((s) => ({ ...s, handle: e.target.value }))} placeholder="@jouwnaam" />
-          <input className="inp" style={{ marginTop: 8 }} type="number" min={0} value={ig.vol || ""} onChange={(e) => setIg((s) => ({ ...s, vol: Number(e.target.value) }))} placeholder="Aantal volgers" />
+          <input className="inp" style={{ marginTop: 8 }} type="number" min={0} value={ig.vol || ""} onChange={(e) => setIg((s) => ({ ...s, vol: Number(e.target.value) }))} placeholder={t("Aantal volgers")} />
           <label className={styles.lbl}>TikTok</label>
           <input className="inp" value={tt.handle} onChange={(e) => setTt((s) => ({ ...s, handle: e.target.value }))} placeholder="@jouwnaam" />
-          <input className="inp" style={{ marginTop: 8 }} type="number" min={0} value={tt.vol || ""} onChange={(e) => setTt((s) => ({ ...s, vol: Number(e.target.value) }))} placeholder="Aantal volgers" />
+          <input className="inp" style={{ marginTop: 8 }} type="number" min={0} value={tt.vol || ""} onChange={(e) => setTt((s) => ({ ...s, vol: Number(e.target.value) }))} placeholder={t("Aantal volgers")} />
         </div>
 
         {/* Categorie */}
-        <div className={styles.groupLbl}>Content-categorie (max 3)</div>
+        <div className={styles.groupLbl}>{t("Content-categorie (max 3)")}</div>
         <div className={styles.cats}>
           {CATEGORIEEN.map((c) => {
             const on = categorieen.includes(c);
@@ -181,14 +183,14 @@ export default function ProfielPage() {
                 disabled={vol}
                 style={vol ? { opacity: 0.4 } : undefined}
               >
-                {c}
+                {t(c)}
               </button>
             );
           })}
         </div>
 
         {/* Stats-screenshot */}
-        <div className={styles.groupLbl}>Bereik-bewijs (optioneel)</div>
+        <div className={styles.groupLbl}>{t("Bereik-bewijs (optioneel)")}</div>
         <label
           className={styles.fotoTile}
           style={statsFoto ? { backgroundImage: `url(${statsFoto})` } : undefined}
@@ -208,24 +210,24 @@ export default function ProfielPage() {
                 const check = await validateStatsImage(url);
                 if (!check.ok) {
                   setMsg(
-                    `Dit lijkt geen statistieken-screenshot. ${check.detail || ""} Upload een screenshot waarop je bereik en de periode (bijv. 30 dagen) staan, of sla deze stap over.`.trim()
+                    `${t("Dit lijkt geen statistieken-screenshot.")} ${check.detail || ""} ${t("Upload een screenshot waarop je bereik en de periode (bijv. 30 dagen) staan, of sla deze stap over.")}`.trim()
                   );
                 } else {
                   setStatsFoto(url);
                 }
               } catch {
-                setMsg("Screenshot uploaden mislukt.");
+                setMsg(t("Screenshot uploaden mislukt."));
               } finally {
                 setStatsBusy(false);
               }
             }}
           />
           {statsBusy ? (
-            <span className={styles.fotoHint}><Waiting label="Uploaden" /></span>
+            <span className={styles.fotoHint}><Waiting label={t("Uploaden")} /></span>
           ) : statsFoto ? (
-            <span className={styles.fotoChange}>Andere screenshot</span>
+            <span className={styles.fotoChange}>{t("Andere screenshot")}</span>
           ) : (
-            <span className={styles.fotoHint}>＋ Upload screenshot</span>
+            <span className={styles.fotoHint}>＋ {t("Upload screenshot")}</span>
           )}
         </label>
 
@@ -234,7 +236,7 @@ export default function ProfielPage() {
 
       <div className={styles.footer}>
         <button className="btn btn-gold" style={{ flex: 1 }} disabled={!kanOpslaan} onClick={opslaan}>
-          {saving ? <Waiting label="Opslaan" /> : "Opslaan"}
+          {saving ? <Waiting label={t("Opslaan")} /> : t("Opslaan")}
         </button>
       </div>
     </div>

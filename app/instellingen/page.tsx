@@ -7,10 +7,12 @@ import { useApp } from "@/lib/appauth";
 import { updateMyStad, getMyCreator, updateMyPayout, uploadCreatorPhoto, saveCreator } from "@/lib/appdata";
 import { enablePush, savePushPrefs, DEFAULT_PREFS, type PushPrefs } from "@/lib/push";
 import { profileGaps, GAP_LABEL } from "@/lib/profileGaps";
+import { useT } from "@/lib/i18n";
 import styles from "./instellingen.module.css";
 
 export default function InstellingenPage() {
   const router = useRouter();
+  const t = useT();
   const { session, uid, loading, profile, saveProfile } = useApp();
 
   const [stad, setStad] = useState(profile.regio || "Amsterdam");
@@ -23,16 +25,16 @@ export default function InstellingenPage() {
 
   async function changeFoto(file: File) {
     setFotoBusy(true);
-    setMsg("Foto uploaden…");
+    setMsg(t("Foto uploaden…"));
     try {
       const url = await uploadCreatorPhoto(file);
       const next = { ...profile, foto: url };
       saveProfile(next);
       const tel = session?.phone ? { telefoon: session.phone } : {};
       await saveCreator({ ...next, ...tel });
-      setMsg("Foto gewijzigd ✓");
+      setMsg(t("Foto gewijzigd ✓"));
     } catch {
-      setMsg("Foto uploaden lukte niet. Probeer het opnieuw.");
+      setMsg(t("Foto uploaden lukte niet. Probeer het opnieuw."));
     } finally {
       setFotoBusy(false);
     }
@@ -127,24 +129,24 @@ export default function InstellingenPage() {
 
   async function toggleMaster() {
     if (!pushOn) {
-      setMsg("Notificaties aanzetten…");
+      setMsg(t("Notificaties aanzetten…"));
       const res = await enablePush(prefs);
       if (res === "ok") {
         setPushOn(true);
         persistPrefs(prefs, true);
-        setMsg("Notificaties staan aan ✓");
+        setMsg(t("Notificaties staan aan ✓"));
       } else if (res === "denied") {
-        setMsg("Je hebt meldingen geblokkeerd. Zet ze aan in je browser-/telefooninstellingen.");
+        setMsg(t("Je hebt meldingen geblokkeerd. Zet ze aan in je browser-/telefooninstellingen."));
       } else if (res === "unsupported") {
-        setMsg("Deze browser ondersteunt geen push. Zet de app op je beginscherm en probeer opnieuw.");
+        setMsg(t("Deze browser ondersteunt geen push. Zet de app op je beginscherm en probeer opnieuw."));
       } else {
-        setMsg("Aanzetten lukte niet. Probeer het opnieuw.");
+        setMsg(t("Aanzetten lukte niet. Probeer het opnieuw."));
       }
     } else {
       setPushOn(false);
       persistPrefs(prefs, false);
       await savePushPrefs(prefs, false);
-      setMsg("Notificaties staan uit.");
+      setMsg(t("Notificaties staan uit."));
     }
   }
 
@@ -167,7 +169,7 @@ export default function InstellingenPage() {
     <div className={styles.wrap}>
       <header className={styles.head}>
         <Link href="/mij" className={styles.back}>‹</Link>
-        <div className={styles.brand}>Instellingen</div>
+        <div className={styles.brand}>{t("Instellingen")}</div>
         <div style={{ width: 30 }} />
       </header>
 
@@ -176,7 +178,7 @@ export default function InstellingenPage() {
           <label
             className={styles.avatar}
             style={profile.foto ? { backgroundImage: `url(${profile.foto})` } : undefined}
-            title="Foto wijzigen"
+            title={t("Foto wijzigen")}
           >
             <input
               type="file"
@@ -195,25 +197,25 @@ export default function InstellingenPage() {
               fotoBusy && <span className={styles.avatarBusy}>…</span>
             )}
           </label>
-          <div className={styles.heroName}>{profile.naam || "Jouw profiel"}</div>
+          <div className={styles.heroName}>{profile.naam || t("Jouw profiel")}</div>
           <div className={styles.heroSub}>Creator{profile.regio ? ` · ${profile.regio}` : ""}</div>
         </div>
 
         {gaps.length > 0 && (
           <div className={styles.todoCard}>
-            <div className={styles.todoTitle}>Maak je profiel af</div>
+            <div className={styles.todoTitle}>{t("Maak je profiel af")}</div>
             <p className={styles.todoLead}>
-              Dit ontbreekt nog. Vul het hieronder in, zodat restaurants je kunnen kiezen en we je kunnen uitbetalen.
+              {t("Dit ontbreekt nog. Vul het hieronder in, zodat restaurants je kunnen kiezen en we je kunnen uitbetalen.")}
             </p>
             <ul className={styles.todoList}>
               {gaps.map((g) => (
                 <li key={g}>
                   {g === "socials" ? (
                     <Link href="/profiel" className={styles.todoLink}>
-                      {GAP_LABEL[g]} <span className={styles.todoGo}>Invullen ›</span>
+                      {t(GAP_LABEL[g])} <span className={styles.todoGo}>{t("Invullen")} ›</span>
                     </Link>
                   ) : (
-                    GAP_LABEL[g]
+                    t(GAP_LABEL[g])
                   )}
                 </li>
               ))}
@@ -221,18 +223,18 @@ export default function InstellingenPage() {
           </div>
         )}
 
-        <div className={styles.groupLbl}>Account</div>
+        <div className={styles.groupLbl}>{t("Account")}</div>
         <div className={styles.card}>
           <div className={styles.rowStatic}>
-            <span>Telefoonnummer</span>
+            <span>{t("Telefoonnummer")}</span>
             <b>{session?.phone || "—"}</b>
           </div>
           <div className={styles.rowStatic}>
-            <span>E-mailadres</span>
+            <span>{t("E-mailadres")}</span>
             <b>{profile.email || "—"}</b>
           </div>
           <div className={styles.rowEdit}>
-            <label className={styles.editLbl}>Stad</label>
+            <label className={styles.editLbl}>{t("Stad")}</label>
             <input
               className={styles.editInput}
               value={stad}
@@ -242,13 +244,13 @@ export default function InstellingenPage() {
             />
           </div>
         </div>
-        <p className={styles.hint}>Telefoonnummer en e-mail horen bij je account en kun je niet wijzigen. Je stad wel, bijvoorbeeld als je verhuist.</p>
+        <p className={styles.hint}>{t("Telefoonnummer en e-mail horen bij je account en kun je niet wijzigen. Je stad wel, bijvoorbeeld als je verhuist.")}</p>
 
-        <div className={styles.groupLbl}>Uitbetaling</div>
+        <div className={styles.groupLbl}>{t("Uitbetaling")}</div>
         <div className={styles.card}>
           <div className={`${styles.rowEdit} ${mist("iban") ? styles.rowNeed : ""}`}>
             <label className={styles.editLbl}>
-              IBAN {mist("iban") && <span className={styles.needTag}>Nog invullen</span>}
+              IBAN {mist("iban") && <span className={styles.needTag}>{t("Nog invullen")}</span>}
             </label>
             <input
               className={styles.editInput}
@@ -262,7 +264,7 @@ export default function InstellingenPage() {
           </div>
           <div className={`${styles.rowEdit} ${mist("ibanNaam") ? styles.rowNeed : ""}`}>
             <label className={styles.editLbl}>
-              Rekeninghouder {mist("ibanNaam") && <span className={styles.needTag}>Nog invullen</span>}
+              {t("Rekeninghouder")} {mist("ibanNaam") && <span className={styles.needTag}>{t("Nog invullen")}</span>}
             </label>
             <input
               className={styles.editInput}
@@ -273,15 +275,15 @@ export default function InstellingenPage() {
             />
           </div>
         </div>
-        <p className={styles.hint}>Hierop maken we je verdiensten over zodra een restaurant je content heeft goedgekeurd.</p>
+        <p className={styles.hint}>{t("Hierop maken we je verdiensten over zodra een restaurant je content heeft goedgekeurd.")}</p>
 
-        <div className={styles.groupLbl}>Notificaties</div>
+        <div className={styles.groupLbl}>{t("Notificaties")}</div>
         <div className={styles.card}>
-          <Toggle label="Push-notificaties" checked={pushOn} onChange={toggleMaster} strong />
+          <Toggle label={t("Push-notificaties")} checked={pushOn} onChange={toggleMaster} strong />
           <div className={`${styles.subs} ${pushOn ? "" : styles.subsOff}`}>
-            <Toggle label="Bij goedkeuring of afwijzing" checked={prefs.approval} onChange={() => togglePref("approval")} />
-            <Toggle label="Als een deal is geaccepteerd" checked={prefs.accepted} onChange={() => togglePref("accepted")} />
-            <Toggle label="Nieuwe deals in jouw stad" checked={prefs.newDeals} onChange={() => togglePref("newDeals")} />
+            <Toggle label={t("Bij goedkeuring of afwijzing")} checked={prefs.approval} onChange={() => togglePref("approval")} />
+            <Toggle label={t("Als een deal is geaccepteerd")} checked={prefs.accepted} onChange={() => togglePref("accepted")} />
+            <Toggle label={t("Nieuwe deals in jouw stad")} checked={prefs.newDeals} onChange={() => togglePref("newDeals")} />
           </div>
         </div>
         {msg && <p className={styles.msg}>{msg}</p>}

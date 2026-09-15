@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useApp } from "@/lib/appauth";
+import { useT } from "@/lib/i18n";
 import { enablePush, DEFAULT_PREFS } from "@/lib/push";
 import styles from "./notificationPrompt.module.css";
 
@@ -14,6 +15,7 @@ const DAY = 24 * 60 * 60 * 1000;
 // kaartje, en pas bij "Zet aan" verschijnt de systeem-toestemming.
 export default function NotificationPrompt() {
   const { session } = useApp();
+  const t = useT();
   const [show, setShow] = useState(false);
   const [busy, setBusy] = useState(false);
 
@@ -71,20 +73,20 @@ export default function NotificationPrompt() {
   if (!show) return null;
 
   return (
-    <div className={styles.wrap} role="dialog" aria-label="Meldingen aanzetten">
+    <div className={styles.wrap} role="dialog" aria-label={t("Meldingen aanzetten")}>
       <div className={styles.card}>
         <div className={styles.bell}>🔔</div>
         <div className={styles.body}>
-          <div className={styles.title}>Zet meldingen aan</div>
+          <div className={styles.title}>{t("Zet meldingen aan")}</div>
           <p className={styles.text}>
-            Zo hoor je meteen als je bent goedgekeurd of een deal binnenkrijgt.
+            {t("Zo hoor je meteen als je bent goedgekeurd of een deal binnenkrijgt.")}
           </p>
           <div className={styles.actions}>
             <button className="btn btn-gold" onClick={enable} disabled={busy}>
-              {busy ? "Bezig…" : "Zet aan"}
+              {busy ? t("Bezig…") : t("Zet aan")}
             </button>
             <button className={styles.later} onClick={later} disabled={busy}>
-              Later
+              {t("Later")}
             </button>
           </div>
         </div>

@@ -8,6 +8,7 @@ import { listAllContent, listRestaurants, listCreatorFotos } from "@/lib/appdata
 import { feedBoost } from "@/lib/feedBoost";
 import type { PublicRestaurant } from "@/lib/appdata";
 import type { ContentItem } from "@/lib/types";
+import { useT } from "@/lib/i18n";
 import BottomNav from "../BottomNav";
 import styles from "./feed.module.css";
 
@@ -26,6 +27,7 @@ type FeedSlide = {
 
 export default function FeedPage() {
   const router = useRouter();
+  const t = useT();
   const { session, loading } = useApp();
   const [slides, setSlides] = useState<FeedSlide[]>([]);
   const [busy, setBusy] = useState(true);
@@ -106,11 +108,11 @@ export default function FeedPage() {
         </div>
       ) : slides.length === 0 ? (
         <div className={styles.center}>
-          <div className={styles.emptyTitle}>Nog geen video&apos;s</div>
+          <div className={styles.emptyTitle}>{t("Nog geen video's")}</div>
           <p className={styles.emptyText}>
-            Zodra creators hun reels plaatsen, zie je ze hier voorbijkomen.
+            {t("Zodra creators hun reels plaatsen, zie je ze hier voorbijkomen.")}
           </p>
-          <Link href="/discover" className={styles.emptyBtn}>Ontdek restaurants →</Link>
+          <Link href="/discover" className={styles.emptyBtn}>{t("Ontdek restaurants")} →</Link>
         </div>
       ) : (
         <div className={styles.feed}>

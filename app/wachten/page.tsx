@@ -5,10 +5,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useApp } from "@/lib/appauth";
 import { getMyCreator } from "@/lib/appdata";
+import { useT } from "@/lib/i18n";
 import styles from "./wachten.module.css";
 
 export default function WachtenPage() {
   const router = useRouter();
+  const t = useT();
   const { session, uid, loading } = useApp();
 
   useEffect(() => {
@@ -31,9 +33,9 @@ export default function WachtenPage() {
         <div className={styles.brand}>Dine<span>ly</span></div>
         <h1 className={styles.title}>Your account is waiting for Dinely&apos;s approval.</h1>
         <p className={styles.sub}>
-          We laten het je weten via mail én een melding zodra je bent goedgekeurd.
+          {t("We laten het je weten via mail én een melding zodra je bent goedgekeurd.")}
         </p>
-        <Link href="/discover" className={styles.link}>Intussen restaurants ontdekken →</Link>
+        <Link href="/discover" className={styles.link}>{t("Intussen restaurants ontdekken")} →</Link>
       </div>
     </div>
   );

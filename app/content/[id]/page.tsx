@@ -12,6 +12,7 @@ import {
   markApplicationContentPosted,
 } from "@/lib/appdata";
 import type { Application } from "@/lib/types";
+import { useT } from "@/lib/i18n";
 import Waiting from "../../Waiting";
 import styles from "./content.module.css";
 
@@ -21,6 +22,7 @@ export default function ContentPage() {
   const params = useParams();
   const id = String(params.id);
   const router = useRouter();
+  const t = useT();
   const { uid, session, loading, profile } = useApp();
 
   const [app, setApp] = useState<Application | null>(null);
@@ -88,7 +90,7 @@ export default function ContentPage() {
       if (app.id) await markApplicationContentPosted(app.id);
       router.replace("/mij");
     } catch {
-      setError("Uploaden mislukt. Staat Cloud Storage aan in Firebase? Probeer anders opnieuw.");
+      setError(t("Uploaden mislukt. Staat Cloud Storage aan in Firebase? Probeer anders opnieuw."));
       setBusy(false);
     }
   }
@@ -97,8 +99,8 @@ export default function ContentPage() {
     return (
       <div className={styles.wrap}>
         <div className={styles.center}>
-          <p className={styles.msg}>Deze deal is niet gevonden.</p>
-          <button className="btn btn-ghost" onClick={() => router.replace("/mij")}>Terug</button>
+          <p className={styles.msg}>{t("Deze deal is niet gevonden.")}</p>
+          <button className="btn btn-ghost" onClick={() => router.replace("/mij")}>{t("Terug")}</button>
         </div>
       </div>
     );
@@ -112,14 +114,13 @@ export default function ContentPage() {
       </header>
 
       <div className={styles.body}>
-        <h1 className={styles.h1}>Plaats je content</h1>
+        <h1 className={styles.h1}>{t("Plaats je content")}</h1>
 
         <div className={styles.note}>
-          <b>Vergeet niet @DinelyApp te taggen</b> in je story/reel op Instagram of TikTok.
-          Upload daarna dezelfde foto's of video hier{gevraagd ? ` (gevraagd: ${gevraagd})` : ""}.
+          <b>{t("Vergeet niet @DinelyApp te taggen")}</b> {t("in je story/reel op Instagram of TikTok. Upload daarna dezelfde foto's of video hier")}{gevraagd ? ` (${t("gevraagd")}: ${gevraagd})` : ""}.
         </div>
 
-        <label className={styles.lbl}>Wat voor content is dit?</label>
+        <label className={styles.lbl}>{t("Wat voor content is dit?")}</label>
         <div className={styles.soortRow}>
           <button
             type="button"
@@ -127,33 +128,33 @@ export default function ContentPage() {
             onClick={() => setSoort("food")}
           >
             🍽️ Food
-            <span>Van het eten/gerecht</span>
+            <span>{t("Van het eten/gerecht")}</span>
           </button>
           <button
             type="button"
             className={`${styles.soortBtn} ${soort === "sfeer" ? styles.soortOn : ""}`}
             onClick={() => setSoort("sfeer")}
           >
-            ✨ Sfeer
-            <span>Interieur, vibe, beleving</span>
+            ✨ {t("Sfeer")}
+            <span>{t("Interieur, vibe, beleving")}</span>
           </button>
         </div>
         <p className={styles.soortHint}>
           {soort === "food"
-            ? "Deze content komt bij het restaurant onder Food te staan."
+            ? t("Deze content komt bij het restaurant onder Food te staan.")
             : soort === "sfeer"
-            ? "Deze content komt bij het restaurant onder Sfeer te staan."
-            : "Kies of dit food- of sfeer-content is."}
+            ? t("Deze content komt bij het restaurant onder Sfeer te staan.")
+            : t("Kies of dit food- of sfeer-content is.")}
         </p>
 
         {soort === "food" && (
           <>
-            <label className={styles.lbl}>Welk gerecht is dit? (optioneel)</label>
+            <label className={styles.lbl}>{t("Welk gerecht is dit? (optioneel)")}</label>
             <input
               className={styles.inp}
               value={gerecht}
               onChange={(e) => setGerecht(e.target.value)}
-              placeholder="Bijv. Short rib met truffelpuree"
+              placeholder={t("Bijv. Short rib met truffelpuree")}
             />
           </>
         )}
@@ -175,7 +176,7 @@ export default function ContentPage() {
         )}
 
         <button className={styles.addBtn} onClick={() => inputRef.current?.click()}>
-          + Foto of video toevoegen
+          + {t("Foto of video toevoegen")}
         </button>
         <input
           ref={inputRef}
@@ -186,12 +187,12 @@ export default function ContentPage() {
           onChange={onPick}
         />
 
-        <label className={styles.lbl}>Bijschrift (optioneel)</label>
+        <label className={styles.lbl}>{t("Bijschrift (optioneel)")}</label>
         <textarea
           className={styles.ta}
           value={caption}
           onChange={(e) => setCaption(e.target.value)}
-          placeholder="Bijv. Wat een avond bij dit restaurant…"
+          placeholder={t("Bijv. Wat een avond bij dit restaurant…")}
         />
 
         {error && <div className={styles.err}>{error}</div>}
@@ -204,7 +205,7 @@ export default function ContentPage() {
           disabled={busy || picked.length === 0 || !soort}
           onClick={submit}
         >
-          {busy ? <Waiting label="Uploaden" /> : `Plaats op ${restNaam}`}
+          {busy ? <Waiting label={t("Uploaden")} /> : `${t("Plaats op")} ${restNaam}`}
         </button>
       </div>
     </div>
