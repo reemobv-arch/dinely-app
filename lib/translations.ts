@@ -476,4 +476,12 @@ export const EN: Record<string, string> = {
   "Gegeten bij": "Eaten at",
   "Nog geen kanalen bekend.": "No channels known yet.",
   "Nog geen restaurants.": "No restaurants yet.",
+
+  // Mijn: creator uitnodigen (WhatsApp-deel)
+  "Nodig een creator uit": "Invite a creator",
+  "Levert jou 15 punten op zodra iemand zich via jouw link aanmeldt.":
+    "Earns you 15 points as soon as someone signs up via your link.",
+  "Deel via WhatsApp": "Share via WhatsApp",
+  "Ken jij een goede content creator? Meld je aan bij Dinely en verdien met gratis diners en betaalde deals bij restaurants:":
+    "Know a good content creator? Join Dinely and earn with free dinners and paid deals at restaurants:",
 };

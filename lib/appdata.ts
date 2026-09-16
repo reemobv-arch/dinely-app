@@ -258,6 +258,30 @@ export async function awardPoints(applicationId: string, event: "content" | "sta
   }
 }
 
+// Kent de uitnodiger 15 punten toe als deze (nieuwe) creator via zijn link kwam.
+// Best-effort; de server bepaalt of het terecht is en telt maar één keer.
+export async function creditInvite(inviterUid: string): Promise<void> {
+  if (!firebaseReady || !inviterUid) return;
+  try {
+    const base = process.env.NEXT_PUBLIC_DASHBOARD_URL;
+    const idToken = await auth.currentUser?.getIdToken();
+    if (!base || !idToken) return;
+    await fetch(`${base}/api/creator/invite-credit`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ idToken, inviterUid }),
+    });
+    // De ref is verzilverd; opruimen zodat het niet nog eens gebeurt.
+    try {
+      localStorage.removeItem("dinely:ref");
+    } catch {
+      /* negeren */
+    }
+  } catch {
+    /* punten zijn bijzaak; nooit de signup blokkeren */
+  }
+}
+
 export async function listContentFor(restaurantId: string): Promise<Content[]> {
   if (!firebaseReady) return [];
   const snap = await getDocs(
@@ -435,6 +459,16 @@ export async function saveCreator(p: {
     pub.createdAt = serverTimestamp();
   }
   await setDoc(doc(db, "creatorProfiles", uid), pub, { merge: true });
+
+  // Nieuw account via een uitnodigingslink? De uitnodiger krijgt 15 punten.
+  if (isNew) {
+    try {
+      const invRef = typeof localStorage !== "undefined" ? localStorage.getItem("dinely:ref") : null;
+      if (invRef && invRef !== uid) void creditInvite(invRef);
+    } catch {
+      /* punten zijn bijzaak, nooit de signup blokkeren */
+    }
+  }
 
   // Nieuwe of gewijzigde stats-screenshot? Laat de cijfers automatisch uitlezen
   // (server-side via Claude vision). Best-effort — mag de flow nooit blokkeren.

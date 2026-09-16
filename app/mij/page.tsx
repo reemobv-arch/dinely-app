@@ -180,6 +180,23 @@ export default function MijPage() {
         <span className={styles.chev}>›</span>
       </Link>
 
+      {/* Nodig een creator uit -> 15 punten zodra die zich via jouw link aanmeldt */}
+      <a
+        className={styles.share}
+        href={`https://wa.me/?text=${encodeURIComponent(
+          `${t("Ken jij een goede content creator? Meld je aan bij Dinely en verdien met gratis diners en betaalde deals bij restaurants:")} https://app.dinely.nl/?ref=${uid ?? ""}`
+        )}`}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <span className={styles.shareIcon} aria-hidden>↗</span>
+        <span className={styles.shareText}>
+          <span className={styles.shareTitle}>{t("Nodig een creator uit")}</span>
+          <span className={styles.shareSub}>{t("Levert jou 15 punten op zodra iemand zich via jouw link aanmeldt.")}</span>
+        </span>
+        <span className={styles.shareBtn}>{t("Deel via WhatsApp")}</span>
+      </a>
+
       {(() => {
         const tier = creatorTier(punten);
         const next = nextTier(punten);

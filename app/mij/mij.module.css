@@ -297,3 +297,26 @@
 .tlCaption { font-family: var(--ff-mono); font-size: 12px; color: var(--gold, #EDF1F5); letter-spacing: 0.02em; }
 .tlHint { font-size: 12.5px; line-height: 1.5; color: var(--muted); background: rgba(255,255,255,0.02); border: 1px solid var(--line); border-radius: 10px; padding: 9px 11px; margin-bottom: 10px; }
 .tlHint b { color: var(--text); }
+
+/* Deel-kaart: nodig een creator uit (15 punten) */
+.share {
+  display: flex; align-items: center; gap: 12px;
+  margin-top: 12px; padding: 14px 16px;
+  border-radius: 14px; text-decoration: none;
+  background: linear-gradient(135deg, rgba(201,162,75,0.14), rgba(201,162,75,0.04));
+  border: 1px solid rgba(201,162,75,0.34);
+}
+.share:active { transform: scale(0.99); }
+.shareIcon {
+  width: 38px; height: 38px; flex: none; border-radius: 50%;
+  display: grid; place-items: center; font-size: 18px;
+  color: var(--au-2, #E4C67E); background: rgba(201,162,75,0.16);
+  border: 1px solid rgba(201,162,75,0.4);
+}
+.shareText { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.shareTitle { font-family: var(--ff-display); font-size: 16px; color: var(--text); }
+.shareSub { font-size: 12px; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+.shareBtn {
+  flex: none; font-size: 12.5px; font-weight: 600; white-space: nowrap;
+  color: #0b3d2e; background: #25D366; border-radius: 100px; padding: 9px 13px;
+}
