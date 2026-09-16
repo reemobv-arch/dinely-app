@@ -9,6 +9,7 @@ import {
   uploadCreatorPhoto,
   validateStatsImage,
   submitReach,
+  awardPoints,
 } from "@/lib/appdata";
 import { canSubmitReach, isValidEntry, type ReachEntry } from "@/lib/reach";
 import type { Application } from "@/lib/types";
@@ -101,6 +102,7 @@ export default function BereikPage() {
       }));
     try {
       await submitReach(appId, uid, schoon);
+      awardPoints(appId, "stats"); // best-effort, blokkeert de flow niet
       router.push("/mij");
     } catch {
       setSaving(false);

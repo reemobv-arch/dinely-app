@@ -10,6 +10,7 @@ import {
   uploadContentFile,
   createContent,
   markApplicationContentPosted,
+  awardPoints,
 } from "@/lib/appdata";
 import type { Application } from "@/lib/types";
 import { useT } from "@/lib/i18n";
@@ -87,7 +88,10 @@ export default function ContentPage() {
         soort: soort || "sfeer",
         gerecht: soort === "food" ? gerecht.trim() : "",
       });
-      if (app.id) await markApplicationContentPosted(app.id);
+      if (app.id) {
+        await markApplicationContentPosted(app.id);
+        awardPoints(app.id, "content"); // best-effort, blokkeert de flow niet
+      }
       router.replace("/mij");
     } catch {
       setError(t("Uploaden mislukt. Staat Cloud Storage aan in Firebase? Probeer anders opnieuw."));

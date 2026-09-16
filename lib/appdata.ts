@@ -239,6 +239,25 @@ export async function markApplicationContentPosted(id: string): Promise<void> {
   });
 }
 
+// Kent creator-punten toe voor een moment in de deal (server-side, veilig).
+// "content" = deal- + op-tijd-punten bij het plaatsen; "stats" = punten voor het
+// aanleveren van de statistieken. Best-effort: mag de flow nooit blokkeren.
+export async function awardPoints(applicationId: string, event: "content" | "stats"): Promise<void> {
+  if (!firebaseReady || !applicationId) return;
+  try {
+    const base = process.env.NEXT_PUBLIC_DASHBOARD_URL;
+    const idToken = await auth.currentUser?.getIdToken();
+    if (!base || !idToken) return;
+    await fetch(`${base}/api/creator/award-points`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ idToken, applicationId, event }),
+    });
+  } catch {
+    /* punten zijn bijzaak; nooit de actie blokkeren */
+  }
+}
+
 export async function listContentFor(restaurantId: string): Promise<Content[]> {
   if (!firebaseReady) return [];
   const snap = await getDocs(
