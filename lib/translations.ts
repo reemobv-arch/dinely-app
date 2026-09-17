@@ -490,4 +490,8 @@ export const EN: Record<string, string> = {
   "Restaurant beoordelen": "Rate the restaurant",
   "Je bent klaar! Je content en bereik staan er. Het restaurant handelt de uitbetaling af, je krijgt bericht zodra die onderweg is.":
     "You're all done! Your content and reach are in. The restaurant handles the payout; you'll get a message once it's on its way.",
+
+  // Login: geen code ontvangen (opnieuw sturen)
+  "Geen code ontvangen? Opnieuw sturen": "No code received? Resend",
+  "Geen code? Opnieuw sturen kan over": "No code? You can resend in",
 };

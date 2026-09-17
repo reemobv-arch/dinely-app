@@ -44,9 +44,17 @@ export default function LoginPage() {
   const [code, setCode] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [cooldown, setCooldown] = useState(0); // seconden tot "opnieuw sturen" weer mag
 
   const verifierRef = useRef<RecaptchaVerifier | null>(null);
   const confirmRef = useRef<ConfirmationResult | null>(null);
+
+  // Aftellen voor de "geen code ontvangen?"-knop.
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const id = setInterval(() => setCooldown((c) => (c <= 1 ? 0 : c - 1)), 1000);
+    return () => clearInterval(id);
+  }, [cooldown]);
 
   useEffect(() => {
     if (!loading && session) router.replace("/start");
@@ -107,10 +115,32 @@ export default function LoginPage() {
       confirmRef.current = await signInWithPhoneNumber(auth, num, getVerifier());
       setE164(num);
       setStep("code");
+      setCooldown(45);
     } catch (err) {
       const c = (err as { code?: string })?.code ?? "";
       setError(meldingVoor(c));
       resetVerifier(); // verse reCAPTCHA voor de volgende poging
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  // Opnieuw een sms sturen naar hetzelfde nummer (met verse reCAPTCHA).
+  async function resend() {
+    if (busy || cooldown > 0) return;
+    const num = e164 || toE164NL(phone);
+    if (!num || !firebaseReady) return;
+    setError(null);
+    setBusy(true);
+    try {
+      resetVerifier();
+      confirmRef.current = await signInWithPhoneNumber(auth, num, getVerifier());
+      setCode("");
+      setCooldown(45);
+    } catch (err) {
+      const c = (err as { code?: string })?.code ?? "";
+      setError(meldingVoor(c));
+      resetVerifier();
     } finally {
       setBusy(false);
     }
@@ -213,6 +243,18 @@ export default function LoginPage() {
           <button className="btn btn-gold" style={{ width: "100%", marginTop: 18 }} disabled={busy}>
             {busy ? <Waiting label={t("Controleren")} /> : t("Inloggen →")}
           </button>
+          {firebaseReady && (
+            <button
+              type="button"
+              className={styles.link}
+              onClick={resend}
+              disabled={busy || cooldown > 0}
+            >
+              {cooldown > 0
+                ? `${t("Geen code? Opnieuw sturen kan over")} ${cooldown}s`
+                : t("Geen code ontvangen? Opnieuw sturen")}
+            </button>
+          )}
           <button type="button" className={styles.link} onClick={opnieuw} disabled={busy}>
             {t("Ander nummer gebruiken")}
           </button>
