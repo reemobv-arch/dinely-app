@@ -9,7 +9,7 @@ import { useT } from "@/lib/i18n";
 import Waiting from "../Waiting";
 import styles from "./creator.module.css";
 
-const MIN_VOLGERS = 2000;
+const MIN_VOLGERS = 3000;
 const STEPS = 9;
 const CATEGORIEEN = ["Food", "Lifestyle", "Fashion", "Travel", "Fitness", "Beauty", "Vegan", "Overig"];
 
