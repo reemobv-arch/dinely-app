@@ -484,4 +484,10 @@ export const EN: Record<string, string> = {
   "Deel via WhatsApp": "Share via WhatsApp",
   "Ken jij een goede content creator? Meld je aan bij Dinely en verdien met gratis diners en betaalde deals bij restaurants:":
     "Know a good content creator? Join Dinely and earn with free dinners and paid deals at restaurants:",
+
+  // Mijn deals: klaar, wachten op uitbetaling
+  "Wachten op uitbetaling": "Waiting for payout",
+  "Restaurant beoordelen": "Rate the restaurant",
+  "Je bent klaar! Je content en bereik staan er. Het restaurant handelt de uitbetaling af, je krijgt bericht zodra die onderweg is.":
+    "You're all done! Your content and reach are in. The restaurant handles the payout; you'll get a message once it's on its way.",
 };

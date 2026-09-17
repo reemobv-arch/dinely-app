@@ -280,6 +280,9 @@ export default function MijPage() {
                   const deal = deals[a.dealId];
                   const meta = restMeta[a.restaurantId];
                   const vp = dealVoortgang(a, deal?.beloningstype === "betaald");
+                  // Creator heeft z'n deel gedaan (content + bereik). Voor een
+                  // betaalde deal wacht-ie dan alleen nog op de uitbetaling.
+                  const creatorKlaar = !!a.contentPosted && !!a.reachSubmitted;
                   const korting = deal?.kortingPct ?? 20;
                   const beloning = deal?.beloningstype === "betaald" ? `€ ${deal?.bedrag}` : t("Gratis diner");
                   const editing = editDatum === a.id;
@@ -303,7 +306,7 @@ export default function MijPage() {
                             {vp.fase === "aangevraagd" ? t("Wacht op restaurant")
                               : vp.fase === "gewijzigd" ? t("Wacht op herbevestiging")
                               : vp.fase === "gepland" ? t("Ingepland")
-                              : vp.fase === "teDoen" ? t("Jij bent aan zet")
+                              : vp.fase === "teDoen" ? (creatorKlaar ? t("Wachten op uitbetaling") : t("Jij bent aan zet"))
                               : t("Afgerond ✓")}
                           </span>
                         </div>
@@ -328,7 +331,7 @@ export default function MijPage() {
                       <div className={styles.tlCaption}>
                         {vp.klaar
                           ? t("Afgerond ✓")
-                          : `${t("Stap")} ${vp.gedaan + 1} ${t("van")} 5 · ${t(VOORTGANG_STAPPEN[vp.gedaan])}`}
+                          : `${t("Stap")} ${Math.min(vp.gedaan + 1, vp.totaal)} ${t("van")} ${vp.totaal} · ${t(VOORTGANG_STAPPEN[Math.min(vp.gedaan, VOORTGANG_STAPPEN.length - 1)])}`}
                       </div>
 
                       {/* instructies wanneer de creator nog langs moet */}
@@ -414,15 +417,21 @@ export default function MijPage() {
                       {/* acties wanneer het bezoek is bevestigd */}
                       {vp.fase === "teDoen" && (
                         <>
-                        <div className={styles.tlHint}>
-                          {t("Upload je content")} <b>{t("binnen 48 uur")}</b> {t("na je bezoek. Je statistieken lever je")}
-                          <b> {t("daarna")}</b> {t("aan, zodat het restaurant het bereik en resultaat ziet.")}
-                        </div>
+                        {creatorKlaar ? (
+                          <div className={styles.tlHint}>
+                            {t("Je bent klaar! Je content en bereik staan er. Het restaurant handelt de uitbetaling af, je krijgt bericht zodra die onderweg is.")}
+                          </div>
+                        ) : (
+                          <div className={styles.tlHint}>
+                            {t("Upload je content")} <b>{t("binnen 48 uur")}</b> {t("na je bezoek. Je statistieken lever je")}
+                            <b> {t("daarna")}</b> {t("aan, zodat het restaurant het bereik en resultaat ziet.")}
+                          </div>
+                        )}
                         <div className={styles.dealActions}>
                           {a.reviewed ? (
                             <span className={`${styles.badge} ${styles.ok}`}>{t("Beoordeeld ✓")}</span>
                           ) : (
-                            <Link href={`/review/${a.id}`} className={styles.actBtn}>Review</Link>
+                            <Link href={`/review/${a.id}`} className={styles.actBtn}>{creatorKlaar ? t("Restaurant beoordelen") : "Review"}</Link>
                           )}
                           {a.contentPosted ? (
                             <span className={`${styles.badge} ${styles.ok}`}>{t("Content ✓")}</span>
