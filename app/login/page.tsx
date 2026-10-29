@@ -10,29 +10,10 @@ import {
 import { auth, firebaseReady, demoMode } from "@/lib/firebase";
 import { useApp, DEMO_CODE } from "@/lib/appauth";
 import { toE164NL } from "@/lib/phone";
+import { loginFoutmelding } from "@/lib/loginError";
 import { useT } from "@/lib/i18n";
 import Waiting from "../Waiting";
 import styles from "./login.module.css";
-
-// Firebase-foutcodes vertalen naar begrijpelijke meldingen.
-function meldingVoor(code: string): string {
-  switch (code) {
-    case "auth/invalid-phone-number":
-      return "Dit lijkt geen geldig Nederlands mobiel nummer.";
-    case "auth/too-many-requests":
-      return "Te veel pogingen. Probeer het over een paar minuten opnieuw.";
-    case "auth/invalid-verification-code":
-      return "Onjuiste code. Controleer de code uit de sms.";
-    case "auth/code-expired":
-      return "De code is verlopen. Vraag een nieuwe aan.";
-    case "auth/quota-exceeded":
-      return "De daglimiet voor sms is bereikt. Probeer het later opnieuw.";
-    case "auth/captcha-check-failed":
-      return "Verificatie mislukt. Ververs de pagina en probeer opnieuw.";
-    default:
-      return "Er ging iets mis. Probeer het opnieuw.";
-  }
-}
 
 export default function LoginPage() {
   const router = useRouter();
@@ -118,7 +99,8 @@ export default function LoginPage() {
       setCooldown(45);
     } catch (err) {
       const c = (err as { code?: string })?.code ?? "";
-      setError(meldingVoor(c));
+      if (c) console.warn("[dinely] sms-login fout", c);
+      setError(loginFoutmelding(c));
       resetVerifier(); // verse reCAPTCHA voor de volgende poging
     } finally {
       setBusy(false);
@@ -139,7 +121,8 @@ export default function LoginPage() {
       setCooldown(45);
     } catch (err) {
       const c = (err as { code?: string })?.code ?? "";
-      setError(meldingVoor(c));
+      if (c) console.warn("[dinely] sms-login fout", c);
+      setError(loginFoutmelding(c));
       resetVerifier();
     } finally {
       setBusy(false);
@@ -178,7 +161,8 @@ export default function LoginPage() {
       router.replace("/start");
     } catch (err) {
       const c = (err as { code?: string })?.code ?? "";
-      setError(meldingVoor(c));
+      if (c) console.warn("[dinely] sms-login fout", c);
+      setError(loginFoutmelding(c));
     } finally {
       setBusy(false);
     }
